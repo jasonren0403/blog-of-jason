@@ -1,0 +1,21 @@
+name: publish-webpage
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-webpage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Build and Deploy
+        uses: y4code/hexo-deploy-action@master
+        env:
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_REPOSITORY: jasonren0403/blog-of-jason
+          BRANCH: gh-pages
+          PUBLISH_DIR: ./public
