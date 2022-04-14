@@ -1,12 +1,14 @@
 ---
-title: 格式化字符串 date: 2019-12-25 20:32:14 tags:
-
-- "网络空间安全"
-- "软件安全"
-  categories:
-- ["实验","软件安全"]
-- ["漏洞","格式化字符串"]
-  comments: true mathjax: true
+title: 格式化字符串 
+date: 2019-12-25 20:32:14 
+tags:
+  - "网络空间安全"
+  - "软件安全"
+categories:
+  - ["实验","软件安全"]
+  - ["漏洞","格式化字符串"]
+comments: true 
+mathjax: true
 
 ---
 

@@ -1,11 +1,12 @@
 ---
-title: Red Hat Linux的安装和使用 date: 2019-09-26 11:34:07 tags: ["OS","Red Hat Linux","gcc"]
+title: Red Hat Linux的安装和使用 
+date: 2019-09-26 11:34:07 
+tags: ["OS","Red Hat Linux","gcc"]
 categories:
-
-- ["OS","Red Hat Linux"]
-- ["技术"]
-- ["实验","操作系统内核"]
-  comments: true
+  - ["OS","Red Hat Linux"]
+  - ["技术"]
+  - ["实验","操作系统内核"]
+comments: true
 
 ---
 

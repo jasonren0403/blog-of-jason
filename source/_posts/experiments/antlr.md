@@ -1,10 +1,11 @@
 ---
-title: ANTLR语言识别工具 date: 2019-05-20 17:11:01 tags:
-
-- "ANTLR"
-- "编译原理"
-  categories:
-- ["实验","编译原理"]
+title: ANTLR语言识别工具 
+date: 2019-05-20 17:11:01 
+tags:
+  - "ANTLR"
+  - "编译原理"
+categories:
+  - ["实验","编译原理"]
 
 ---
 

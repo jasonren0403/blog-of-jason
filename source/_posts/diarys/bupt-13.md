@@ -1,12 +1,14 @@
 ---
-title: 北邮小日记——第十三期 date: 2018-11-07 22:08:36 updated: 2018-11-07 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
+title: 北邮小日记——第十三期 
+date: 2018-11-07 22:08:36 
+updated: 2018-11-07 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 
 ---
 

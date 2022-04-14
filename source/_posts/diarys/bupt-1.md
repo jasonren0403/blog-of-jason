@@ -1,13 +1,14 @@
 ---
-title: 北邮小日记——第一期 date: 2017-10-11 20:41:58 updated: 2017-10-12 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
-
+title: 北邮小日记——第一期 
+date: 2017-10-11 20:41:58 
+updated: 2017-10-12 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 ---
 
 大家好，我是任子恒，好久不见，你们也有很长时间没有看到我在这个公众号上更新文字了。进北邮也有一个月了，一直忙于其他琐碎事情，没有来得及停一下，用文字记录下多彩的大学生活。

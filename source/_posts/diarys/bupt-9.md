@@ -1,14 +1,16 @@
 ---
-title: 北邮小日记——第九期 date: 2018-04-03 22:40:00 updated: 2018-04-03 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-- "special"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-- ["生日特别篇"]
-  comments: true
+title: 北邮小日记——第九期 
+date: 2018-04-03 22:40:00 
+updated: 2018-04-03 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+  - "special"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+  - ["生日特别篇"]
+comments: true
 
 ---
 

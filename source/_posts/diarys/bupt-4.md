@@ -1,13 +1,14 @@
 ---
-title: 北邮小日记——第四期 date: 2017-11-26 23:00:00 updated: 2017-11-26 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
-
+title: 北邮小日记——第四期 
+date: 2017-11-26 23:00:00 
+updated: 2017-11-26 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 ---
 
 各位，又到了我随便写一些东西的时候了，先从乐队开始讲起吧。

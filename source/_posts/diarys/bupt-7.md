@@ -1,12 +1,14 @@
 ---
-title: 北邮小日记——第七期 date: 2017-12-30 23:59:59 updated: 2017-12-30 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
+title: 北邮小日记——第七期 
+date: 2017-12-30 23:59:59 
+updated: 2017-12-30 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]   
+comments: true
 
 ---
 

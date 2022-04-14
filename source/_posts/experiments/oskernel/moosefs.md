@@ -1,11 +1,12 @@
 ---
-title: 分布式文件系统MooseFS搭建 date: 2019-12-21 13:47:00 tags: ["OS","MooseFS","文件系统"]
+title: 分布式文件系统MooseFS搭建 
+date: 2019-12-21 13:47:00 
+tags: ["OS","MooseFS","文件系统"]
 categories:
-
-- ["OS","分布式文件系统"]
-- ["技术"]
-- ["实验","操作系统内核"]
-  comments: true
+  - ["OS","分布式文件系统"]
+  - ["技术"]
+  - ["实验","操作系统内核"]
+comments: true
 
 ---
 

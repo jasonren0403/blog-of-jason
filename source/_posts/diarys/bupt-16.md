@@ -1,13 +1,15 @@
 ---
-title: 北邮小日记——第十六期 date: 2018-12-31 17:33:57 updated: 2019-1-1 0:00:00 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-- "special"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
+title: 北邮小日记——第十六期 
+date: 2018-12-31 17:33:57 
+updated: 2019-1-1 0:00:00 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+  - "special"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 
 ---
 

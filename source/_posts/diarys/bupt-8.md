@@ -1,12 +1,14 @@
 ---
-title: 北邮小日记——第八期 date: 2018-03-26 9:32:00 updated: 2018-03-26 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
+title: 北邮小日记——第八期 
+date: 2018-03-26 9:32:00 
+updated: 2018-03-26 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 
 ---
 

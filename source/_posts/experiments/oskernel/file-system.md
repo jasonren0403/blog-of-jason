@@ -1,12 +1,13 @@
 ---
-title: 文件系统实验 date: 2019-11-11 11:53:46 tags: ["OS","Linux","文件系统"]
+title: 文件系统实验 
+date: 2019-11-11 11:53:46 
+tags: ["OS","Linux","文件系统"]
 categories:
-
-- ["技术"]
-- ["实验","操作系统内核"]
-- ["OS","Linux"]
-- ["OS","文件系统"]
-  comments: true
+  - ["技术"]
+  - ["实验","操作系统内核"]
+  - ["OS","Linux"]
+  - ["OS","文件系统"]
+comments: true
 
 ---
 

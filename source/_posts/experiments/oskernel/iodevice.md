@@ -1,12 +1,13 @@
 ---
-title: 设备管理实验 date: 2019-12-04 13:20:38 tags: ["OS","Linux","IO(输入输出设备)"]
+title: 设备管理实验 
+date: 2019-12-04 13:20:38 
+tags: ["OS","Linux","IO(输入输出设备)"]
 categories:
-
-- ["OS","Linux 内核"]
-- ["OS","IO设备"]
-- ["技术"]
-- ["实验","操作系统内核"]
-  comments: true
+  - ["OS","Linux 内核"]
+  - ["OS","IO设备"]
+  - ["技术"]
+  - ["实验","操作系统内核"]
+comments: true
 
 ---
 

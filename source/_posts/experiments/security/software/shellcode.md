@@ -1,12 +1,13 @@
 ---
-title: Shellcode利用 date: 2019-11-13 11:33:59 tags:
-
-- "网络空间安全"
-- "软件安全"
-  categories:
-- ["实验","软件安全"]
-- ["漏洞","shellcode注入"]
-  comments: true
+title: Shellcode利用 
+date: 2019-11-13 11:33:59 
+tags:
+  - "网络空间安全"
+  - "软件安全"
+categories:
+  - ["实验","软件安全"]
+  - ["漏洞","shellcode注入"]
+comments: true
 
 ---
 

@@ -1,12 +1,14 @@
 ---
-title: 北邮小日记——第十一期 date: 2018-06-06 08:00:00 updated: 2018-06-06 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
+title: 北邮小日记——第十一期 
+date: 2018-06-06 08:00:00 
+updated: 2018-06-06 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 
 ---
 

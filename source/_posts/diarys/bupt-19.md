@@ -1,12 +1,14 @@
 ---
-title: 北邮小日记——第十九期 date: 2019-12-31 23:25:43 updated: 2019-12-31 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
+title: 北邮小日记——第十九期 
+date: 2019-12-31 23:25:43 
+updated: 2019-12-31 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 
 ---
 

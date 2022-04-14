@@ -1,14 +1,15 @@
 ---
-title: 北邮小日记——第六期 date: 2017-12-15 18:58:08 updated: 2017-12-15 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-- "special"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
-
+title: 北邮小日记——第六期 
+date: 2017-12-15 18:58:08 
+updated: 2017-12-15 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+  - "special"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 ---
 
 ## 特别篇-搬家小故事

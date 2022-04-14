@@ -1,12 +1,14 @@
 ---
-title: 北邮小日记——第十八期 date: 2019-11-8 23:37:18 updated: 2019-11-8 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
+title: 北邮小日记——第十八期 
+date: 2019-11-8 23:37:18 
+updated: 2019-11-8 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 
 ---
 

@@ -1,13 +1,14 @@
 ---
-title: 北邮小日记——第三期 date: 2017-11-12 21:00:01 updated: 2017-11-12 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
-
+title: 北邮小日记——第三期 
+date: 2017-11-12 21:00:01 
+updated: 2017-11-12 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 ---
 
 第三期，姗姗来迟~

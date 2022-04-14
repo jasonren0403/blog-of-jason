@@ -1,13 +1,14 @@
 ---
-title: 北邮小日记——第五期 date: 2017-12-10 14:30:00 updated: 2017-12-10 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
-
+title: 北邮小日记——第五期 
+date: 2017-12-10 14:30:00 
+updated: 2017-12-10 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 ---
 
 {% mmedia "meting" "id=002X3RjI43O8qj" "server=tencent" "type=song" %}

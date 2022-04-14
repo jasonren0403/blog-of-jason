@@ -1,12 +1,14 @@
 ---
-title: 北邮小日记——第二期 date: 2017-10-19 19:40:00 updated: 2017-10-20 23:59:59 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-  comments: true
+title: 北邮小日记——第二期 
+date: 2017-10-19 19:40:00 
+updated: 2017-10-20 23:59:59 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+comments: true
 
 ---
 

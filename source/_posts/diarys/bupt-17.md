@@ -1,14 +1,16 @@
 ---
-title: 北邮小日记——第十七期 date: 2019-04-02 22:31:14 updated: 2019-04-03 0:00:00 tags:
-
-- "北邮小日记"
-- "life-in-bupt"
-- "special"
-  categories:
-- ["北邮小日记"]
-- ["Life","life-in-bupt"]
-- ["生日特别篇"]
-  comments: true
+title: 北邮小日记——第十七期 
+date: 2019-04-02 22:31:14 
+updated: 2019-04-03 0:00:00 
+tags:
+  - "北邮小日记"
+  - "life-in-bupt"
+  - "special"
+categories:
+  - ["北邮小日记"]
+  - ["Life","life-in-bupt"]
+  - ["生日特别篇"]
+comments: true
 
 ---
 
