@@ -3,8 +3,11 @@ Thumbs.db
 db.json
 *.log
 node_modules/
+# generated static files
 public/
 .deploy*/
+# blog drafts
+source/_drafts/*.md
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
