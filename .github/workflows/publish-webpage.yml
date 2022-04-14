@@ -20,12 +20,12 @@ jobs:
       - name: Setup Hexo
         env:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run:|
+        run: |
           mkdir -p ~/.ssh/
           echo "$GITHUB_TOKEN$" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
       - name: Deploy page
-        run:|
+        run: |
           hexo clean
           hexo deploy
