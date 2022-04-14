@@ -10,12 +10,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@master
-
-      - name: Build and Deploy
-        uses: y4code/hexo-deploy-action@master
+        uses: actions/checkout@v2
+        with:
+          ref: main
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+      - name: Setup Hexo
         env:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_REPOSITORY: jasonren0403/blog-of-jason
-          BRANCH: gh-pages
-          PUBLISH_DIR: ./public
+        run:|
+          mkdir -p ~/.ssh/
+          echo "$GITHUB_TOKEN$" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - name: Deploy page
+        run:|
+          hexo clean
+          hexo deploy
