@@ -17,7 +17,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - name: Setup Hexo
+      - name: Setup Hexo Dependencies
+        run: |
+          npm install hexo-cli -g
+          npm install
+      - name: Setup Deploy Key
         env:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -25,7 +29,12 @@ jobs:
           echo "$GITHUB_TOKEN$" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - name: Setup Git Information
+        run: |
+          git config --global user.name 'Jason Ren'
+          git config --global user.email '40999116+jasonren0403@users.noreply.github.com'
       - name: Deploy page
         run: |
           hexo clean
+          hexo generate
           hexo deploy
