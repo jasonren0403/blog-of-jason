@@ -1,3 +1,4 @@
 ---
-title: {{ title }} tags:
+title: {{ title }} 
+tags:
 ---
