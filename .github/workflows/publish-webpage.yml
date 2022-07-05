@@ -13,28 +13,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: main
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'
-      - name: Setup Hexo Dependencies
-        run: |
-          npm install hexo-cli -g
-          npm install
-      - name: Setup Deploy Key
+      - name: Build and Deploy
+        uses: renzhaosy/hexo-deploy-action@master
         env:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$GITHUB_TOKEN$" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - name: Setup Git Information
-        run: |
-          git config --global user.name 'Jason Ren'
-          git config --global user.email '40999116+jasonren0403@users.noreply.github.com'
-      - name: Deploy page
-        run: |
-          hexo clean
-          hexo generate
-          hexo deploy
+          PUBLISH_REPOSITORY: jasonren0403/blog-of-jason # The repository the action should deploy to.
+          BRANCH: main  # The branch the action should deploy to.
+          PUBLISH_DIR: ./public # The folder the action should deploy.
