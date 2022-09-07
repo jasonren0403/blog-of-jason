@@ -8,15 +8,30 @@ on:
 jobs:
   publish-webpage:
     runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
     steps:
-      - name: Checkout
+      - name: Checkout source
         uses: actions/checkout@v3
         with:
           ref: main
-      - name: Build and Deploy
-        uses: renzhaosy/hexo-deploy-action@master
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Setup Hexo
         env:
-          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_REPOSITORY: jasonren0403/blog-of-jason # The repository the action should deploy to.
-          BRANCH: main  # The branch the action should deploy to.
-          PUBLISH_DIR: ./public # The folder the action should deploy.
+          ACTION_DEPLOY_KEY: ${{ secrets.HEXO_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$ACTION_DEPLOY_KEY" > ~/.ssh/id_rsa
+          chmod 700 ~/.ssh
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          git config --global user.email "40999116+jasonren0403@users.noreply.github.com"
+          git config --global user.name "Jason Ren"
+          npm install hexo-cli -g
+          npm install
+      - name: Build and Deploy
+        run: |
+          hexo clean
+          hexo deploy
