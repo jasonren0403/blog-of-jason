@@ -61,7 +61,10 @@ main()
 1. 正常情况下，输入正确密码，程序提示“输入正确”；输入错误密码（少于8位），程序提示“输入错误”。 {% asset_img 1.png %}
 2. 进入ollydbg，在函数调用处打断点。开始运行程序，输入一个较短的密码，就以`"444"`为例。 {% asset_img 2.png %}
 3. `strcpy`的调用点在`0x401055`处。 {% asset_img 3.png %}
-4. 输入的密码存储在`0x12fb7c`处，要拷贝到`0x12fb18`处。 {% grouppicture 2-2 %} {% asset_img 4.png "from" %} {% asset_img 5.png "to" %}
+4. 输入的密码存储在`0x12fb7c`处，要拷贝到`0x12fb18`处。 
+   {% grouppicture 2-2 %} 
+   {% asset_img 4.png "from" %} 
+   {% asset_img 5.png "to" %}
    {% endgrouppicture %}
 5. `0x12fb18`处的数据如下，显示为`00 34 34 34`，恰好是`"4"`的ascii码十六进制表示 {% asset_img 5补.png %}
 
@@ -69,25 +72,53 @@ main()
 
 {% tabs overflow2, 1 %}
 <!-- tab 输入qqqqqqqqrst -->
-{% asset_img 6.png %} 拷贝前后，内存的变化如下 {% grouppicture 2-2 %} {% asset_img 7.png "前" %} {% asset_img 8.png "后" %} {%
-endgrouppicture %} {% note info no-icon %} 已经观察到`0x12fb20`位置的变量被覆盖了 {% asset_img 9.png %} {% endnote %}
+{% asset_img 6.png %} 
+拷贝前后，内存的变化如下 
+{% grouppicture 2-2 %} 
+{% asset_img 7.png "前" %} 
+{% asset_img 8.png "后" %} 
+{% endgrouppicture %} 
+{% note info no-icon %} 
+已经观察到`0x12fb20`位置的变量被覆盖了 
+{% asset_img 9.png %} 
+{% endnote %}
 <!-- endtab -->
 <!-- tab 输入qqqqqqqq -->
-{% asset_img 10.png %} 拷贝前后，内存变化如下 {% grouppicture 2-2 %} {% asset_img 11.png "前" %} {% asset_img 12.png "后" %} {%
-endgrouppicture %} {% asset_img 13.png %} {% note info no-icon %}
-`0x12fb20`的值被覆盖成了`0x00000000`。导致函数返回值为零，认证通过。 {% asset_img 14.png %} {% endnote %}
+{% asset_img 10.png %} 
+拷贝前后，内存变化如下 
+{% grouppicture 2-2 %} 
+{% asset_img 11.png "前" %} 
+{% asset_img 12.png "后" %} 
+{% endgrouppicture %} 
+{% asset_img 13.png %}
+{% note info no-icon %}
+`0x12fb20`的值被覆盖成了`0x00000000`。导致函数返回值为零，认证通过。
+{% asset_img 14.png %} 
+{% endnote %}
 <!-- endtab -->
 <!-- tab 输入01234567 -->
-{% asset_img 15.png %} {% grouppicture 2-2 %} {% asset_img 16.png %} {% asset_img 17.png %} {% endgrouppicture %} {%
-asset_img 18.png %} {% note info no-icon %} 虽然也淹没了`0x12fb20`处的`authenticated`变量，但是我们输入的密码小于`1234567`，`strcmp`会返回`-1`
-，`-1`是用补码表示的，末尾的`\0`只可以淹没`-1`补码的后两位，程序不会向我们预想的方向走去。 {% asset_img 19.png %} {% endnote %}
+{% asset_img 15.png %} 
+{% grouppicture 2-2 %} {% asset_img 16.png %} {% asset_img 17.png %} {% endgrouppicture %}
+{% asset_img 18.png %} 
+{% note info no-icon %} 
+虽然也淹没了`0x12fb20`处的`authenticated`变量，但是我们输入的密码小于`1234567`，`strcmp`会返回`-1`，`-1`是用补码表示的，末尾的`\0`只可以淹没`-1`补码的后两位，程序不会向我们预想的方向走去。 {% asset_img 19.png %} {% endnote %}
 <!-- endtab -->
 {% endtabs %}
 
 ### 淹没返回地址改变程序流程
 
-{% note default %} 为了方便调试，我们使用文件来输入“密码”。 {% codeblock lang:c %} if(!fp=fopen("password.txt","rw+")){ exit(0); } fscanf(
-fp,"%s",password); valid_flag = verify_password(password); {% endcodeblock %} {% endnote %}
+{% note default %} 
+为了方便调试，我们使用文件来输入“密码”。 
+
+```c
+if(!fp=fopen("password.txt","rw+"))
+{ 
+   exit(0);
+} 
+fscanf(fp,"%s",password); 
+valid_flag = verify_password(password); 
+```
+{% endnote %}
 
 1. 找到输入点。这个地址跳转到“验证成功”的输出上。 {% asset_img 20.png %}
 2. 先填满8字节的`buffer`数组，4字节的`authenticated`变量，4字节的ebp，接下来的4个字节我们就可以放上我们的返回地址。 {% asset_img 21.png %}

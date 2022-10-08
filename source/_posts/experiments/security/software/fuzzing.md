@@ -93,58 +93,64 @@ if __name__ == '__main__':
    操作，很容易发生溢出，那么我们要怎么知道在什么时候发生溢出呢？ {% note info %} sub_401005仅仅是跳转到了sub_401030 {% endnote %} {% asset_img 思考-2.png %} {%
    asset_img 思考-3.png %}
 3. 首先通过fuzz计算“缓冲区”大小。每次向里填充一个字符，最终计算出我们需要填充字符的数量为`11940`比特。在填充满之前，会引发右图所示错误，注意到其中有提示`"ESP was not properly saved"`
-   ，说明ESP可能被覆盖掉了 {% note fuzz源码 %}
+   ，说明ESP可能被覆盖掉了 
 
-```python fuzz.py
-import os
+   {% note fuzz源码 %}
 
-rpwd = "Congratulation! You have passed the verification!\n"
-wpwd = "incorrect password!\n"
-
-def write_file(num):
-    with open("password.txt","w+") as fp:
-        fp.write("a"*num)
-def get_output():
-    p=os.popen("overflow_exe.exe")
-    return "".join(p.readlines())
-
-def is_valid_output(output):
-    try:
-        return output in (rpwd,wpwd)
-    except:
-        return False
-
-def fuzz():
-    i = 100
-    breakout_num = 0
-    for i in range(100,20000,100):
-        write_file(i)
-        if is_valid_output(get_output()):
-            print "[+] Writing {} letters to password.txt".format(i)
-            continue
-        else:
-            for j in range(i-100,i,10):
-                write_file(j)
-                if is_valid_output(get_output()):
-                    print "[+] Writing {} letters to password.txt".format(j)
-                    continue
-                else:
-                    for k in range(j-10,j+1):
-                        write_file(k)
-                        if is_valid_output(get_output()):
-                            print "[+] Writing {} letters to password.txt".format(k)
-                            breakout_num=k
-                            continue
-                        else:
-                            breakout_num=k
-                            break
-                        break
-                break
-        break
-    print "[*] The program broke up after %d bytes of 'a's."%breakout_num
-```
-
-{% endnote %} {% grouppicture 2-2 %} {% asset_img 思考-4.png %} {% asset_img 思考-9.png %} {% endgrouppicture %}
+   ```python fuzz.py
+   import os
+   
+   rpwd = "Congratulation! You have passed the verification!\n"
+   wpwd = "incorrect password!\n"
+   
+   def write_file(num):
+       with open("password.txt","w+") as fp:
+           fp.write("a"*num)
+   def get_output():
+       p=os.popen("overflow_exe.exe")
+       return "".join(p.readlines())
+   
+   def is_valid_output(output):
+       try:
+           return output in (rpwd,wpwd)
+       except:
+           return False
+   
+   def fuzz():
+       i = 100
+       breakout_num = 0
+       for i in range(100,20000,100):
+           write_file(i)
+           if is_valid_output(get_output()):
+               print "[+] Writing {} letters to password.txt".format(i)
+               continue
+           else:
+               for j in range(i-100,i,10):
+                   write_file(j)
+                   if is_valid_output(get_output()):
+                       print "[+] Writing {} letters to password.txt".format(j)
+                       continue
+                   else:
+                       for k in range(j-10,j+1):
+                           write_file(k)
+                           if is_valid_output(get_output()):
+                               print "[+] Writing {} letters to password.txt".format(k)
+                               breakout_num=k
+                               continue
+                           else:
+                               breakout_num=k
+                               break
+                           break
+                   break
+           break
+       print "[*] The program broke up after %d bytes of 'a's."%breakout_num
+   ```
+   
+   {% endnote %} 
+   {% grouppicture 2-2 %} 
+   {% asset_img 思考-4.png %} 
+   {% asset_img 思考-9.png %} 
+   {% endgrouppicture %}
 
 4. 还有一个缓冲区？通过ollydbg调试可以看到在检验密码的函数中有一个`MOV,EAX 2EE4`操作，中间取了`[EBP-2EE4]`的有效地址，后面还有一个`ADD,ESP 2EE4`
    操作，可以推断这是再开辟另一块缓冲区，大小为十进制的`12004`字节。 {% asset_img 思考-7.png %}
