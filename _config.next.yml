@@ -112,7 +112,7 @@ darkmode: false
 # External url should start with http:// or https://
 menu:
   home: / || fa fa-home
-  about: https://www.fantasyroom.cn/#/about || fa fa-user
+  about: https://www.jason0743.space/#/about || fa fa-user
   tags: /tags/ || fa fa-tags
   categories: /categories/ || fa fa-th
   archives: /archives/ || fa fa-archive
@@ -262,7 +262,7 @@ reward:
 # Usage: `Key: permalink || icon` (Font Awesome)
 follow_me:
   Twitter: https://twitter.com/theRealRev270 || fab fa-twitter
-  #Telegram: https://t.me/channel_name || fab fa-telegram
+  Telegram: https://t.me/jrchan_blog || fab fa-telegram
   WeChat: /images/gongzhonghao.jpg || fab fa-weixin
   RSS: /atom.xml || fa fa-rss
   知乎: https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51 || fab fa-zhihu
