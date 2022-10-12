@@ -245,7 +245,7 @@ js_minifier:
     - '*.min.js'
 
 image_minifier:
-  enable: true # set it to false for development
+  enable: false # set it to false for development
   interlaced: false
   multipass: false
   optimizationLevel: 2
