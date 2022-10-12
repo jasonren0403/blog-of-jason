@@ -17,7 +17,7 @@ source/_drafts/*.md
 
 .idea/**/.gitignore
 .idea/**/modules.xml
-.idea/**/mysite.iml
+.idea/**/jason-blog.iml
 .idea/**/vcs.iml
 
 # AWS User-specific
