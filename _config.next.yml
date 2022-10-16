@@ -473,14 +473,13 @@ exturl: false
 
 # If true, an icon will be attached to each external URL
 exturl_icon: true
-# todo: rebind with new domain
 # Google Webmaster tools verification.
 # See: https://www.google.com/webmasters
-#google_site_verification: fogD9iUuXHNOlsclKPUsEzv03DFi3N4tqSeh0O_B91c
+google_site_verification: _BB-DZzmmn7TdnBraOBUDUHUKOriibfz2MBxjCDbew8
 
 # Bing Webmaster tools verification.
 # See: https://www.bing.com/webmaster
-#bing_site_verification: 3020EF64BA5C55416731FB98FB50453D
+bing_site_verification: _BB-DZzmmn7TdnBraOBUDUHUKOriibfz2MBxjCDbew8
 
 # Yandex Webmaster tools verification.
 # See: https://webmaster.yandex.ru
@@ -613,17 +612,11 @@ changyan:
   appkey:
   #post_meta_order: 0
 
-# Valine
-# For more information: https://valine.js.org, https://github.com/xCss/Valine
-# valine comment system. https://valine.js.org
-valine:
-  enable: false
-
 # Waline
 # For more information: https://waline.js.org, https://github.com/walinejs/waline
 waline:
   enable: true
-  serverURL: https://blog-api-1zelshuzr-jasonren0403.vercel.app/  # vercel 域名
+  serverURL: https://blog-manage.jason0743.best/  # vercel 域名
   placeholder: (来发表一条友善的评论吧~) # comment box placeholder
   avatar: mm # Gravatar style
   meta: [ nick, mail, link ] # Custom comment header
@@ -632,7 +625,7 @@ waline:
   # Warning: Do not enable both `waline.visitor` and `leancloud_visitors`.
   visitor: true # Article reading statistic
   comment_count: true # If false, comment count will only be displayed in post page, not in home page
-  requiredFields: [ nick ] # Set required fields: [nick] | [nick, mail]
+  requiredFields: [nick, mail] # Set required fields: [nick] | [nick, mail]
   libUrl: # Set custom library cdn url
 
 # LiveRe comments system
