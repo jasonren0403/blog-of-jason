@@ -36,5 +36,6 @@ comments: true
 
 加油，我在北邮等你。 {% endcenterquote %}
 
-{% grouppicture 4-3 %} {% asset_img 1.jpg %} {% asset_img 2.jpg %} {% asset_img 3.jpg %} {% asset_img 4.jpg %} {%
-endgrouppicture %}
+{% grouppicture 4-3 %} 
+{% asset_img 1.jpg %} {% asset_img 2.jpg %} {% asset_img 3.jpg %} {% asset_img 4.jpg %} 
+{% endgrouppicture %}
