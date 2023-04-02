@@ -475,11 +475,11 @@ exturl: false
 exturl_icon: true
 # Google Webmaster tools verification.
 # See: https://www.google.com/webmasters
-google_site_verification: _BB-DZzmmn7TdnBraOBUDUHUKOriibfz2MBxjCDbew8
+google_site_verification: BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4
 
 # Bing Webmaster tools verification.
 # See: https://www.bing.com/webmaster
-bing_site_verification: 3020EF64BA5C55416731FB98FB50453D
+bing_site_verification:
 
 # Yandex Webmaster tools verification.
 # See: https://webmaster.yandex.ru
@@ -616,7 +616,7 @@ changyan:
 # For more information: https://waline.js.org, https://github.com/walinejs/waline
 waline:
   enable: true
-  serverURL: https://blog-manage.jason0743.best/  # vercel 域名
+  serverURL: https://blog-manage.jason0743.space/  # vercel 域名
   placeholder: (来发表一条友善的评论吧~) # comment box placeholder
   avatar: mm # Gravatar style
   meta: [ nick, mail, link ] # Custom comment header

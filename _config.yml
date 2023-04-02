@@ -13,8 +13,8 @@ timezone: 'Asia/Shanghai'
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://example.com/child' and root as '/child/'
-url: https://jason0403.github.io/blog-of-jason
-root: /blog-of-jason/
+url: https://blog.jason0743.space/
+root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -38,7 +38,7 @@ open_graph:
   options:
     #twitter_card: <twitter:card>
     twitter_id: theRealRev270
-    twitter_site: https://blog.jason0743.best
+    twitter_site: https://blog.jason0743.space/
     #twitter_image: <twitter:image>
     #fb_admins: <fb:admin_id>
     fb_app_id: 849161579109162
