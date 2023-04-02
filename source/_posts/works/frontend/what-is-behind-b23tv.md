@@ -26,7 +26,7 @@ categories:
 
 1. 同域跳转，将不带www的域名直接转发到带www的域名，后台如果使用nginx，会配置成这样：
 
-	```
+	```nginx
 	server {
 		listen                  443 ssl http2;
 		listen                  [::]:443 ssl http2;
