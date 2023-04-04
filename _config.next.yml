@@ -55,7 +55,7 @@ footer:
     # Icon name in Font Awesome. See: https://fontawesome.com/icons
     name: fa fa-heart
     # If you want to animate the icon, set it to true.
-    animated: false
+    animated: true
     # Change the color of icon, using Hex Code.
     color: "#ff0000"
 
@@ -67,8 +67,8 @@ footer:
 
   # Beian ICP and gongan information for Chinese users. See: https://beian.miit.gov.cn, http://www.beian.gov.cn
   beian:
-    enable: false
-    icp: 京ICP备19044050-2
+    enable: true
+    icp: 京ICP备19044050-3
     # The digit in the num of gongan beian.
     gongan_id:
     # The full num of gongan beian.
@@ -158,11 +158,11 @@ sidebar:
 # Sidebar Avatar
 avatar:
   # Replace the default image and set the url here.
-  url: #/images/avatar.gif
+  url: /images/avatar-v1.png
   # If true, the avatar will be dispalyed in circle.
-  rounded: false
+  rounded: true
   # If true, the avatar will be rotated with the cursor.
-  rotated: false
+  rotated: true
 
 # Posts / Categories / Tags in sidebar.
 site_state: true
@@ -186,7 +186,7 @@ social:
 social_icons:
   enable: true
   icons_only: false
-  transition: false
+  transition: true
 
 # Blog rolls
 links_settings:
@@ -408,7 +408,6 @@ github_banner:
 
 # ---------------------------------------------------------------
 # Font Settings
-# See: https://theme-next.org/docs/theme-settings/#Fonts-Customization
 # ---------------------------------------------------------------
 # Find fonts on Google Fonts (https://www.google.com/fonts)
 # All fonts set here will have the following styles:
@@ -420,7 +419,7 @@ github_banner:
 # ---------------------------------------------------------------
 
 font:
-  enable: false
+  enable: true
 
   # Uri of fonts host, e.g. https://fonts.googleapis.com (Default).
   host:
@@ -433,7 +432,7 @@ font:
   # Global font settings used for all elements inside <body>.
   global:
     external: true
-    family: Lato
+    family: Tahoma
     size:
 
   # Font settings for site title (.site-title).
@@ -451,7 +450,7 @@ font:
   # Font settings for posts (.post-body).
   posts:
     external: true
-    family:
+    family: Open Sans, Noto Serif SC
 
   # Font settings for <code> and code blocks.
   codes:
@@ -616,7 +615,7 @@ changyan:
 # For more information: https://waline.js.org, https://github.com/walinejs/waline
 waline:
   enable: true
-  serverURL: https://blog-manage.jason0743.space/  # vercel 域名
+  serverURL: https://blog-manage.jason0743.space/
   placeholder: (来发表一条友善的评论吧~) # comment box placeholder
   avatar: mm # Gravatar style
   meta: [ nick, mail, link ] # Custom comment header
@@ -659,10 +658,6 @@ utterances:
   # Available values: github-light | github-dark | preferred-color-scheme | github-dark-orange | icy-dark | dark-blue | photon-dark | boxy-light
   theme: github-light
 
-# Isso
-# For more information: https://posativ.org/isso/
-isso: # <data_isso>
-
 # ---------------------------------------------------------------
 # Post Widgets & Content Sharing Services
 # See: https://theme-next.org/docs/third-party-services/post-widgets
@@ -684,16 +679,6 @@ google_analytics:
   # By default, NexT will load an external gtag.js script on your site.
   # If you only need the pageview feature, set the following option to true to get a better performance.
   only_pageview: false
-
-# Baidu Analytics
-baidu_analytics: # <app_id>
-
-# Growingio Analytics
-growingio_analytics: # <project_id>
-
-# Cloudflare Web Analytics
-# See: https://www.cloudflare.com/web-analytics/
-cloudflare_analytics:
 
 # Show number of visitors of each article.
 # You can visit https://leancloud.cn to get AppID and AppKey.
