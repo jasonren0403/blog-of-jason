@@ -22,41 +22,46 @@ comments: true
 
 1. 首先解压给定的压缩包。
 
-```bash
-tar -zxvf iodevicemanagement.tar.gz
-```
-
-{% asset_img 1.png %}
+    ```bash
+    tar -zxvf iodevicemanagement.tar.gz
+    ```
+	
+    {% asset_img 1.png %}
 
 2. 安装`build-essential`，发现失败。在
 
-```bash
-sudo rm /var/lib/apt/lists/* -vf
-sudo apt-get update
-```
+    ```bash
+    sudo rm /var/lib/apt/lists/* -vf
+    sudo apt-get update
+    ```
 
-后可以解决。接下来安装`qemu`，过程类似，没有截图。 {% asset_img 2.png %}
+    后可以解决。接下来安装`qemu`，过程类似，没有截图。 {% asset_img 2.png %}
 
 3. 先对build.sh加执行权限。
 
-```bash
-chmod +x tools/build.sh
-```
+    ```bash
+    chmod +x tools/build.sh
+    ```
 
 4. 然后运行`make`
-   {% asset_img 5.png %} Make生成结束后，使用`make start`启动虚拟机。 {% asset_img 6.png %}
-5. 出来一个叫做QEMU的黑色窗口，到这里，实验环境算是准备好了。 {% asset_img 7.png %}
+   {% asset_img 5.png %}
+5. Make生成结束后，使用`make start`启动虚拟机。 {% asset_img 6.png %}
+6. 出来一个叫做QEMU的黑色窗口，到这里，实验环境算是准备好了。 {% asset_img 7.png %}
 
 ### 尝试修改内核代码
 
 {% note info %}
-
 #### 需求
+修改内核中I/O设备代码，实现按<kbd>F12</kbd>，`ls`命令显示的信息替换成`*`，再按<kbd>F12</kbd>恢复正常，如此反复。
+{% endnote %}
 
-修改内核中I/O设备代码，实现按<kbd>F12</kbd>，`ls`命令显示的信息替换成`*`，再按<kbd>F12</kbd>恢复正常，如此反复。 {% endnote %} 原来，虚拟机系统按<kbd>F12</kbd>
-时，显示如下信息： {% asset_img 8-f12.png %} 根据这个输出，我们找到了相应的源代码。 {% codeblock /kernel/sched.c lang:c mark:5,9 %} void show_task(
-int nr,struct task_struct * p)
-{ int i,j = 4096-sizeof(struct task_struct);
+原来，虚拟机系统按<kbd>F12</kbd>时，显示如下信息：
+{% asset_img 8-f12.png %}
+根据这个输出，我们找到了相应的源代码。
+{% codeblock /kernel/sched.c lang:c mark:5,9 %}
+void show_task(int nr,struct task_struct * p)
+{ 
+	int i,j = 4096-sizeof(struct task_struct);
 
 	printk("%d: pid=%d, state=%d, ",nr,p->pid,p->state);
 	i=0;
@@ -64,18 +69,19 @@ int nr,struct task_struct * p)
 		i++;
 	printk("%d (of %d) chars free in kernel stack\n\r",i,j);
 
-} {% endcodeblock %} {% note info %}
+}
+{% endcodeblock %}
 
+{% note info %}
 #### <code>printk</code>是啥？
-
-`printk`是在内核中运行的向控制台输出显示的函数，Linux内核首先在内核空间分配一个静态缓冲区，作为显示用的空间，然后调用`sprintf`，格式化显示字符串，最后调用`tty_write`向终端进行信息的显示。 {%
-endnote %}
+`printk`是在内核中运行的向控制台输出显示的函数，Linux内核首先在内核空间分配一个静态缓冲区，作为显示用的空间，然后调用`sprintf`，格式化显示字符串，最后调用`tty_write`向终端进行信息的显示。
+{% endnote %}
 
 {% tabs change,1 %}
 <!-- tab <code>/include/linux/sched.h</code> -->
 声明变量`int f12_state`
-{% codeblock /include/linux/sched.h lang:c line_number:false %} int f12_state; //if it is 1,all chars are replaced
-with *
+{% codeblock /include/linux/sched.h lang:c line_number:false %}
+int f12_state; //if it is 1,all chars are replaced with *
 {% endcodeblock %}
 <!-- endtab -->
 <!-- tab <code>/kernel/sched.c</code> -->
@@ -96,8 +102,10 @@ void switch_f12(void)
 <!-- tab <code>/kernel/chr_drv/console.c</code> -->
 修改`con_write`函数，即改变显示的字符。
 
-加入如下代码，在写字符之前根据 `f12_state` 的状态判断是否要将字符修改为 `*` 。根据要求，只将字母显示为 `*` 。 {% codeblock /kernel/chr_drv/console.c lang:c
-line_number:false %} if((c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z') && f12_state==1) c = '*'; {% endcodeblock %}
+加入如下代码，在写字符之前根据 `f12_state` 的状态判断是否要将字符修改为 `*`。根据要求，只将字母显示为 `*`。
+{% codeblock /kernel/chr_drv/console.c lang:c line_number:false %}
+if((c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z') && f12_state==1) c = '*';
+{% endcodeblock %}
 <!-- endtab -->
 <!-- tab <code>/kernel/chr_drv/keyboard.S</code> -->
 在开头添加对<kbd>f12</kbd>扫描码（`0x58`）的检测
@@ -123,14 +131,21 @@ continue_func:
 <!-- endtab -->
 {% endtabs %}
 
-{% note warning %} 对内核文件作修改后，需要重新运行`make`和`make start`
+{% note warning %}
+对内核文件作修改后，需要重新运行`make`和`make start`
 {% endnote %}
 
 ## 实验关键里程碑数据与结果
 
-所安装的Qemu版本 由于qemu存在很多架构的模拟器，所以查看版本的命令并不是简单的`qemu`，而是需要输入qemu架构的全名，后面加一个`-version`（既不是`--version`也不是`-v`）。 {% asset_img
-qemu-version(x86-64).png %} 而输入`qemu-`，按<kbd>tab</kbd>键提示的命令竟然有这么多 {% asset_img qemu-environs.png %}
-本次实验用到的是其中的一种：`qemu-system-x86_64`，可以从Makefile文件中观察到。 {% asset_img 3.png %} 修改相关文件后的运行结果。
+### 所安装的Qemu版本
+
+由于qemu存在很多架构的模拟器，所以查看版本的命令并不是简单的`qemu`，而是需要输入qemu架构的全名，后面加一个`-version`（既不是`--version`也不是`-v`）。
+{% asset_img qemu-version(x86-64).png %}
+而输入`qemu-`，按<kbd>tab</kbd>键提示的命令竟然有这么多
+{% asset_img qemu-environs.png %}
+本次实验用到的是其中的一种：`qemu-system-x86_64`，可以从Makefile文件中观察到。
+{% asset_img 3.png %}
+修改相关文件后的运行结果。
 
 {% gp 2-2 %} {% asset_img before-f12.png "F12按下前" %} {% asset_img after-f12.png "F12按下后" %} {% endgp %}
 

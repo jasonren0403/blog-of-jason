@@ -249,7 +249,9 @@ private Uri insertMessage(Context context, SmsMessage[] msgs, int error, String 
 
 测试的效果见下面的五张图
 
-{% note info %} AVD没有装中文输入法测不了中文，但是应该是没有问题的 {% endnote %}
+{% note info %}
+AVD没有装中文输入法测不了中文，但是应该是没有问题的
+{% endnote %}
 
 {% grouppicture 5-4 %} 
 {% asset_img try1.jpg %} 

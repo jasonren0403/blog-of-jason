@@ -65,48 +65,46 @@ main()
 ### shellcode代码理解
 
 1. 由于涉及到了`dll`库的加载，我们打开源程序，用dependency walker分析dll依赖。 
-   {% grouppicture 2-2 %} 
-   {% asset_img 1.png %}
-   {% asset_img 2.png %}
-   {% endgrouppicture %}
-2. 查出`kernel32.dll`的实际基址地址为`0x77e60000`，`ExitProcess`的地址的入口点为`0x01b0bb`，加起来就是`ExitProcess`的实际地址`0x77e7b0bb`
-   。这是shellcode代码中`exitprocess`地址的来源。
-3. 同样方法找出`user32.dll`的基址为`0x77df0000`，`MessageBoxA`的入口点为`0x033d68`，相加得到`MessageBoxA`的实际地址为`0x77e23d68`
-   。这是shellcode代码中`messageBoxA`的地址来源。 
-   {% grouppicture 2-2 %} {% asset_img 3.png %} {% asset_img 4.png %} {% endgrouppicture %} 
-   {% grouppicture 2-2 %} {% asset_img 5.png %} {% asset_img 6.png %} {% endgrouppicture %} 
-   {% grouppicture 2-2 %} {% asset_img 7.png %} {% asset_img 8.png %} {% endgrouppicture %}
+    {% grouppicture 2-2 %} 
+    {% asset_img 1.png %}
+    {% asset_img 2.png %}
+    {% endgrouppicture %}
+2. 查出`kernel32.dll`的实际基址地址为`0x77e60000`，`ExitProcess`的地址的入口点为`0x01b0bb`，加起来就是`ExitProcess`的实际地址`0x77e7b0bb`。这是shellcode代码中`exitprocess`地址的来源。
+3. 同样方法找出`user32.dll`的基址为`0x77df0000`，`MessageBoxA`的入口点为`0x033d68`，相加得到`MessageBoxA`的实际地址为`0x77e23d68`。这是shellcode代码中`messageBoxA`的地址来源。 
+    {% grouppicture 2-2 %} {% asset_img 3.png %} {% asset_img 4.png %} {% endgrouppicture %} 
+    {% grouppicture 2-2 %} {% asset_img 5.png %} {% asset_img 6.png %} {% endgrouppicture %} 
+    {% grouppicture 2-2 %} {% asset_img 7.png %} {% asset_img 8.png %} {% endgrouppicture %}
 4. 接下来调试shellcode代码。shellcode源码如下
 
-   ```c shellcode.c
-   #include<windows.h>
-   int main()
-   {
-       HINSTANCE LibHandle;
-       char dllbuf[11] = "user32.dll";
-       LibHandle = LoadLibrary(dllbuf);
-       _asm{
-           sub sp,0x440
-           xor ebx,ebx
-           push ebx
-           push 0x74707562		//bupt
-           push 0x74707562		//bupt
+    ```c shellcode.c
+    #include<windows.h>
+    int main()
+    {
+        HINSTANCE LibHandle;
+        char dllbuf[11] = "user32.dll";
+        LibHandle = LoadLibrary(dllbuf);
+        _asm{
+            sub sp,0x440
+            xor ebx,ebx
+            push ebx
+            push 0x74707562		//bupt
+            push 0x74707562		//bupt
    
-           mov eax,esp
-           push ebx
-           push eax
-           push eax
-           push ebx
+            mov eax,esp
+            push ebx
+            push eax
+            push eax
+            push ebx
    
-           mov eax,0x77E23D68	//messageboxA  入口地址
-           call eax
-           push ebx
-           mov eax,0x77E7B0BB	//exitprocess  入口地址
-           call eax
-       }
-       return 0;
-   }
-   ```
+            mov eax,0x77E23D68	//messageboxA  入口地址
+            call eax
+            push ebx
+            mov eax,0x77E7B0BB	//exitprocess  入口地址
+            call eax
+        }
+        return 0;
+    }
+    ```
 
 5. 运行该代码，发现程序弹出了一个含有`"buptbupt"`标题的对话框 {% asset_img 9.png %} {% asset_img 10.png %}
 6. 用ollydbg打开shellcode程序，把我们写的汇编代码复制出来
@@ -115,8 +113,7 @@ main()
 
 1. 用ollydbg打开`overflow_exe.exe`程序，在`strcpy`处下一个断点。 {% asset_img 11.png %}
 2. `strcpy`将拷贝字符串到`0x12faf0`地址处，这也是我们将要放shellcode的地址。 {% asset_img 12.png %}
-3. 下面构造payload，我们构造的形式类似于Shellcode + `0x90`若干 +
-   shellcode在缓冲区的起始地址，要注意逆序书写。Shellcode的返回地址应当在buff的容量+authenticated变量空间+ebp之后，也就是第53~56字节处。综上，我们构造payload如下 
+3. 下面构造payload，我们构造的形式类似于Shellcode + `0x90`若干 + shellcode在缓冲区的起始地址，要注意逆序书写。Shellcode的返回地址应当在buff的容量+authenticated变量空间+ebp之后，也就是第53~56字节处。综上，我们构造payload如下 
    {% asset_img 13.png %}
 4. 再运行程序，发现`0x12faf0`开始的空间已经覆盖为了我们所需要的样子。 {% asset_img 14.png %}
 5. 返回到shellcode地址后，其中所写的内容都作为代码执行了。 {% asset_img 15.png %}
@@ -126,12 +123,12 @@ main()
 
 1. 仍在`strcpy`函数上设置断点，运行至其附近。
 2. 右键选择overflow return address → ASCII overflow returns → search JMP/CALL ESP
-3. 根据提示查看日志，发现有很多可以利用的地方。选择一条在`user32.txt`中的地址，`0x77e2e32a`。这个是`jmp esp`的地址。 {% asset_img 18.png %} {% asset_img 19.png
-   %}
+3. 根据提示查看日志，发现有很多可以利用的地方。选择一条在`user32.txt`中的地址，`0x77e2e32a`。这个是`jmp esp`的地址。
+    {% asset_img 18.png %} {% asset_img 19.png %}
 4. 这次的payload形式为52字节填充物 + 4字节`JMP ESP`地址（逆序） + shellcode (可选 + 若干`0x90`)。 
-   {% note info %}
-   下图payload也可以成功弹框出来。但是程序没退出，后来发现shellcode中忘记调用 `ExitProcess` 函数，补上就更加完美了 {% asset_img 20.png %} {% asset_img 21.png %} 
-   {% endnote %}
+    {% note info %}
+    下图payload也可以成功弹框出来。但是程序没退出，后来发现shellcode中忘记调用 `ExitProcess` 函数，补上就更加完美了 {% asset_img 20.png %} {% asset_img 21.png %} 
+    {% endnote %}
 
 ### 修改汇编语句，改变弹窗标题
 
@@ -211,22 +208,23 @@ int main(int argc, char* argv[])
     * 用同样的方法计算出`ExitProcess`的地址为`0x77e7b0bb`。
 
 3. 通过试运行程序得知，我们的命令行输入被存储在了`0x12ff68`开头的位置上。`bar`的地址为`0x401070`，`jmp esp`后将从`0x12ff78`开始执行我们的shellcode。 
-   {% grouppicture 2-2 %} {% asset_img 思考题-2.png %} {% asset_img 思考题-3.png %} {% endgrouppicture %}
+    {% grouppicture 2-2 %} {% asset_img 思考题-2.png %} {% asset_img 思考题-3.png %} {% endgrouppicture %}
 
 4. 扫描到了很多`jmp esp`的地址，本次选择`0x77e2e32a`中`user32.text`的地址作为跳板 {% asset_img 思考题-4.png %}
 
 5. 首先，完成前半部分的填充和`bar`函数调用。 
-   {% grouppicture 2-2 %} {% asset_img 思考题-6.png %} {% asset_img 思考题-7.png %} {% endgrouppicture %}
+    {% grouppicture 2-2 %} {% asset_img 思考题-6.png %} {% asset_img 思考题-7.png %} {% endgrouppicture %}
 
 6. 把我们的所有操作写成一个c文件，编译，把生成的exe拿到ollydbg运行一遍，拿到我们的shellcode。这是需要的操作部分：
 
-   ```c
-   const char command[40] = "cmd.exe /c dir C:\\>shellcode.txt";
-   WinExec(command, SW_HIDE);
-   ExitProcess(0);
-   ```
+    ```c
+    const char command[40] = "cmd.exe /c dir C:\\>shellcode.txt";
+    WinExec(command, SW_HIDE);
+    ExitProcess(0);
+    ```
 
 {% note warning %} 
-表面上看非常不错，但这样的字符串是在rdata段里的，复制出来的操作码取的就是内存中的相对值，所以只能靠push推入。 {% asset_img 思考题-8.png %} 
+表面上看非常不错，但这样的字符串是在rdata段里的，复制出来的操作码取的就是内存中的相对值，所以只能靠push推入。
+{% asset_img 思考题-8.png %} 
 把`command`数组写成一个一个字符分开的模式，末尾的`\x00`要手动加上。目前的问题停留在了栈上字符串的构造上。 
 {% endnote %}

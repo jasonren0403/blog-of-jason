@@ -195,33 +195,35 @@ int main(int argc, char* argv[])
 1. 程序通过命令行参数执行了`foo`函数，在`foo`函数中，有一个10个字节长的`buf`字符数组，在第14行中发生了未经检查的无界向有界拷贝的行为，很容易引发溢出。分析到这里，思路就很简单了：参数中先用任意字符填满`buf`
    ，然后再填入4字节的`bar`函数的地址。
 
-2. 先调试，填上一个较短的参数看看发生了什么 {% grouppicture 2-2 %} {% asset_img 思考题1.png "填入参数3344" %} {% asset_img 思考题2.png "运行" %} {%
-   endgrouppicture %}
+2. 先调试，填上一个较短的参数看看发生了什么
+    {% grouppicture 2-2 %} {% asset_img 思考题1.png "填入参数3344" %} {% asset_img 思考题2.png "运行" %} {% endgrouppicture %}
 3. 发现我们给的这个参数在DS段中存储着，而且运行时程序会打印出`foo`和`bar`函数的地址值。所以`bar`函数地址我们已经有了。
-4. 我们的命令行参数从DS段拷贝到了`0x12ff60`的位置。 {% grouppicture 2-2 %} {% asset_img 思考题3.png %} {% asset_img 思考题4.png %} {%
-   endgrouppicture %} {% grouppicture 2-2 %} {% asset_img 思考题5.png %} {% asset_img 思考题6.png %} {% endgrouppicture %}
+4. 我们的命令行参数从DS段拷贝到了`0x12ff60`的位置。
+    {% grouppicture 2-2 %} {% asset_img 思考题3.png %} {% asset_img 思考题4.png %} {% endgrouppicture %}
+    {% grouppicture 2-2 %} {% asset_img 思考题5.png %} {% asset_img 思考题6.png %} {% endgrouppicture %}
 5. 构造payload时要注意考虑到内存的对齐因素，缓冲区是10个字节长没错，但是填充时要淹没掉`0x40109b`的返回地址值，又要使最后4个字节为`bar`函数的地址值，所以要填上12个任意字符。综合考虑，构造payload如下。
-   {% asset_img 思考题7.png %}
+    {% asset_img 思考题7.png %}
 6. 把这个值复制到调试命令行中，重启程序 {% asset_img 思考题8.png %}
-7. 此时已经可以看到`0x12ff6c`中存储的返回地址值变成了`0x401060`。前面的`0x12ff60~0x12ff68`也已悉数占满。 {% asset_img 思考题9.png %} {% asset_img
-   思考题10.png %}
-8. 按<kbd>F8</kbd>单步跟下来，可以发现程序紧接着跳到了`0x401060`，`bar`函数的地址，目标达到了。紧接着程序就因为栈不平衡而崩溃了。 {% grouppicture 2-2 %} {% asset_img
-   思考题11.png %} {% asset_img 思考题12.png %} {% endgrouppicture %} {% asset_img 思考题最终.png "命令行运行结果" %}
+7. 此时已经可以看到`0x12ff6c`中存储的返回地址值变成了`0x401060`。前面的`0x12ff60~0x12ff68`也已悉数占满。
+    {% asset_img 思考题9.png %} {% asset_img 思考题10.png %}
+8. 按<kbd>F8</kbd>单步跟下来，可以发现程序紧接着跳到了`0x401060`，`bar`函数的地址，目标达到了。紧接着程序就因为栈不平衡而崩溃了。
+    {% grouppicture 2-2 %} {% asset_img 思考题11.png %} {% asset_img 思考题12.png %} {% endgrouppicture %}
+    {% asset_img 思考题最终.png "命令行运行结果" %}
 9. 覆盖返回地址法利用全过程图示 {% asset_img 1571749477979.jpg "图中红笔为溢出执行过程" %}
 
 <!-- endtab -->
 <!-- tab 解法二 -->
 接下来，我们使用`jmp esp`的方法来完成程序的破解。
 
-1. 使用od自带的插件overflow return address寻找可用的`jmp esp`地址，查找结果如下 {% grouppicture 2-2 %} {% asset_img 思考题2-1.png %} {%
-   asset_img 思考题2-2.png %} {% endgrouppicture %}
+1. 使用od自带的插件overflow return address寻找可用的`jmp esp`地址，查找结果如下
+    {% grouppicture 2-2 %} {% asset_img 思考题2-1.png %} {% asset_img 思考题2-2.png %} {% endgrouppicture %}
 2. 本次实验选用了一个位于`ntdll.text`段的`jmp esp`，地址为`77f8948bh`。
 
-根据`jmp esp`构造相关知识，构造payload为12个填充字符"a"+`jmp esp`地址`0x77f8948b`（大端书写）+shellcode（`call bar()`的机器码）。下面简单看一下运行该参数之后，栈的情况。 {%
-asset_img 思考题2-3.png "payload图示" %}
+	根据`jmp esp`构造相关知识，构造payload为12个填充字符"a"+`jmp esp`地址`0x77f8948b`（大端书写）+shellcode（`call bar()`的机器码）。下面简单看一下运行该参数之后，栈的情况。
+    {% asset_img 思考题2-3.png "payload图示" %}
 
-3. `foo`和`bar`的地址输出等同于方法一 {% grouppicture 2-2 %} {% asset_img 思考题2-4.png %} {% asset_img 思考题2-5.png %} {%
-   endgrouppicture %}
+3. `foo`和`bar`的地址输出等同于方法一
+    {% grouppicture 2-2 %} {% asset_img 思考题2-4.png %} {% asset_img 思考题2-5.png %} {% endgrouppicture %}
 
 4. 将命令行的内容复制到缓冲区时，观察输出，可以发现`0x12ff6c`被覆盖成了`jmp esp`的地址 {% asset_img 思考题2-6.png "而临接地址的内容，就是本次我们要执行的shellcode" %}
 
@@ -236,7 +238,9 @@ asset_img 思考题2-3.png "payload图示" %}
 
 9. 调用完成后，它返回了`12ff70`处，然后继续向下执行指令，直到崩溃。 {% asset_img 思考题2-11.png %}
 
-{% note warning %} 如果没有任何中断的话，接下来地址的所有的hex数据都会按照命令来执行，相当危险…… {% endnote %}
+    {% note warning %}
+    如果没有任何中断的话，接下来地址的所有的hex数据都会按照命令来执行，相当危险……
+    {% endnote %}
 
 10. 刚才执行的过程中成功产生预期输出。 {% asset_img 思考题2-12.png %}
 

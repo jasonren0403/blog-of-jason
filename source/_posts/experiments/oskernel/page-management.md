@@ -57,23 +57,23 @@ public:
 {% tabs algs,1 %}
 <!-- tab 先进先出算法FIFO -->
 
-1. 初始化。设置两个数组`page[ap]`和`pagecontrol[pp]`分别表示进程页面数和内存分配的页面数，并产生一个的随机数序列`main[total_instruction]`（当然这个序列由`page[]`
-   的下标随机构成），表示待处理的进程页面顺序，`diseffect`置0。
+1. 初始化。设置两个数组`page[ap]`和`pagecontrol[pp]`分别表示进程页面数和内存分配的页面数，并产生一个的随机数序列`main[total_instruction]`（当然这个序列由`page[]`的下标随机构成），表示待处理的进程页面顺序，`diseffect`置0。
 2. 看`main[]`中是否有下一个元素，有就由`main[]`中获取该页面下标，并转到3；没有，就转到7。
 3. 如果该`page`页已在内存中，就转到2；否则就到4，同时未命中的`diseffect`加1。
 4. 观察`pagecontrol`是否占满，如果占满需将使用队列（6中建立的）中最先进入的（就是队列第一个单元）`pagecontrol`单元“清干净”，同时将对应的`page[]`单元置为“不在内存中”。
-5. 将该`page[]`与`pagecontrol[]`建立关系（可以改变`pagecontrol[]`的标示位，也可以采用指针连接。总之，至少要使对应的`pagecontrol`单元包含两个信息：一是它被使用了，二是哪个`page[]`
-   单元使用的；`page[]`单元包含两个信息：对应的`pagecontrol`单元号、本`page[]`单元已在内存中）；
+5. 将该`page[]`与`pagecontrol[]`建立关系（可以改变`pagecontrol[]`的标示位，也可以采用指针连接。总之，至少要使对应的`pagecontrol`单元包含两个信息：一是它被使用了，二是哪个`page[]`单元使用的；`page[]`单元包含两个信息：对应的`pagecontrol`单元号、本`page[]`单元已在内存中）；
 6. 将用到的`pagecontrol`置入使用队列（这里的队列当然是一种先进先出的数据结构），返回2；
 7. 显示命中率，算法完成。
 
-{% mermaid graph TD %} A(["初始化"]) --> B{"main[] 中是否有下一个元素"} B --> |Y|C["由main获取下一个元素页面下标"]
+{% mermaid graph TD %}
+A(["初始化"]) --> B{"main[] 中是否有下一个元素"} B --> |Y|C["由main获取下一个元素页面下标"]
 B --> |N|D(["显示命中率，算法完成"])
 C --> E{"该页是否在内存中"} E --> |Y|B E --> |N|F["diseffect++"]
 F --> G{Pagecontrol是否占满} G --> |Y|H["将最先进入的单元清干净，并重置状态"]
 G --> |N|I["建立page和pagecontrol的关系"]
 H --> I I --> J["用到的Pagecontrol置入使用队列"]
-J --> B {% endmermaid %}
+J --> B
+{% endmermaid %}
 
 ```c++ FIFO算法
 void CMemory::FIFO(const int nTotal_pf){
@@ -108,7 +108,12 @@ void CMemory::FIFO(const int nTotal_pf){
 }
 ```
 
-{% note success %} 易于实现 {% endnote %} {% note danger %} 容易淘汰常用页面 {% endnote %}
+{% note success %}
+易于实现
+{% endnote %}
+{% note danger %}
+容易淘汰常用页面
+{% endnote %}
 <!-- endtab -->
 <!-- tab 最近最少使用的算法LRU -->
 
@@ -162,12 +167,16 @@ void CMemory::LRU(const int nTotal_pf){
 }
 ```
 
-{% note success %} 页面利用率有显著提升 {% endnote %} {% note danger %} 代价很大 {% endnote %}
+{% note success %}
+页面利用率有显著提升
+{% endnote %}
+{% note danger %}
+代价很大
+{% endnote %}
 <!-- endtab -->
 <!-- tab 最近未使用算法NRU -->
 
-1. 初始化。设置两个数组`page[ap]`和`pagecontrol[pp]`分别表示进程页面数和内存分配的页面数，并产生一个的随机数序列`main[total_instruction]`（当然这个序列由`page[]`
-   的下标随机构成），表示待处理的进程页面顺序，`diseffect`置0，设定循环周期`CLEAR_PERIOD`。
+1. 初始化。设置两个数组`page[ap]`和`pagecontrol[pp]`分别表示进程页面数和内存分配的页面数，并产生一个的随机数序列`main[total_instruction]`（当然这个序列由`page[]`的下标随机构成），表示待处理的进程页面顺序，`diseffect`置0，设定循环周期`CLEAR_PERIOD`。
 2. 看`main[]`中是否有下一个元素，有就从`main[]`中获得一个CPU将处理页面的序号；没有，就转到8。
 3. 如果待处理的页面已在内存中，就转到2；否则`diseffect`加1，并转到4。
 4. 看是否有空闲的内存页面，如果有，返回空闲页面指针，转到5；否则，在所有没有被访问且位于内存中的页面中按任意规则（或者取最近的一个页面；或者取下标最小的页面，等等）取出一个，返回清空后的内存页面指针。
@@ -225,7 +234,9 @@ void CMemory::NRU(const int nTotal_pf)   {
 }
 ```
 
-{% note success %} 易于理解，容易实现。 {% endnote %}
+{% note success %}
+易于理解，容易实现。
+{% endnote %}
 <!-- endtab -->
 <!-- tab 最佳置换算法OPT -->
 
@@ -233,14 +244,16 @@ void CMemory::NRU(const int nTotal_pf)   {
    的下标随机构成），表示待处理的进程页面顺序，`diseffect`置0。然后扫描整个页面访问序列，对`vDistance[TOTAL_VP]`数组进行赋值，表示该页面将在第几步被处理。
 2. 看`main[]`中是否有下一个元素，有就从`main[]`中获取一个CPU待处理的页面号；没有，就转到6。
 3. 如果该`page`页已在内存中，就转到2；否则就到4，同时未命中的`diseffect`加1。
-4.
-看是否有空闲的内存页面。如果有，就直接返回该页面指针。如果没有，遍历所有未处理的进程页面序列，如果有位于内存中的页面，而以后CPU不再处理，首先将其换出，返回页面指针；如果没有这样的页面，找出CPU最晚处理到的页面，将其换出，返回该内存页面指针。
+4. 看是否有空闲的内存页面。如果有，就直接返回该页面指针。如果没有，遍历所有未处理的进程页面序列，如果有位于内存中的页面，而以后CPU不再处理，首先将其换出，返回页面指针；如果没有这样的页面，找出CPU最晚处理到的页面，将其换出，返回该内存页面指针。
 5. 在内存页面和待处理的进程页面之间建立联系，返回2。
 6. 输出命中率，算法结束。（命中率在扫描时完成计算）
 
-{% note info %} 从以上算法描述中，可以看出，OPT是一种理想化的算法，因为操作系统中页面处理顺序是不一定的，所以页面将在哪一步被处理是不可预测的。但是，可以以此为标准来评价其他页面置换算法。 {% endnote %}
+{% note info %}
+从以上算法描述中，可以看出，OPT是一种理想化的算法，因为操作系统中页面处理顺序是不一定的，所以页面将在哪一步被处理是不可预测的。但是，可以以此为标准来评价其他页面置换算法。
+{% endnote %}
 
-{% mermaid graph TD %} A(["初始化"]) --> B{"main[] 中是否有下一个元素"} B --> |Y|C["由main获取下一个元素页面下标"]
+{% mermaid graph TD %}
+A(["初始化"]) --> B{"main[] 中是否有下一个元素"} B --> |Y|C["由main获取下一个元素页面下标"]
 B --> |N|D(["显示命中率，算法完成"])
 C --> E{"该页是否在内存中"} E --> |Y|B E --> |N|F["diseffect++"]
 F --> G{是否有空闲页面} G --> |Y|H["返回该页面指针"]
@@ -248,7 +261,8 @@ G --> |N|I["遍历所有未处理的进程页面序列"]
 I --> J{"存在位于内存中的页面，而以后CPU不再处理"} J --> |Y|K[将其换出]
 J --> |N|L[找出CPU最晚处理到的页面]
 L --> K K --> H H --> M[内存页面和待处理的进程页面建立关系]
-M --> B {% endmermaid %}
+M --> B
+{% endmermaid %}
 
 ```c++ OPT算法
 void CMemory::OPT(const int nTotal_pf)

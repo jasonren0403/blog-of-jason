@@ -44,79 +44,78 @@ More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
 
 ### Tag Plugins Test
 
-* Pullquotes
+* Centered quotes
 
-```
-{% pullquote [class] %}
-content
-{% endpullquote %}
-```
-
-{% pullquote 2345 %} content {% endpullquote %}
+	```
+	{% centerquote %}
+	content
+	{% endcenterquote %}
+	```
+	
+	{% centerquote %} content {% endcenterquote %}
 
 * Other posts
 
-```
-{% post_path filename %}
-{% post_link filename [title] [escape] %}
-```
-
-{% post_link works/frontend/echarts-drawing %}
+	```
+	{% post_path filename %}
+	{% post_link filename [title] [escape] %}
+	```
+	
+	{% post_link works/frontend/echarts-drawing %}
 
 * Admonition
 
-```
-{% note info %}
-#### title
-content
-{% endnote %}
-
-{% note warning title %}
-content
-{% endnote %}
-
-{% note success %}
-#### Success Header
-**Welcome** to [Hexo!](https://hexo.io)
-{% endnote %}
-```
-
-{% note info %}
-
-#### title
-
-content {% endnote %}
-
-{% note warning title %} content {% endnote %}
-
-{% note success %}
-
-#### Success Header
-
-**Welcome** to [Hexo!](https://hexo.io)
-{% endnote %}
+	```
+	{% note info %}
+	#### title
+	content
+	{% endnote %}
+	
+	{% note warning title %}
+	content
+	{% endnote %}
+	
+	{% note success %}
+	#### Success Header
+	**Welcome** to [Hexo!](https://hexo.io)
+	{% endnote %}
+	```
+	
+	{% note info %}
+	#### title
+	content 
+	% endnote %}
+	
+	{% note warning title %}
+	content
+	{% endnote %}
+	
+	{% note success %}
+	#### Success Header
+	**Welcome** to [Hexo!](https://hexo.io)
+	{% endnote %}
 
 * Content Tabs
 
-```
-{% tabs Unique name, [index] %}
-<!-- tab [Tab caption] [@icon] -->
-Any content (support inline tags too).
-<!-- endtab -->
-{% endtabs %}
-```
-
-{% tabs Unique name,2 %}
-<!-- tab first tab@heart -->
-first
-<!-- endtab -->
-<!-- tab second tab-->
-second
-<!-- endtab -->
-<!-- tab third tab-->
-**This is Tab 3.**
-<!-- endtab -->
-{% endtabs %}
+	```
+	{% tabs Unique name, [index] %}
+	<!-- tab [Tab caption] [@icon] -->
+	Any content (support inline tags too).
+	<!-- endtab -->
+	{% endtabs %}
+	```
+	
+	{% tabs Unique name,2 %}
+	<!-- tab first tab@heart -->
+	first
+	<!-- endtab -->
+	<!-- tab second tab-->
+	second
+	<!-- endtab -->
+	<!-- tab third tab-->
+	**This is Tab 3.**
+	<!-- endtab -->
+	{% endtabs %}
 
 ## Video and audio embeds
 

@@ -133,7 +133,8 @@ public static void main(String[] args){
 
 <!-- endtab -->
 <!-- tab 一个正常的运算式 -->
-{% note %} 本次测试的式子为`1+4.5*2-3/3`
+{% note %}
+本次测试的式子为`1+4.5*2-3/3`
 {% endnote %}
 
 Main函数代码类似，控制台工具显示如下 
@@ -169,10 +170,7 @@ Main函数代码类似，控制台工具显示如下
 
 {% asset_img end2.png %}
 
-* 有两个tokens文件和六个java文件，`Listener`和`Visitor`是两个接口，`Listener`中定义了一些退出或进入一个表达式中所进行的语法动作，`Visitor`
-  中定义了遍历语法树中项目的返回动作，一个语法项对应一个`visit`函数。具体由`xxBaseListener`或`xxBaseVisitor`
-  来实现。默认状态下，所有的实现都是空的，我们可以扩展`xxBase[Listener|Visitor]`类，自己定义语法动作。本实验中，只需要实现`Visitor`的内容即可，不过由于上下文的关系，我们需要自建一个`Context`
-  类，负责上下文内容的保存和识别。
+* 有两个tokens文件和六个java文件，`Listener`和`Visitor`是两个接口，`Listener`中定义了一些退出或进入一个表达式中所进行的语法动作，`Visitor` 中定义了遍历语法树中项目的返回动作，一个语法项对应一个`visit`函数。具体由`xxBaseListener`或`xxBaseVisitor`来实现。默认状态下，所有的实现都是空的，我们可以扩展`xxBase[Listener|Visitor]`类，自己定义语法动作。本实验中，只需要实现`Visitor`的内容即可，不过由于上下文的关系，我们需要自建一个`Context`类，负责上下文内容的保存和识别。
 
 * 重写`visit`函数：
 
@@ -242,5 +240,4 @@ public class Visitor extends exprBaseVisitor<Double>{
 }
 {% endcodeblock %}
 
-* 目前实现的版本中，可以正确地进行运算，但还没有实现连续赋值功能，也没有考虑到多语句的分隔及分开解析，例如输入`"a=1 a+1"`后不能得到`2`，可能需要修改`Context`类和`Visitor`
-  类中的代码，使其可以记录上下文信息，将`a`的值存入暂存区。
+* 目前实现的版本中，可以正确地进行运算，但还没有实现连续赋值功能，也没有考虑到多语句的分隔及分开解析，例如输入`"a=1 a+1"`后不能得到`2`，可能需要修改`Context`类和`Visitor`类中的代码，使其可以记录上下文信息，将`a`的值存入暂存区。

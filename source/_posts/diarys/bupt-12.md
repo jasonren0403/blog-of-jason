@@ -47,4 +47,8 @@ Yeah~我回来了！
 
 最后一位同学，在晚上8：44时终于到来，给整天的工作画上一个圆满的句号！
 
-{% grouppicture 3-3 %} {% asset_img 1.jpg %} {% asset_img 2.jpg %} {% asset_img 3.jpg %} {% endgrouppicture %}
+{% grouppicture 3-3 %}
+{% asset_img 1.jpg %}
+{% asset_img 2.jpg %}
+{% asset_img 3.jpg %}
+{% endgrouppicture %}

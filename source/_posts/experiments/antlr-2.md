@@ -28,31 +28,41 @@ categories:
 
 * Double Free，多次释放漏洞，是对指向同一个地址的指针进行两次及以上的操作，可能会造成任意代码执行或其他非预期危害。虽然一般把它叫做double free。其实只要是`free`一个指向堆内存的指针都有可能产生可以利用的漏洞。
 
-* 一段简单的漏洞代码示例如下所示，其中对`char * buf2R1`所指向的内存进行了两次释放操作 {% codeblock lang:c %}
+* 一段简单的漏洞代码示例如下所示，其中对`char* buf2R1`所指向的内存进行了两次释放操作
 
-# include <stdio.h>
-
-# include <unistd.h>
-
-# define BUFSIZE1 512
-
-# define BUFSIZE2 ((BUFSIZE1/2) - 8) //248
-
-int main(int argc, char **argv) { char *buf1R1; char *buf2R1; char *buf1R2; buf1R1 = (char *) malloc(BUFSIZE2); buf2R1
-= (char *) malloc(BUFSIZE2); free(buf1R1); free(buf2R1); buf1R2 = (char *) malloc(BUFSIZE1); strncpy(buf1R2, argv[1],
-BUFSIZE1-1); free(buf2R1); free(buf1R2); } {% endcodeblock %}
+	```c
+	#include <stdio.h>
+	#include <unistd.h>
+	#define BUFSIZE1 512
+	#define BUFSIZE2 ((BUFSIZE1/2) - 8) //248
+	
+	int main(int argc, char **argv) { 
+		char *buf1R1; 
+		char *buf2R1; 
+		char *buf1R2; 
+		buf1R1 = (char *) malloc(BUFSIZE2); 
+		buf2R1 = (char *) malloc(BUFSIZE2); 
+		free(buf1R1); 
+		free(buf2R1); 
+		buf1R2 = (char *) malloc(BUFSIZE1); 
+		strncpy(buf1R2, argv[1], BUFSIZE1-1); 
+		free(buf2R1); 
+		free(buf1R2); 
+	}
+	```
 
 * double free的原理其实和堆溢出的原理差不多，都是通过unlink这个双向链表删除的宏来利用的。只是double free需要由自己来伪造整个chunk并且欺骗操作系统。
 
 ### 语法识别
 
-{% note info %} 利用ANTLR4的C++语言语法规则文件，对漏洞代码进行分析。 {% endnote %}
+{% note info %}
+利用ANTLR4的C++语言语法规则文件，对漏洞代码进行分析。
+{% endnote %}
 
 1. 右键点击g4中的translationunit，选择test rule，将那个有漏洞的C代码制作成expr文件后，作为输入。
-
 2. 然后在输出位置就可以看到好大一棵parseTree了！右键另存为一张图。
 
-{% asset_img parseTree-full.png 500 500 %}
+	{% asset_img parseTree-full.png 500 500 %}
 
 3. ParseTree全貌，其中左边的一小撮是函数头定义，右边的一大撮才是函数体定义。
     * 首先定义了三个字符指针型变量`buf1R1`、`buf2R1`、`buf1R2`
@@ -68,12 +78,12 @@ BUFSIZE1-1); free(buf2R1); free(buf1R2); } {% endcodeblock %}
 
 7. 最后的两个`free`语句都在语法分析树的右侧 {% asset_img 9.png %}
 
-{% note primary %} 从语法分析树中看不出任何问题，因为这个存在漏洞的代码是语法正确的，而且也符合C语言语法结构。所以我们在编写相关代码时，要自行检查指针的使用情况，最好在释放指针所指向的空间后，将其置为<code>
-NULL</code>。 {% endnote %}
+{% note primary %}
+从语法分析树中看不出任何问题，因为这个存在漏洞的代码是语法正确的，而且也符合C语言语法结构。所以我们在编写相关代码时，要自行检查指针的使用情况，最好在释放指针所指向的空间后，将其置为<code>NULL</code>。
+{% endnote %}
 
 ## 实验总结
 
 本实验中通过学习带有漏洞的C语言代码，了解到一些常见的二进制相关漏洞，借助到C语言的语法规则文件，对漏洞代码进行分解研究，了解到了我们所写的程序通过语法树展开后的样子，并试着提取其规则，编写漏洞描述xml文件。
 
-中途遇到了IntelliJ IDEA无法解析规则，找不到start rule的问题，后来通过在cpp14.g4文件中右击translationunit规则，点击test translationunit
-rule找到了语法树的生成点，从而成功在ANTLR Output中看到了所生成的语法树。
+中途遇到了IntelliJ IDEA无法解析规则，找不到start rule的问题，后来通过在cpp14.g4文件中右击translationunit规则，点击test translationunit rule找到了语法树的生成点，从而成功在ANTLR Output中看到了所生成的语法树。

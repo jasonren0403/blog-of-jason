@@ -113,7 +113,7 @@ ECharts，缩写来自 Enterprise Charts，商业级数据图表，是一个开�
     </script>
     ```
 
-    -   `options`中要怎么指定设置和数据呢？别急，我们先来看它的官方示例数据和它渲染出来的图：
+    - `options`中要怎么指定设置和数据呢？别急，我们先来看它的官方示例数据和它渲染出来的图：
         {% tabs code_show %}
         <!-- tab 代码@code -->
         ```javascript main.js
@@ -137,16 +137,14 @@ ECharts，缩写来自 Enterprise Charts，商业级数据图表，是一个开�
         <!-- endtab -->
         {% endtabs %}
 
-        -   option 中有 xAxis、yAxis、series 三个对象，它们都拥有 type 和 data 两个属性。对于这个简单的示例来说：
-
-            -   xAxis 是横轴数据及类型描述
-            -   yAxis 是纵轴数据及类型描述
-            -   series 是系列描述，可以包含多组“统计数据”
-                {% note info "" %}
+      	- option 中有 xAxis、yAxis、series 三个对象，它们都拥有 type 和 data 两个属性。对于这个简单的示例来说：
+            - xAxis 是横轴数据及类型描述
+            - yAxis 是纵轴数据及类型描述
+            - series 是系列描述，可以包含多组“统计数据”
+                {% note info %}
                 在 echarts 里，系列（series）是指：一组数值以及他们映射成的图。“系列”这个词原本可能来源于“一系列的数据”，而在 echarts 中取其扩展的概念，不仅表示数据，也表示数据映射成为的图。所以，一个 **系列**包含的要素至少有：一组数值、图表类型（series.type）、以及其他的关于这些数据如何映射成图的参数。
                 {% endnote %} 
                 * 实际上，这也意味着可以在一个 echarts 对象上同时绘制多组类型各同或各异的统计数据（注意到 series 是一个数组！）！如果把以上例子的 series 数据稍作修改，就可以得到多折线的统计图，这也是本次数据处理任务的重要模型！
-
                     {% tabs code_show2 %}
                     <!-- tab 代码@code -->
                     ```javascript
@@ -176,32 +174,32 @@ ECharts，缩写来自 Enterprise Charts，商业级数据图表，是一个开�
                     <!-- endtab -->
                     {% endtabs %}
 
-        -   xAxis、yAxis、series 实质为统计图的“组件”。在 echarts 中，各种内容都是被抽象为“组件”的，除了前述的 xAxis、yAxis、series 以外，还有 grid、polar、geo 等组件，与本次任务关系并不大。
-            -   所有的组件都在 option 对象中声明，可以是一个对象或者数组。
-        -   上层的 option 对象描述了图表的各种需求，包括：有什么数据、要画什么图表、图表长什么样子、含有什么组件、组件能操作什么事情等等。这些设置内容通过`setOption`函数绑定到 echarts 对象上。
+        - xAxis、yAxis、series 实质为统计图的“组件”。在 echarts 中，各种内容都是被抽象为“组件”的，除了前述的 xAxis、yAxis、series 以外，还有 grid、polar、geo 等组件，与本次任务关系并不大。
+            - 所有的组件都在 option 对象中声明，可以是一个对象或者数组。
+        - 上层的 option 对象描述了图表的各种需求，包括：有什么数据、要画什么图表、图表长什么样子、含有什么组件、组件能操作什么事情等等。这些设置内容通过`setOption`函数绑定到 echarts 对象上。
 
             ```javascript
             // 用 option 描述数据、数据如何映射成图形、交互行为等。
             // option 是个大的 JavaScript 对象。
             var option = {
-				// option 每个属性是一类组件。
+                // option 每个属性是一类组件。
 				legend: {...},
 				grid: {...},
-				tooltip: {...},
-				toolbox: {...},
-				dataZoom: {...},
-				visualMap: {...},
-				// 如果有多个同类组件，那么就是个数组。例如这里有三个 X 轴。
+                tooltip: {...},
+                toolbox: {...},
+                dataZoom: {...},
+                visualMap: {...},
+                // 如果有多个同类组件，那么就是个数组。例如这里有三个 X 轴。
 				xAxis: [
-					// 数组每项表示一个组件实例，用 type 描述“子类型”。
+                    // 数组每项表示一个组件实例，用 type 描述“子类型”。
 					{type: 'category', ...},
 					{type: 'category', ...},
 					{type: 'value', ...}
 				],
 				yAxis: [{...}, {...}],
-				// 这里有多个系列，也是构成一个数组。
+                // 这里有多个系列，也是构成一个数组。
 				series: [
-					// 每个系列，也有 type 描述“子类型”，即“图表类型”。
+                    // 每个系列，也有 type 描述“子类型”，即“图表类型”。
 					{type: 'line', data: [['AA', 332], ['CC', 124], ['FF', 412], /_ ... _/ ]},
 					{type: 'line', data: [2231, 1234, 552, /* ... */ ]},
 					{type: 'line', data: [[4, 51], [8, 12], /* ... */ ]}
@@ -209,33 +207,33 @@ ECharts，缩写来自 Enterprise Charts，商业级数据图表，是一个开�
             };
             ```
 
-            -   数据都在`series.data`中，也可通过 dataset 来取得数据。
+            - 数据都在`series.data`中，也可通过 dataset 来取得数据。
 
-            ```javascript
-            var option = {
-            	dataset: {
-            		source: [
-            			[121, "XX", 442, 43.11],
-            			[663, "ZZ", 311, 91.14],
-            			[913, "ZZ", 312, 92.12],
+                ```javascript
+                var option = {
+            	    dataset: {
+            		    source: [
+            			    [121, "XX", 442, 43.11],
+            			    [663, "ZZ", 311, 91.14],
+            			    [913, "ZZ", 312, 92.12],
             			/* ... */
-            		],
-            	},
-            	xAxis: {},
-            	yAxis: {},
-            	series: [
-            		// 数据从 dataset 中取，encode 中的数值是 dataset.source 的维度 index（即第几列）
-            		{ type: "bar", encode: { x: 1, y: 0 } },
-            		{ type: "bar", encode: { x: 1, y: 2 } },
-            		{ type: "scatter", encode: { x: 1, y: 3 } },
-            		/* ... */
-            	],
-            };
-            ```
+            		    ],
+            	    },
+            	    xAxis: {},
+            	    yAxis: {},
+            	    series: [
+            		    // 数据从 dataset 中取，encode 中的数值是 dataset.source 的维度 index（即第几列）
+            		    { type: "bar", encode: { x: 1, y: 0 } },
+            		    { type: "bar", encode: { x: 1, y: 2 } },
+            		    { type: "scatter", encode: { x: 1, y: 3 } },
+            		    /* ... */
+            	    ],
+                };
+                ```
 
             > 总的来说，option 表述了：数据、数据如何映射成图形、交互行为。
 
-        -   通过以上这几个步骤，我们可以绘制一个简单的统计图。
+       - 通过以上这几个步骤，我们可以绘制一个简单的统计图。
 
 ### 准备二：数据
 
@@ -457,14 +455,15 @@ action=getsingleday&param={Y-m-d} 得到某一天的统计数据，SQL 语句是
 
 ## 效果
 
--   经过以上步骤后，打开网页，现在显示效果如下，虽然不怎么酷炫，但是已经基本上满足了我们的需求，可以看到大概的数据走向。可以用鼠标滚轮实现局部放大效果。调一调样式，就可以嵌入到一般网页中去使用了。
-    {% asset_img 9.png 效果 %}
+- 经过以上步骤后，打开网页，现在显示效果如下，虽然不怎么酷炫，但是已经基本上满足了我们的需求，可以看到大概的数据走向。可以用鼠标滚轮实现局部放大效果。调一调样式，就可以嵌入到一般网页中去使用了。
+	
+	{% asset_img 9.png 效果 %}
 
 {% asset_img 10.png 局部效果 %}
 
 ## 后续的思考和启示
 
--   其实丁香园网页的开头还有几段 javascript 数据，多加研究的话还有可以值得提取和研究的东西，比如最近新加的国外疫情数据
--   原来页面真的可以全用 javascript 渲染出来……丁香园疫情网页应该用到了类似于 webpack 和客户端渲染的东西，网页`body`元素中全是 javascript 代码
-    -   具体来讲，应该是在`script`标签中加载了一些 js 和 css 文件
--   数据获取部分本来想用 php 一起写掉，但奈何 php 中想要爬虫，只有使用 curl 库来进行抓取，且后续正则提取麻烦，索性放弃了
+- 其实丁香园网页的开头还有几段 javascript 数据，多加研究的话还有可以值得提取和研究的东西，比如最近新加的国外疫情数据
+- 原来页面真的可以全用 javascript 渲染出来……丁香园疫情网页应该用到了类似于 webpack 和客户端渲染的东西，网页`body`元素中全是 javascript 代码
+    - 具体来讲，应该是在`script`标签中加载了一些 js 和 css 文件
+- 数据获取部分本来想用 php 一起写掉，但奈何 php 中想要爬虫，只有使用 curl 库来进行抓取，且后续正则提取麻烦，索性放弃了

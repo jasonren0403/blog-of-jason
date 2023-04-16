@@ -32,5 +32,11 @@ comments: true
 
 好了，写不动了，这期文字到此结束吧。我要去肛高数和线代了。ヽ(ﾟ∀ﾟ*)ﾉ
 
-{% grouppicture 6-4 %} {% asset_img 1.jpg 250 250 %} {% asset_img 2.jpg 250 250 %} {% asset_img 3.jpg 250 250 %} {%
-asset_img 4.jpg 250 250 %} {% asset_img 5.jpg 250 250 %} {% asset_img 6.jpg 250 250 %} {% endgrouppicture %}
+{% grouppicture 6-4 %}
+{% asset_img 1.jpg 250 250 %}
+{% asset_img 2.jpg 250 250 %}
+{% asset_img 3.jpg 250 250 %}
+{% asset_img 4.jpg 250 250 %}
+{% asset_img 5.jpg 250 250 %}
+{% asset_img 6.jpg 250 250 %}
+{% endgrouppicture %}

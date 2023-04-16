@@ -15,7 +15,7 @@ comments: true
 
 <!-- more -->
 
-{% mmedia "meting" "id=002X3RjI43O8qj" "server=tencent" "type=song" %}
+{% meting "002X3RjI43O8qj" "tencent" "song" %}
 
 分数都还可以，至少都及格了，当然还可以做到更好，这得靠接下来的努力了~
 
