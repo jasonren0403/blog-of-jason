@@ -192,7 +192,7 @@ ECharts，缩写来自 Enterprise Charts，商业级数据图表，是一个开�
                 // 如果有多个同类组件，那么就是个数组。例如这里有三个 X 轴。
 				xAxis: [
                     // 数组每项表示一个组件实例，用 type 描述“子类型”。
-					{type: 'category', ...},
+					{type: 'category', /*...*/},
 					{type: 'category', ...},
 					{type: 'value', ...}
 				],

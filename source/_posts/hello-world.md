@@ -12,110 +12,110 @@ Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [docume
 
 ### Create a new post
 
-``` bash
-$ hexo new "My New Post"
+```bash
+hexo new "My New Post"
 ```
 
 More info: [Writing](https://hexo.io/docs/writing.html)
 
 ### Run server
 
-``` bash
-$ hexo server
+```bash
+hexo server
 ```
 
 More info: [Server](https://hexo.io/docs/server.html)
 
 ### Generate static files
 
-``` bash
-$ hexo generate
+```bash
+hexo generate
 ```
 
 More info: [Generating](https://hexo.io/docs/generating.html)
 
 ### Deploy to remote sites
 
-``` bash
-$ hexo deploy
+```bash
+hexo deploy
 ```
 
 More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
 
 ### Tag Plugins Test
 
-* Centered quotes
+#### Centered quotes
 
-	```
-	{% centerquote %}
-	content
-	{% endcenterquote %}
-	```
+```
+{% centerquote %}
+content
+{% endcenterquote %}
+```
 	
-	{% centerquote %} content {% endcenterquote %}
+{% centerquote %} content {% endcenterquote %}
 
-* Other posts
+#### Other posts
 
-	```
-	{% post_path filename %}
-	{% post_link filename [title] [escape] %}
-	```
+```
+{% post_path filename %}
+{% post_link filename [title] [escape] %}
+```
 	
-	{% post_link works/frontend/echarts-drawing %}
+{% post_link works/frontend/echarts-drawing %}
 
-* Admonition
+#### Admonition
 
-	```
-	{% note info %}
-	#### title
-	content
-	{% endnote %}
+```
+{% note info %}
+#### title
+content
+{% endnote %}
 	
-	{% note warning title %}
-	content
-	{% endnote %}
+{% note warning title %}
+content
+{% endnote %}
 	
-	{% note success %}
-	#### Success Header
-	**Welcome** to [Hexo!](https://hexo.io)
-	{% endnote %}
-	```
+{% note success %}
+#### Success Header
+**Welcome** to [Hexo!](https://hexo.io)
+{% endnote %}
+```
 	
-	{% note info %}
-	#### title
-	content 
-	% endnote %}
+{% note info %}
+#### title
+content 
+{% endnote %}
 	
-	{% note warning title %}
-	content
-	{% endnote %}
-	
-	{% note success %}
-	#### Success Header
-	**Welcome** to [Hexo!](https://hexo.io)
-	{% endnote %}
+{% note warning title %}
+content
+{% endnote %}
 
-* Content Tabs
+{% note success %}
+#### Success Header
+**Welcome** to [Hexo!](https://hexo.io)
+{% endnote %}
 
-	```
-	{% tabs Unique name, [index] %}
-	<!-- tab [Tab caption] [@icon] -->
-	Any content (support inline tags too).
-	<!-- endtab -->
-	{% endtabs %}
-	```
+#### Content Tabs
+
+```
+{% tabs Unique name, [index] %}
+<!-- tab [Tab caption] [@icon] -->
+Any content (support inline tags too).
+<!-- endtab -->
+{% endtabs %}
+```
 	
-	{% tabs Unique name,2 %}
-	<!-- tab first tab@heart -->
-	first
-	<!-- endtab -->
-	<!-- tab second tab-->
-	second
-	<!-- endtab -->
-	<!-- tab third tab-->
-	**This is Tab 3.**
-	<!-- endtab -->
-	{% endtabs %}
+{% tabs Unique name,2 %}
+<!-- tab first tab@heart -->
+first
+<!-- endtab -->
+<!-- tab second tab-->
+second
+<!-- endtab -->
+<!-- tab third tab-->
+**This is Tab 3.**
+<!-- endtab -->
+{% endtabs %}
 
 ## Video and audio embeds
 
@@ -124,12 +124,13 @@ More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
 ### Bilibili
 
 ```text
-{% mmedia "bilibili" "bvid:<bvid>" "quality:high" "danmaku" "allowfullscreen" %}
+{% mmedia "bilibili" "bvid:<bvid>" "quality:high" "danmaku:true" "allowfullscreen" %}
 ```
 
-{% mmedia "bilibili" "bvid:BV1yN4y1N7vZ" "quality:high" "danmaku" "allowfullscreen" %}
+{% mmedia "bilibili" "bvid:BV1yN4y1N7vZ" "quality:high" "danmaku:true" "allowfullscreen" %}
 
 ### 西瓜视频
+
 ```text
 {% mmedia "xigua" "xid=<xid>" %}
 ```
@@ -142,5 +143,5 @@ More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
 {% mmedia "meting" <id> <server> <type> ... %}
 ```
 
-{% mmedia "meting" "id:7737308430" "server:netease" "type:playlist" %} 
+{% mmedia "meting" "id=7737308430" "server=netease" "type=playlist" %} 
 

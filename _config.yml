@@ -52,7 +52,7 @@ external_link:
   field: site # Apply to the whole site
   exclude: ''
 filename_case: 0
-render_drafts: false
+render_drafts: true
 post_asset_folder: true
 markdown:
   preset: 'default'
@@ -136,23 +136,46 @@ deploy:
   branch: gh-pages
 
 mmedia:
-  aplayer:
-    cdn: https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js
-    style_cdn: https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css
+  audio:
     default:
+  video:
+    default:
+  aplayer:
+    js: https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.js
+    css: https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.css
+    default:
+      contents:
   meting:
-    cdn: https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js
+    js: https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js
     api:
     default:
   dplayer:
-    cdn: https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.js
-    style_cdn: https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.css
-    hls_cdn: https://cdn.jsdelivr.net/npm/hls.j/dist/hls.min.js
-    dash_cdn: https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js
-    shaka_dash_cdn: https://cdn.jsdelivr.net/npm/shaka-player/dist/shaka-player.compiled.js
-    flv_cdn: https://cdn.jsdelivr.net/npm/flv.js/dist/flv.min.js
-    webtorrent_cdn: https://cdn.jsdelivr.net/npm/webtorrent/webtorrent.min.js
+    js: https://cdn.jsdelivr.net/npm/dplayer@1/dist/DPlayer.min.js
+    hls_js: https://cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js
+    dash_js: https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js
+    shaka_dash_js: https://cdn.jsdelivr.net/npm/shaka-player/dist/shaka-player.compiled.js
+    flv_js: https://cdn.jsdelivr.net/npm/flv.js/dist/flv.min.js
+    webtorrent_js: https://cdn.jsdelivr.net/npm/webtorrent/webtorrent.min.js
     default:
+      contents:
+  bilibili:
+    default:
+      page: 1
+      danmaku: true
+      allowfullscreen: allowfullscreen
+      sandbox: allow-top-navigation allow-same-origin allow-forms allow-scripts allow-popups
+      width: 100%
+      max_width: 850px
+      margin: auto
+  xigua:
+    default:
+      autoplay: false
+      startTime: 0
+      allowfullscreen: allowfullscreen
+      sandbox: allow-top-navigation allow-same-origin allow-forms allow-scripts allow-popups
+      width: 100%
+      max_width: 850px
+      margin: auto
 
 # RSS
 # https://github.com/hexojs/hexo-generator-feed
