@@ -4,10 +4,10 @@ tags:
   - 运维
   - 建站
 categories:
-  - - 运维
-  - - 技术
-draft: true
+  - ["运维"]
+  - ["技术"]
 date: 2023-04-03 19:45:33
+comments: true
 ---
 
 
