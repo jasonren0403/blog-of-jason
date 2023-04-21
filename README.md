@@ -5,4 +5,5 @@
 ## 备忘命令
 
 * `hexo new [layout] <title>` 新建文章，可指定 `-p` 文章路径
+	- `hexo new draft <文件名>` 新建草稿
 * `hexo publish [layout] <filename>` 发表草稿
