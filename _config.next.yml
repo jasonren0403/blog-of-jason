@@ -548,9 +548,9 @@ waline:
   # Waline server address url, you should set this to your own link
   serverURL: https://blog-manage.jason0743.space/
   # Waline library CDN url, you can set this to your preferred CDN
-  # libUrl: https://unpkg.com/@waline/client@v2/dist/waline.js
+  libUrl: https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js
   # Waline CSS styles CDN url, you can set this to your preferred CDN
-  cssUrl: https://unpkg.com/@waline/client@v2/dist/waline.css
+  cssUrl: https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css
   # Custom locales
   locale:
     placeholder: 来发表一条友善的评论吧~ # Comment box placeholder
