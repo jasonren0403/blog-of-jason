@@ -141,20 +141,20 @@ mmedia:
   video:
     default:
   aplayer:
-    js: https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.js
-    css: https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.css
+    js: https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js
+    css: https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css
     default:
       contents:
   meting:
-    js: https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js
+    js: https://cdnjs.cloudflare.com/ajax/libs/meting/2.0.1/Meting.min.js
     api:
     default:
   dplayer:
-    js: https://cdn.jsdelivr.net/npm/dplayer@1/dist/DPlayer.min.js
-    hls_js: https://cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js
-    dash_js: https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js
-    shaka_dash_js: https://cdn.jsdelivr.net/npm/shaka-player/dist/shaka-player.compiled.js
-    flv_js: https://cdn.jsdelivr.net/npm/flv.js/dist/flv.min.js
+    js: https://cdnjs.cloudflare.com/ajax/libs/dplayer/1.27.1/DPlayer.min.js
+    hls_js: https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.3/hls.min.js
+    dash_js: https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.0/dash.all.min.js
+    shaka_dash_js: https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.js
+    flv_js: https://cdnjs.cloudflare.com/ajax/libs/flv.js/1.6.2/flv.min.js
     webtorrent_js: https://cdn.jsdelivr.net/npm/webtorrent/webtorrent.min.js
     default:
       contents:
