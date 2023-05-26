@@ -113,6 +113,7 @@ darkmode: false
 menu:
   home: / || fa fa-home
   about: https://www.jason0743.space/#/about || fa fa-user
+  note: https://note.jason0743.space || fa fa-book
   tags: /tags/ || fa fa-tags
   categories: /categories/ || fa fa-th
   archives: /archives/ || fa fa-archive
