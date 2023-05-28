@@ -28,13 +28,16 @@ jobs:
           chmod 700 ~/.ssh
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - name: Switch to Hexo directory
-        run: |
-          git checkout -b gh-pages origin/gh-pages
       - name: Install Hexo cli
         run: |
           npm install hexo-cli -g
           npm install
+      - name: Fetch current htmls
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+          path: .deploy-git
       - name: Build Hexo 🔧
         run: |
           hexo clean
