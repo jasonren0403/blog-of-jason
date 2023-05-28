@@ -37,7 +37,7 @@ jobs:
         with:
           ref: gh-pages
           fetch-depth: 0
-          path: .deploy-git
+          path: .deploy_git
       - name: Build Hexo 🔧
         run: |
           hexo clean
