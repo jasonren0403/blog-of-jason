@@ -136,6 +136,7 @@ deploy:
   branch: gh-pages
   name: Jason Ren
   email: 40999116+jasonren0403@users.noreply.github.com
+  message: Site updated
 
 mmedia:
   audio:
