@@ -39,6 +39,5 @@ jobs:
           token: ${{ secrets.HEXO_DEPLOY_KEY }}
           branch: gh-pages
           folder: public
-          repository-name: jasonren0403/blog-of-jason
           git-config-name: "Jason Ren"
           git-config-email: "40999116+jasonren0403@users.noreply.github.com"
