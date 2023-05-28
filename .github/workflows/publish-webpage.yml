@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   publish-webpage:
     runs-on: ubuntu-latest
@@ -14,25 +17,28 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: main
+          repository: jasonren0403/blog-of-jason
+          fetch-depth: 0
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16
       - name: Setup Hexo
-        env:
-          ACTION_DEPLOY_KEY: ${{ secrets.HEXO_DEPLOY_KEY }}
         run: |
-          mkdir -p ~/.ssh/
-          echo "$ACTION_DEPLOY_KEY" > ~/.ssh/id_rsa
-          chmod 700 ~/.ssh
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          git config --global user.email "40999116+jasonren0403@users.noreply.github.com"
-          git config --global user.name "Jason Ren"
           npm install hexo-cli -g
-          npm install
-      - name: Build and Deploy
+          npm ci
+      - name: Build Hexo
         run: |
           hexo clean
+          export TZ='Asia/Shanghai'
           hexo generate
-          hexo deploy
+        shell: bash
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          token: ${{ secrets.HEXO_DEPLOY_KEY }}
+          branch: gh-pages
+          folder: public
+          repository-name: jasonren0403/blog-of-jason
+          git-config-name: "Jason Ren"
+          git-config-email: "40999116+jasonren0403@users.noreply.github.com"
