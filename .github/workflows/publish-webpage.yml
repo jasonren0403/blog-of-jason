@@ -16,6 +16,10 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+      - name: Set Timezone
+        uses: szenius/set-timezone@v1.2
+        with:
+          timezoneLinux: "Asia/Shanghai"
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
