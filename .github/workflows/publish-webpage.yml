@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      - name: Setup Hexo
+      - name: Deploy Key Setup
         env:
           ACTION_DEPLOY_KEY: ${{ secrets.HEXO_DEPLOY_KEY }}
         run: |
@@ -28,8 +28,13 @@ jobs:
           chmod 700 ~/.ssh
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          git config --global user.email "40999116+jasonren0403@users.noreply.github.com"
-          git config --global user.name "Jason Ren"
+      - name: Setup Hexo
+        run: |
+          mkdir -p ~/.deploy_git
+          cd ~/.deploy_git
+          git clone -b gh-pages --single-branch git@github.com:jasonren0403/blog-of-jason.git
+      - name: Install Hexo cli
+        run: |
           npm install hexo-cli -g
           npm install
       - name: Build Hexo

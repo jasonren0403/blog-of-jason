@@ -134,6 +134,8 @@ deploy:
   repo: git@github.com:jasonren0403/blog-of-jason.git
   # example, https://github.com/hexojs/hexojs.github.io
   branch: gh-pages
+  name: Jason Ren
+  email: 40999116+jasonren0403@users.noreply.github.com
 
 mmedia:
   audio:
