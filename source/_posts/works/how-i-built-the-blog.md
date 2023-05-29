@@ -595,6 +595,78 @@ jobs:
 
 配置完成后，每次将博客源码推送到 `main` 分支时，GitHub Actions 就会自动执行部署操作。
 
+#### 保留 gh-pages 提交历史
+
+上面的 Actions 是很容易想的，但每次提交仓库后，会发现 gh-pages 分支的提交历史都是一条直线，没有任何记录。这是因为 `hexo-deployer-git` 每次部署时，都会先清空 gh-pages 分支，再重新生成静态网页，再提交到 gh-pages 分支上。
+
+干净提交也并不是不可以，但每次提交后，都会导致 gh-pages 分支的提交历史被重写，这样就无法通过提交历史来查看博客的更新记录了。
+
+怎么办呢？这时需要去看看 `hexo-deployer-git` 的源码寻找答案。
+
+```js
+// setup()
+function setup() {
+	const userName = args.name || args.user || args.userName || '';
+	const userEmail = args.email || args.userEmail || '';
+	// Create a placeholder for the first commit
+	return fs.writeFile(pathFn.join(deployDir, 'placeholder'), '').then(() => {
+		return git('init');
+	}).then(() => {
+		return userName && git('config', 'user.name', userName);
+	}).then(() => {
+		return userEmail && git('config', 'user.email', userEmail);
+	}).then(() => {
+		return git('add', '-A');
+	}).then(() => {
+		return git('commit', '-m', 'First commit');
+	});
+}
+// ... //
+return fs.exists(deployDir).then(exist => {
+    if (exist) return;
+    log.info('Setting up Git deployment...');
+    return setup();
+  }).then(() => {
+    log.info('Clearing .deploy_git folder...');
+    return fs.emptyDir(deployDir);
+  })
+// ...
+```
+
+也就是说，`hexo-deployer-git` 会先在 `.deploy_git` 中生成仓库，并将它强制推送到 `_config.yml` 配置中的仓库上，如果文件夹不存在，则会进入初始化流程。
+
+因此，我们要在 `hexo deploy` 之前，先手创建一个 `.deploy_git` 文件夹，并将当前的 `gh-pages` 分支的内容复制进去，这样就可以保留提交历史了。
+
+可以使用 git clone 命令，也可以使用 `actions/checkout` 来实现在工作流中克隆仓库内容。
+
+```yaml
+jobs:
+  publish-webpage:
+    runs-on: ubuntu-latest
+    steps:
+    #	... #	  
+    - name: Fetch current htmls
+      uses: actions/checkout@v3
+      with:
+        ref: gh-pages
+        fetch-depth: 0
+        path: .deploy_git
+    - name: Build Hexo 🔧
+      run: |
+        hexo clean
+        hexo generate
+        hexo deploy
+```
+
+#### 使用正确的时区
+
+在使用 GitHub Actions 生成博客时，会发现生成的时间与实际不太一致，因为运行我们的 Actions 的机器跟我们并不在同一时区。这可以通过设置时区来解决。
+
+```yaml
+env:
+  TZ: Asia/Shanghai
+```
+
 ## 访问优化
 
 博客的内容会越来越多，大量的文章和图片难免会拖慢访问速度，hexo及相关的插件也提供了一些优化的方法。
