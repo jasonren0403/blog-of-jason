@@ -1,2 +1,716 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0"><link rel="preconnect" href="https://fonts.geekzu.org" crossorigin=""><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin=""><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script><script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><meta name="description" content="目标 尝试一次本地 ARP 欺骗攻击，掌握 ARP 协议及其利用。学会使用 ARP 攻击工具并进行分析。"><meta property="og:type" content="article"><meta property="og:title" content="ARP 欺骗"><meta property="og:url" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/"><meta property="og:site_name" content="随心记"><meta property="og:description" content="目标 尝试一次本地 ARP 欺骗攻击，掌握 ARP 协议及其利用。学会使用 ARP 攻击工具并进行分析。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4baninternet.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4bannedinternet2.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/5ipconflict.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6sniffering.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6snifferatob.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6snifferbtoa.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/7pcap1.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/7pcap2.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/2beforesend.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4bannedinternet1.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4bannedinternet3.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4bannedinternet4.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/5ipconflict3.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/5ipconflict4.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/5ipconflict5.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/5ipconflict2.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6sniffering2.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6sniffering3.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6sniffera.jpg"><meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/7pcap4.jpg"><meta property="article:published_time" content="2019-09-28T16:06:00.000Z"><meta property="article:modified_time" content="2023-05-29T04:01:15.176Z"><meta property="article:author" content="Jason Ren"><meta property="article:tag" content="网络空间安全"><meta property="article:tag" content="网络安全"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4baninternet.jpg"><link rel="canonical" href="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/","path":"2019/09/29/experiments/security/web/arp/","title":"ARP 欺骗"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>ARP 欺骗 | 随心记</title><link rel="dns-prefetch" href="https://blog-manage.jason0743.space/"><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript><link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
-</head><body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><div class="column"><header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">随心记</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">展现安全态度</p></div><div class="site-nav-right"><div class="toggle popup-trigger" aria-label="搜索" role="button"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></header><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87"><span class="nav-number">1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ARP%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.1.</span> <span class="nav-text">ARP 协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ARP%E6%AC%BA%E9%AA%97%E6%94%BB%E5%87%BB"><span class="nav-number">2.2.</span> <span class="nav-text">ARP 欺骗攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ARP%E6%AC%BA%E9%AA%97%E6%94%BB%E5%87%BB%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.3.</span> <span class="nav-text">ARP 欺骗攻击的类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">实验过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8ARP%E6%94%BB%E5%87%BB%E5%B7%A5%E5%85%B7%E6%94%BB%E5%87%BB"><span class="nav-number">3.1.</span> <span class="nav-text">使用 ARP 攻击工具攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E4%B8%8A%E7%BD%91"><span class="nav-number">3.1.1.</span> <span class="nav-text">禁止上网</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IP%E5%86%B2%E7%AA%81"><span class="nav-number">3.1.2.</span> <span class="nav-text">IP 冲突</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BA%BA%E6%94%BB%E5%87%BB"><span class="nav-number">3.1.3.</span> <span class="nav-text">中间人攻击</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E8%BF%9B%E8%A1%8CARP%E6%94%BB%E5%87%BB"><span class="nav-number">3.2.</span> <span class="nav-text">编程进行 ARP 攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%8F%8A%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">实验结果及分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%9C%AC%E6%9C%BA-A-%E7%9A%84ARP%E7%BC%93%E5%AD%98%E8%A1%A8"><span class="nav-number">4.1.</span> <span class="nav-text">查看本机 (A) 的 ARP 缓存表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E4%B8%8A%E7%BD%91-2"><span class="nav-number">4.2.</span> <span class="nav-text">禁止上网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP%E5%86%B2%E7%AA%81-2"><span class="nav-number">4.3.</span> <span class="nav-text">IP 冲突</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BA%BA%E6%94%BB%E5%87%BB-2"><span class="nav-number">4.4.</span> <span class="nav-text">中间人攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Winpcap-%E7%BC%96%E7%A8%8B%E6%94%BB%E5%87%BB"><span class="nav-number">4.5.</span> <span class="nav-text">Winpcap 编程攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E4%BD%BF%E7%94%A8%E6%96%B9%E9%9D%A2"><span class="nav-number">5.1.</span> <span class="nav-text">软件使用方面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ARP%E7%9F%A5%E8%AF%86%E6%96%B9%E9%9D%A2"><span class="nav-number">5.2.</span> <span class="nav-text">ARP 知识方面</span></a></li></ol></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png"><p class="site-author-name" itemprop="name">Jason Ren</p><div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div></div><div class="site-state-wrap animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">60</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">46</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">30</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author animated"><span class="links-of-author-item"><a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a> </span><span class="links-of-author-item"><a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a> </span><span class="links-of-author-item"><a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a> </span><span class="links-of-author-item"><a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a></span></div></div></div><div class="back-to-top animated" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside></div><div class="main-inner post posts-expand"><div class="post-block"><article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/"><span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar-v1.png"><meta itemprop="name" content="Jason Ren"></span><span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization"><meta itemprop="name" content="随心记"><meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔"></span><span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="ARP 欺骗 | 随心记"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">ARP 欺骗</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-09-29 00:06:00" itemprop="dateCreated datePublished" datetime="2019-09-29T00:06:00+08:00">2019-09-29</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar-check"></i> </span><span class="post-meta-item-text">更新于</span> <time title="修改时间：2023-05-29 12:01:15" itemprop="dateModified" datetime="2023-05-29T12:01:15+08:00">2023-05-29</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E5%AE%9E%E9%AA%8C/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">网络安全</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E6%BC%8F%E6%B4%9E/" itemprop="url" rel="index"><span itemprop="name">漏洞</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E6%BC%8F%E6%B4%9E/%E5%8D%8F%E8%AE%AE%E6%BC%8F%E6%B4%9E/" itemprop="url" rel="index"><span itemprop="name">协议漏洞</span></a> </span></span><span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span id="busuanzi_value_page_pv"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Waline：</span> <a title="waline" href="/2019/09/29/experiments/security/web/arp/#waline" itemprop="discussionUrl"><span class="post-comments-count waline-comment-count" data-path="/2019/09/29/experiments/security/web/arp/" itemprop="commentCount"></span> </a></span><span class="post-meta-item" title="阅读次数"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="waline-pageview-count" data-path="/2019/09/29/experiments/security/web/arp/"></span> </span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>2.6k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 ≈</span> <span>10 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><h2 id="目标">目标</h2><p>尝试一次本地 ARP 欺骗攻击，掌握 ARP 协议及其利用。学会使用 ARP 攻击工具并进行分析。</p><span id="more"></span><div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p></div><h2 id="原理">原理</h2><h3 id="ARP协议">ARP 协议</h3><p>在网络中，每台主机会有一个 MAC 地址，而每个网络位置会有一个专属于它的 IP 地址。ARP 协议是将 IP 地址解析为 MAC（硬件地址）的协议。IP 地址和 MAC 地址不存在任何简单的映射关系，网络中的主机也在不停变化中，映射关系在不断改变，ARP 协议利用了主机的高速缓冲，维护了一个从 IP 地址到硬件地址的映射表，这个映射表在动态更新。</p><p>若主机 A 要与主机 B 通信，首先会从主机 A 的缓冲中寻找 B 的 IP 地址，如果有，就查出 B 对应的 MAC 地址。若无，就在局域网中广播 ARP 请求（其中有 B 的地址），所有主机都会收到该请求。B 主机收到以后，向 A 主机回复 IP 地址。B 主机也会记录下 A 的 IP 地址和 MAC 地址，以便之后双方高速通信。</p><h3 id="ARP欺骗攻击">ARP 欺骗攻击</h3><p>ARP 高速缓存根据所接收到的 ARP 协议包随时进行动态更新，它是无状态的协议，不会检查自己是否发过请求包，只要收到目标 MAC 是自己的 ARP 响应数据包或 ARP 广播包，都会接受并缓存。<br>ARP 协议没有认证机制，只要接收到的协议包是有效的，主机就无条件地根据协议包的内容刷新本机 ARP 缓存，并不检查该协议包的合法性。 因此攻击者可以随时发送虚假 ARP 包更新被攻击主机上的 ARP 缓存，进行地址欺骗或拒绝服务攻击。</p><h3 id="ARP欺骗攻击的类型">ARP 欺骗攻击的类型</h3><ul><li>拒绝服务攻击：构造响应包，指定协议地址为关键服务的 IP 地址，而 MAC 地址为不存在的虚拟地址。这样，局域网转发给关键服务的数据包都会丢失（因为对应物理地址不存在）。</li><li>广播攻击：构造响应包，其中协议地址为网关 IP，而 MAC 地址为广播地址。如此，所有发往网关的数据包都将被广播出来，可能会占用过大带宽，干扰服务，也会泄露局域网结构。</li><li>MAC 洪泛攻击：攻击者与目标机连接在同一个集线器时，可以将网卡设置为混杂模式，从而能够接收所有经过它的数据流，而不论其目的地址是否是它。当其在交换机不同的端口时，攻击者可向交换机发送大量不同源 MAC 地址的数据包，使得交换机内存不足以存放正确的 MAC 地址和物理端口号的映射关系。交换机降级为集线器模式，从而可以继续使用广播攻击嗅探网络结构。</li><li>中间人攻击：攻击者向目标发送虚假应答包，告诉主机 A“主机 B 的 MAC 地址是 MacC（攻击者 MAC）”，告诉主机 B“主机 A 的 MAC 地址是 MacC（攻击者 MAC）”，此时 A 和 B 间通信的数据均被 C 嗅探，而 A 和 B 不能得知这一点（C 会将数据正确地重定向至正确位置）。</li></ul><h2 id="实验过程">实验过程</h2><h3 id="使用ARP攻击工具攻击">使用 ARP 攻击工具攻击</h3><div class="note info"><p>本实验使用 WinArpAttacker3.7.0 版完成。监测机的两块网卡分别为：192.168.235.1 00-50-56-C0-00-08 192.168.17.1 00-50-56-C0-00-01</p><p>操作系统为 Windows 10 64Bit。</p></div><h4 id="禁止上网">禁止上网</h4><div class="note warning"><p>目标机 (A) 地址为 192.168.235.133 00-0C-29-E7-58-4D</p><p>操作系统 windows2000。</p></div><img data-src="/2019/09/29/experiments/security/web/arp/4baninternet.jpg"><p>在 WinArpAttacker 中，扫描到目标主机后，选择攻击 -&gt; 禁止上网，发现 Attack 处变为”BanGateway”，说明攻击过程已经开始。目标机的上网受到了一定的影响。</p><img data-src="/2019/09/29/experiments/security/web/arp/4bannedinternet2.jpg"><h4 id="IP冲突">IP 冲突</h4><div class="note warning"><p>目标机 (A) 地址为 192.168.235.133 00-0C-29-E7-58-4D</p><p>操作系统 windows2000。</p></div><p>扫描到需要攻击的主机后，选择攻击 -&gt; 定时 IP 冲突（不断 IP 冲突貌似也可以，只是一次发包量的不同，定时 IP 冲突可以方便看到过程），Attack 处变为 IPConflict，证明攻击过程开始。</p><img data-src="/2019/09/29/experiments/security/web/arp/5ipconflict.jpg"><h4 id="中间人攻击">中间人攻击</h4><div class="note warning"><p>目标机 (A) 地址为 192.168.235.133 00-0C-29-E7-58-4D，操作系统 windows2000。</p><p>另外一个被监测机 (B) 地址为 192.168.235.134 00-0C-29-9D-2D-F7，操作系统为 Red Hat Linux Enterprise 7.2 64Bit。</p></div><p>顾名思义，中间人攻击需要有两台主机在互相通信（实验中用的是 ping）。所以布置好另外一台主机，先行测试互 ping 成功后，开启 WinArpAttacker，选择两台要监听的主机，选择攻击 -&gt; 监听主机通讯。Attack 处会变为 SniffHosts。</p><img data-src="/2019/09/29/experiments/security/web/arp/6sniffering.jpg"><p>然后让两个虚拟机之间互相 ping。与此同时打开 wireshark 准备进行抓包分析。</p><img data-src="/2019/09/29/experiments/security/web/arp/6snifferatob.jpg"> <img data-src="/2019/09/29/experiments/security/web/arp/6snifferbtoa.jpg"><h3 id="编程进行ARP攻击">编程进行 ARP 攻击</h3><p>本机安装 winpcap 及其开发包环境，编程运行截图如下：</p><img data-src="/2019/09/29/experiments/security/web/arp/7pcap1.jpg"> <img data-src="/2019/09/29/experiments/security/web/arp/7pcap2.jpg" width="200" height="200"><h2 id="实验结果及分析">实验结果及分析</h2><h3 id="查看本机-A-的ARP缓存表">查看本机 (A) 的 ARP 缓存表</h3><img data-src="/2019/09/29/experiments/security/web/arp/2beforesend.jpg"><p>第一行的 IP 地址恰好是监测机的 IP 之一，MAC 地址也是监测机的硬件地址。类型为动态。此检测结果也表明其与监测机在同一网段下 (192.168.235.*)。</p><h3 id="禁止上网-2">禁止上网</h3><img data-src="/2019/09/29/experiments/security/web/arp/4bannedinternet1.jpg"><p>当执行禁止上网攻击后，靶机的 arp 记录中多了一条 <code>0.0.0.0-&gt;01-01-01-01-01-01</code> 的动态路由。经查阅资料可得知，在这里，0.0.0.0 表示 “本网络的本主机”，也表示默认的路由，即所有不满足路由表其他 IP 要求的路由均由该地址进行处理。本主机的 MAC 地址被指定了一个非法的值（01-01-01-01-01-01），理论上会导致发往本机的所有包均丢失。经观察抓包记录，发现监测机不断在向外部广播请求 <code>192.168.235.2</code> 的地址，然而一直得不到回复。</p><img data-src="/2019/09/29/experiments/security/web/arp/4bannedinternet3.jpg"> <img data-src="/2019/09/29/experiments/security/web/arp/4bannedinternet4.jpg"><div class="note warning"><p>但是，本次测试的这个攻击的强度并没有想象中的大，在虚拟机中也不是所有的网都上不了，可以访问百度主页，只是访问不了贴吧子域名。可能是这部分的缓存完好无损，恰好不需要 0.0.0.0 来默认路由的原因。</p></div><h3 id="IP冲突-2">IP 冲突</h3><img data-src="/2019/09/29/experiments/security/web/arp/5ipconflict3.jpg"><p>查看 arp 列表并没有异常的地方。检查 attacker 软件的日志，发现了在 IP 冲突攻击前，目的机的 MAC 地址被改成了 01-01-01-01-01-01。本地由于开了保护所以又将 MAC 地址改为了目的机的源 MAC 地址。</p><img data-src="/2019/09/29/experiments/security/web/arp/5ipconflict4.jpg"><p>检查抓包记录，发现目标机发送了一次 GARP 请求，从 192.168.235.133 发到了 192.168.235.133，这个请求通常用于确认有没有其他主机的 IP 与它相同。</p><img data-src="/2019/09/29/experiments/security/web/arp/5ipconflict5.jpg"><div class="note danger"><p>感觉不太对，为什么这个截图和禁止上网的那么像，有 GARP 请求但没有 IP Conflict 错误…… 是不是抓包时用错网卡了？</p></div><p>目的机在 IP 冲突开始的一瞬间报了一个错误。除此以外没有别的影响。</p><img data-src="/2019/09/29/experiments/security/web/arp/5ipconflict2.jpg"><h3 id="中间人攻击-2">中间人攻击</h3><p>在靶机开心的互 ping 时，看到 attacker 软件上的日志有了这样两个事件。其中一个是修改目的 IP，监测机 192.168.235.1 在两个主机 192.168.235.133 和 192.168.235.134 间担任了转发者的角色，两个主机并不知道它们通信时 192.168.235.1 在做它们的 “网关”。第二个是修改 MAC 映射，把两个主机的对方 IP 对应的 MAC 地址改成监测机自己的 MAC 网关，这样就实现了对两个机子通信的监听。</p><img data-src="/2019/09/29/experiments/security/web/arp/6sniffering2.jpg"> <img data-src="/2019/09/29/experiments/security/web/arp/6sniffering3.jpg"><p>对两个机子的抓包结果看不到任何监听的痕迹。从两个目标机的角度来看，它们发现不了被监听的痕迹，也没有相关的第三方流量。</p><img data-src="/2019/09/29/experiments/security/web/arp/6sniffera.jpg"><h3 id="Winpcap-编程攻击">Winpcap 编程攻击</h3><img data-src="/2019/09/29/experiments/security/web/arp/7pcap4.jpg"><p>攻击效果如上图，可以看到，成功地实现了 MAC 和 IP 地址的碰撞，它们全部碰撞在同一网关地址 00-50-56-c0-00-08 上，造成了冲突。编程的关键在于 ARP 包的构建，由于 winpcap 提供了发包的 api <code>int pcap_sendpacket(pcap_t *, const u_char *, int)</code>，我们剩下的工作就是构建正确的协议头。</p><ul><li><p>根据 ARP 协议包的构成，我们有</p><figure class="highlight c"><figcaption><span>arp_header.h</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pkt-&gt;eth_hdr.type = htons(<span class="number">0x0806</span>);</span><br><span class="line">pkt-&gt;arp_hdr.hardware_type = htons(<span class="number">0x1</span>);</span><br><span class="line">pkt-&gt;arp_hdr.protocol_type = htons(<span class="number">0x800</span>);</span><br><span class="line">pkt-&gt;arp_hdr.hardware_len = <span class="number">6</span>;</span><br><span class="line">pkt-&gt;arp_hdr.protocol_len = <span class="number">4</span>;</span><br><span class="line">pkt-&gt;arp_hdr.option = htons(<span class="number">0x2</span>);</span><br></pre></td></tr></tbody></table></figure><ul><li><p><code>0x0806</code> 代表该帧封装了 arp 包，硬件类型为以太网 <code>0x1</code>，协议类型为 IP<code>0x0800</code>，硬件地址为 MAC 地址，其长度为 6，协议地址为 IP 地址，其长度为 4，此包封装了 ARP 应答，值为 <code>0x2</code>。<br>然后，在这里，构造 packet 的目标 IP 和 MAC 地址。</p><figure class="highlight c"><figcaption><span>arp.c</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (flag == TO_VICTIM_HOST) {</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; MAC_LEN; i++)</span><br><span class="line">		pkt-&gt;eth_hdr.dst_mac[i] = pkt-&gt;arp_hdr.dst_mac[i] =  VICTIM_MAC[i];</span><br><span class="line">	pkt-&gt;arp_hdr.src_ip = inet_addr(GATEWAY_IP);</span><br><span class="line">	pkt-&gt;arp_hdr.dst_ip = inet_addr(VICTIM_IP);</span><br><span class="line">}</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (flag == TO_VICTIM_GATEWAY) {</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; MAC_LEN; i++)</span><br><span class="line">		pkt-&gt;eth_hdr.dst_mac[i] = pkt-&gt;arp_hdr.dst_mac[i] = GATEWAY_MAC[i];</span><br><span class="line">	pkt-&gt;arp_hdr.src_ip = inet_addr(VICTIM_IP);</span><br><span class="line">	pkt-&gt;arp_hdr.dst_ip = inet_addr(GATEWAY_IP);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li><li><p>最后在一个循环中，不断发出 arp 请求包。</p><figure class="highlight c"><figcaption><span>arp.c</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (<span class="number">1</span>) {</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"Press ctrl+C to stop attack...\n"</span>);</span><br><span class="line">	<span class="keyword">if</span>(attack_host){</span><br><span class="line">		<span class="keyword">if</span> (pcap_sendpacket(handle, (<span class="type">unsigned</span> <span class="type">char</span> *)&amp;pkt_host, <span class="keyword">sizeof</span>(ARP_PKT)) != <span class="number">0</span>)</span><br><span class="line">			<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"\nError sending the packet: \n"</span>, pcap_geterr(handle));</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"attack %s...\n"</span>, VICTIM_IP);</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">if</span>(attack_gateway){</span><br><span class="line">		<span class="keyword">if</span> (pcap_sendpacket(handle, (<span class="type">unsigned</span> <span class="type">char</span> *)&amp;pkt_gateway, <span class="keyword">sizeof</span>(ARP_PKT)) != <span class="number">0</span>)</span><br><span class="line">			<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"\nError sending the packet: \n"</span>, pcap_geterr(handle));</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"attack %s...\n"</span>, GATEWAY_IP);</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li></ul></li></ul><p>前述截图中输出了 attack xxx，说明 ARP 包被成功发送。</p><h2 id="总结">总结</h2><h3 id="软件使用方面">软件使用方面</h3><ol><li>WinArpAttacker 的兼容性在 win10 中略差，启动前需要先行调整为兼容模式，以防止闪退。</li><li>WinArpAttacker 扫描主机时，要注意选择虚拟机所在的 VMware 网卡，否则扫描不到虚拟机，同时要注意仔细核对目标 ip 和 mac 地址，防止其对正常影响的监测机产生影响，误伤到自己或其他无辜的局域网用户。</li></ol><h3 id="ARP知识方面">ARP 知识方面</h3><p>掌握了 ARP 网络包的组成和构建，并尝试在结构体的帮助下，使用 C 语言编程实现 ARP 请求包的发送。</p></div><footer class="post-footer"><div class="reward-container"><div>请我一杯咖啡吧！</div><button>赞赏</button><div class="post-reward"><div><img src="/images/wechatpay.png" alt="Jason Ren 微信"> <span>微信</span></div><div><img src="/images/alipay.jpg" alt="Jason Ren 支付宝"> <span>支付宝</span></div></div></div><div class="post-copyright"><ul><li class="post-copyright-author"><strong>本文作者： </strong>Jason Ren</li><li class="post-copyright-link"><strong>本文链接：</strong> <a href="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/" title="ARP 欺骗">https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/</a></li><li class="post-copyright-license"><strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><div class="followme"><span>欢迎关注我的其它发布渠道</span><div class="social-list"><div class="social-item"><a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-twitter"></i> </span><span class="label">Twitter</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-telegram"></i> </span><span class="label">Telegram</span></a></div><div class="social-item"><span class="social-link"><span class="icon"><i class="fab fa-weixin"></i> </span><span class="label">WeChat</span> </span><img class="social-item-img" src="/images/gongzhonghao.jpg"></div><div class="social-item"><a target="_blank" class="social-link" href="/atom.xml"><span class="icon"><i class="fa fa-rss"></i> </span><span class="label">RSS</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-zhihu"></i> </span><span class="label">知乎</span></a></div></div></div><div class="post-tags"><a href="/tags/%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络空间安全</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络安全</a></div><div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style"><a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a> <a class="a2a_button_facebook"></a> <a class="a2a_button_twitter"></a> <a class="a2a_button_telegram"></a> <a class="a2a_button_douban"></a> <a class="a2a_button_mastodon"></a> <a class="a2a_button_sina_weibo"></a> <a class="a2a_button_wechat"></a></div><div class="post-nav"><div class="post-nav-item"><a href="/2019/09/26/experiments/oskernel/using-rhel-and-gcc/" rel="prev" title="Red Hat Linux 的安装和使用"><i class="fa fa-chevron-left"></i> Red Hat Linux 的安装和使用</a></div><div class="post-nav-item"><a href="/2019/10/08/experiments/security/vulnerability_analysis/shellcode/" rel="next" title="二进制漏洞">二进制漏洞 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="waline"></div></div></main><footer class="footer"><div class="footer-inner"><div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3</a></div><div class="copyright">© 2020 – <span itemprop="copyrightYear">2023</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">Jason Ren</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">96k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">5:50</span></span></div><div class="busuanzi-count"><span class="post-meta-item" id="busuanzi_container_site_uv"><span class="post-meta-item-icon"><i class="fa fa-user"></i> </span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span> </span></span><span class="post-meta-item" id="busuanzi_container_site_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div><div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动</div></div></footer><div class="toggle sidebar-toggle" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><div class="sidebar-dimmer"></div><div class="reading-progress-bar"></div><a role="button" class="book-mark-link book-mark-link-fixed"></a> <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin:130px 106px" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script><script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script><script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2019/09/29/experiments/security/web/arp/"}</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css"><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.waline.el).then(()=>NexT.utils.getScript(CONFIG.waline.libUrl,{condition:window.Waline})).then(()=>Waline.init(Object.assign({},CONFIG.waline,{el:document.querySelector(CONFIG.waline.el)})))})</script><script type="text/javascript" src="/js/bundle.js"></script></body></html>
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+<link rel="preconnect" href="https://fonts.geekzu.org" crossorigin="">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script>
+
+    <meta name="description" content="目标 尝试一次本地 ARP 欺骗攻击，掌握 ARP 协议及其利用。学会使用 ARP 攻击工具并进行分析。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ARP 欺骗">
+<meta property="og:url" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/">
+<meta property="og:site_name" content="随心记">
+<meta property="og:description" content="目标 尝试一次本地 ARP 欺骗攻击，掌握 ARP 协议及其利用。学会使用 ARP 攻击工具并进行分析。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4baninternet.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4bannedinternet2.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/5ipconflict.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6sniffering.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6snifferatob.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6snifferbtoa.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/7pcap1.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/7pcap2.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/2beforesend.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4bannedinternet1.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4bannedinternet3.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4bannedinternet4.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/5ipconflict3.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/5ipconflict4.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/5ipconflict5.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/5ipconflict2.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6sniffering2.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6sniffering3.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/6sniffera.jpg">
+<meta property="og:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/7pcap4.jpg">
+<meta property="article:published_time" content="2019-09-28T16:06:00.000Z">
+<meta property="article:modified_time" content="2023-06-04T08:34:47.163Z">
+<meta property="article:author" content="Jason Ren">
+<meta property="article:tag" content="网络空间安全">
+<meta property="article:tag" content="网络安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/4baninternet.jpg">
+
+
+<link rel="canonical" href="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/","path":"2019/09/29/experiments/security/web/arp/","title":"ARP 欺骗"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ARP 欺骗 | 随心记</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="https://blog-manage.jason0743.space/">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">随心记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">展现安全态度</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87"><span class="nav-number">1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ARP%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.1.</span> <span class="nav-text">ARP 协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ARP%E6%AC%BA%E9%AA%97%E6%94%BB%E5%87%BB"><span class="nav-number">2.2.</span> <span class="nav-text">ARP 欺骗攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ARP%E6%AC%BA%E9%AA%97%E6%94%BB%E5%87%BB%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.3.</span> <span class="nav-text">ARP 欺骗攻击的类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">实验过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8ARP%E6%94%BB%E5%87%BB%E5%B7%A5%E5%85%B7%E6%94%BB%E5%87%BB"><span class="nav-number">3.1.</span> <span class="nav-text">使用 ARP 攻击工具攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E4%B8%8A%E7%BD%91"><span class="nav-number">3.1.1.</span> <span class="nav-text">禁止上网</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IP%E5%86%B2%E7%AA%81"><span class="nav-number">3.1.2.</span> <span class="nav-text">IP 冲突</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BA%BA%E6%94%BB%E5%87%BB"><span class="nav-number">3.1.3.</span> <span class="nav-text">中间人攻击</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E8%BF%9B%E8%A1%8CARP%E6%94%BB%E5%87%BB"><span class="nav-number">3.2.</span> <span class="nav-text">编程进行 ARP 攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%8F%8A%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">实验结果及分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%9C%AC%E6%9C%BA-A-%E7%9A%84ARP%E7%BC%93%E5%AD%98%E8%A1%A8"><span class="nav-number">4.1.</span> <span class="nav-text">查看本机 (A) 的 ARP 缓存表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E4%B8%8A%E7%BD%91-2"><span class="nav-number">4.2.</span> <span class="nav-text">禁止上网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IP%E5%86%B2%E7%AA%81-2"><span class="nav-number">4.3.</span> <span class="nav-text">IP 冲突</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BA%BA%E6%94%BB%E5%87%BB-2"><span class="nav-number">4.4.</span> <span class="nav-text">中间人攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Winpcap-%E7%BC%96%E7%A8%8B%E6%94%BB%E5%87%BB"><span class="nav-number">4.5.</span> <span class="nav-text">Winpcap 编程攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E4%BD%BF%E7%94%A8%E6%96%B9%E9%9D%A2"><span class="nav-number">5.1.</span> <span class="nav-text">软件使用方面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ARP%E7%9F%A5%E8%AF%86%E6%96%B9%E9%9D%A2"><span class="nav-number">5.2.</span> <span class="nav-text">ARP 知识方面</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png">
+  <p class="site-author-name" itemprop="name">Jason Ren</p>
+  <div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-v1.png">
+      <meta itemprop="name" content="Jason Ren">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随心记">
+      <meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔">
+    </span>
+
+    <span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ARP 欺骗 | 随心记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ARP 欺骗
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-29 00:06:00" itemprop="dateCreated datePublished" datetime="2019-09-29T00:06:00+08:00">2019-09-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-06-04 16:34:47" itemprop="dateModified" datetime="2023-06-04T16:34:47+08:00">2023-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">网络安全</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%BC%8F%E6%B4%9E/" itemprop="url" rel="index"><span itemprop="name">漏洞</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%BC%8F%E6%B4%9E/%E5%8D%8F%E8%AE%AE%E6%BC%8F%E6%B4%9E/" itemprop="url" rel="index"><span itemprop="name">协议漏洞</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/09/29/experiments/security/web/arp/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/09/29/experiments/security/web/arp/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/2019/09/29/experiments/security/web/arp/"></span>
+    </span>
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="目标">目标</h2>
+<p>尝试一次本地 ARP 欺骗攻击，掌握 ARP 协议及其利用。学会使用 ARP 攻击工具并进行分析。</p>
+<span id="more"></span>
+<div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p>
+</div>
+<h2 id="原理">原理</h2>
+<h3 id="ARP协议">ARP 协议</h3>
+<p>在网络中，每台主机会有一个 MAC 地址，而每个网络位置会有一个专属于它的 IP 地址。ARP 协议是将 IP 地址解析为 MAC（硬件地址）的协议。IP 地址和 MAC 地址不存在任何简单的映射关系，网络中的主机也在不停变化中，映射关系在不断改变，ARP 协议利用了主机的高速缓冲，维护了一个从 IP 地址到硬件地址的映射表，这个映射表在动态更新。</p>
+<p>若主机 A 要与主机 B 通信，首先会从主机 A 的缓冲中寻找 B 的 IP 地址，如果有，就查出 B 对应的 MAC 地址。若无，就在局域网中广播 ARP 请求（其中有 B 的地址），所有主机都会收到该请求。B 主机收到以后，向 A 主机回复 IP 地址。B 主机也会记录下 A 的 IP 地址和 MAC 地址，以便之后双方高速通信。</p>
+<h3 id="ARP欺骗攻击">ARP 欺骗攻击</h3>
+<p>ARP 高速缓存根据所接收到的 ARP 协议包随时进行动态更新，它是无状态的协议，不会检查自己是否发过请求包，只要收到目标 MAC 是自己的 ARP 响应数据包或 ARP 广播包，都会接受并缓存。<br>
+ARP 协议没有认证机制，只要接收到的协议包是有效的，主机就无条件地根据协议包的内容刷新本机 ARP 缓存，并不检查该协议包的合法性。 因此攻击者可以随时发送虚假 ARP 包更新被攻击主机上的 ARP 缓存，进行地址欺骗或拒绝服务攻击。</p>
+<h3 id="ARP欺骗攻击的类型">ARP 欺骗攻击的类型</h3>
+<ul>
+<li>拒绝服务攻击：构造响应包，指定协议地址为关键服务的 IP 地址，而 MAC 地址为不存在的虚拟地址。这样，局域网转发给关键服务的数据包都会丢失（因为对应物理地址不存在）。</li>
+<li>广播攻击：构造响应包，其中协议地址为网关 IP，而 MAC 地址为广播地址。如此，所有发往网关的数据包都将被广播出来，可能会占用过大带宽，干扰服务，也会泄露局域网结构。</li>
+<li>MAC 洪泛攻击：攻击者与目标机连接在同一个集线器时，可以将网卡设置为混杂模式，从而能够接收所有经过它的数据流，而不论其目的地址是否是它。当其在交换机不同的端口时，攻击者可向交换机发送大量不同源 MAC 地址的数据包，使得交换机内存不足以存放正确的 MAC 地址和物理端口号的映射关系。交换机降级为集线器模式，从而可以继续使用广播攻击嗅探网络结构。</li>
+<li>中间人攻击：攻击者向目标发送虚假应答包，告诉主机 A“主机 B 的 MAC 地址是 MacC（攻击者 MAC）”，告诉主机 B“主机 A 的 MAC 地址是 MacC（攻击者 MAC）”，此时 A 和 B 间通信的数据均被 C 嗅探，而 A 和 B 不能得知这一点（C 会将数据正确地重定向至正确位置）。</li>
+</ul>
+<h2 id="实验过程">实验过程</h2>
+<h3 id="使用ARP攻击工具攻击">使用 ARP 攻击工具攻击</h3>
+<div class="note info"><p>本实验使用 WinArpAttacker3.7.0 版完成。监测机的两块网卡分别为：192.168.235.1 00-50-56-C0-00-08 192.168.17.1 00-50-56-C0-00-01</p>
+<p>操作系统为 Windows 10 64Bit。</p>
+</div>
+<h4 id="禁止上网">禁止上网</h4>
+<div class="note warning"><p>目标机 (A) 地址为 192.168.235.133 00-0C-29-E7-58-4D</p>
+<p>操作系统 windows2000。</p>
+</div>
+<img data-src="/2019/09/29/experiments/security/web/arp/4baninternet.jpg" class="">
+<p>在 WinArpAttacker 中，扫描到目标主机后，选择攻击 -&gt; 禁止上网，发现 Attack 处变为”BanGateway”，说明攻击过程已经开始。目标机的上网受到了一定的影响。</p>
+<img data-src="/2019/09/29/experiments/security/web/arp/4bannedinternet2.jpg" class="">
+<h4 id="IP冲突">IP 冲突</h4>
+<div class="note warning"><p>目标机 (A) 地址为 192.168.235.133 00-0C-29-E7-58-4D</p>
+<p>操作系统 windows2000。</p>
+</div> 
+<p>扫描到需要攻击的主机后，选择攻击 -&gt; 定时 IP 冲突（不断 IP 冲突貌似也可以，只是一次发包量的不同，定时 IP 冲突可以方便看到过程），Attack 处变为 IPConflict，证明攻击过程开始。</p>
+<img data-src="/2019/09/29/experiments/security/web/arp/5ipconflict.jpg" class="">
+<h4 id="中间人攻击">中间人攻击</h4>
+<div class="note warning"><p>目标机 (A) 地址为 192.168.235.133 00-0C-29-E7-58-4D，操作系统 windows2000。</p>
+<p>另外一个被监测机 (B) 地址为 192.168.235.134 00-0C-29-9D-2D-F7，操作系统为 Red Hat Linux Enterprise 7.2 64Bit。</p>
+</div>
+<p>顾名思义，中间人攻击需要有两台主机在互相通信（实验中用的是 ping）。所以布置好另外一台主机，先行测试互 ping 成功后，开启 WinArpAttacker，选择两台要监听的主机，选择攻击 -&gt; 监听主机通讯。Attack 处会变为 SniffHosts。</p>
+<img data-src="/2019/09/29/experiments/security/web/arp/6sniffering.jpg" class="">
+<p>然后让两个虚拟机之间互相 ping。与此同时打开 wireshark 准备进行抓包分析。</p>
+<img data-src="/2019/09/29/experiments/security/web/arp/6snifferatob.jpg" class=""> <img data-src="/2019/09/29/experiments/security/web/arp/6snifferbtoa.jpg" class="">
+<h3 id="编程进行ARP攻击">编程进行 ARP 攻击</h3>
+<p>本机安装 winpcap 及其开发包环境，编程运行截图如下：</p>
+<img data-src="/2019/09/29/experiments/security/web/arp/7pcap1.jpg" class="">
+<img data-src="/2019/09/29/experiments/security/web/arp/7pcap2.jpg" class="" width="200" height="200">
+<h2 id="实验结果及分析">实验结果及分析</h2>
+<h3 id="查看本机-A-的ARP缓存表">查看本机 (A) 的 ARP 缓存表</h3>
+<img data-src="/2019/09/29/experiments/security/web/arp/2beforesend.jpg" class="">
+<p>第一行的 IP 地址恰好是监测机的 IP 之一，MAC 地址也是监测机的硬件地址。类型为动态。此检测结果也表明其与监测机在同一网段下 (192.168.235.*)。</p>
+<h3 id="禁止上网-2">禁止上网</h3>
+<img data-src="/2019/09/29/experiments/security/web/arp/4bannedinternet1.jpg" class="">
+<p>当执行禁止上网攻击后，靶机的 arp 记录中多了一条 <code>0.0.0.0-&gt;01-01-01-01-01-01</code> 的动态路由。经查阅资料可得知，在这里，0.0.0.0 表示 “本网络的本主机”，也表示默认的路由，即所有不满足路由表其他 IP 要求的路由均由该地址进行处理。本主机的 MAC 地址被指定了一个非法的值（01-01-01-01-01-01），理论上会导致发往本机的所有包均丢失。经观察抓包记录，发现监测机不断在向外部广播请求 <code>192.168.235.2</code> 的地址，然而一直得不到回复。</p>
+<img data-src="/2019/09/29/experiments/security/web/arp/4bannedinternet3.jpg" class=""> <img data-src="/2019/09/29/experiments/security/web/arp/4bannedinternet4.jpg" class="">
+<div class="note warning"><p>但是，本次测试的这个攻击的强度并没有想象中的大，在虚拟机中也不是所有的网都上不了，可以访问百度主页，只是访问不了贴吧子域名。可能是这部分的缓存完好无损，恰好不需要 0.0.0.0 来默认路由的原因。</p>
+</div>
+<h3 id="IP冲突-2">IP 冲突</h3>
+<img data-src="/2019/09/29/experiments/security/web/arp/5ipconflict3.jpg" class="">
+<p>查看 arp 列表并没有异常的地方。检查 attacker 软件的日志，发现了在 IP 冲突攻击前，目的机的 MAC 地址被改成了 01-01-01-01-01-01。本地由于开了保护所以又将 MAC 地址改为了目的机的源 MAC 地址。</p>
+<img data-src="/2019/09/29/experiments/security/web/arp/5ipconflict4.jpg" class=""> 
+<p>检查抓包记录，发现目标机发送了一次 GARP 请求，从 192.168.235.133 发到了 192.168.235.133，这个请求通常用于确认有没有其他主机的 IP 与它相同。</p>
+<img data-src="/2019/09/29/experiments/security/web/arp/5ipconflict5.jpg" class="">
+<div class="note danger"><p>感觉不太对，为什么这个截图和禁止上网的那么像，有 GARP 请求但没有 IP Conflict 错误…… 是不是抓包时用错网卡了？</p>
+</div>
+<p>目的机在 IP 冲突开始的一瞬间报了一个错误。除此以外没有别的影响。</p>
+<img data-src="/2019/09/29/experiments/security/web/arp/5ipconflict2.jpg" class="">
+<h3 id="中间人攻击-2">中间人攻击</h3>
+<p>在靶机开心的互 ping 时，看到 attacker 软件上的日志有了这样两个事件。其中一个是修改目的 IP，监测机 192.168.235.1 在两个主机 192.168.235.133 和 192.168.235.134 间担任了转发者的角色，两个主机并不知道它们通信时 192.168.235.1 在做它们的 “网关”。第二个是修改 MAC 映射，把两个主机的对方 IP 对应的 MAC 地址改成监测机自己的 MAC 网关，这样就实现了对两个机子通信的监听。</p>
+<img data-src="/2019/09/29/experiments/security/web/arp/6sniffering2.jpg" class="">
+<img data-src="/2019/09/29/experiments/security/web/arp/6sniffering3.jpg" class="">
+<p>对两个机子的抓包结果看不到任何监听的痕迹。从两个目标机的角度来看，它们发现不了被监听的痕迹，也没有相关的第三方流量。</p>
+
+<img data-src="/2019/09/29/experiments/security/web/arp/6sniffera.jpg" class="">
+<h3 id="Winpcap-编程攻击">Winpcap 编程攻击</h3>
+<img data-src="/2019/09/29/experiments/security/web/arp/7pcap4.jpg" class="">
+<p>攻击效果如上图，可以看到，成功地实现了 MAC 和 IP 地址的碰撞，它们全部碰撞在同一网关地址 00-50-56-c0-00-08 上，造成了冲突。编程的关键在于 ARP 包的构建，由于 winpcap 提供了发包的 api <code>int pcap_sendpacket(pcap_t *, const u_char *, int)</code>，我们剩下的工作就是构建正确的协议头。</p>
+<ul>
+<li>
+<p>根据 ARP 协议包的构成，我们有</p>
+  <figure class="highlight c"><figcaption><span>arp_header.h</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pkt-&gt;eth_hdr.type = htons(<span class="number">0x0806</span>);</span><br><span class="line">pkt-&gt;arp_hdr.hardware_type = htons(<span class="number">0x1</span>);</span><br><span class="line">pkt-&gt;arp_hdr.protocol_type = htons(<span class="number">0x800</span>);</span><br><span class="line">pkt-&gt;arp_hdr.hardware_len = <span class="number">6</span>;</span><br><span class="line">pkt-&gt;arp_hdr.protocol_len = <span class="number">4</span>;</span><br><span class="line">pkt-&gt;arp_hdr.option = htons(<span class="number">0x2</span>);</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>
+<p><code>0x0806</code> 代表该帧封装了 arp 包，硬件类型为以太网 <code>0x1</code>，协议类型为 IP<code>0x0800</code>，硬件地址为 MAC 地址，其长度为 6，协议地址为 IP 地址，其长度为 4，此包封装了 ARP 应答，值为 <code>0x2</code>。<br>
+然后，在这里，构造 packet 的目标 IP 和 MAC 地址。</p>
+  <figure class="highlight c"><figcaption><span>arp.c</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (flag == TO_VICTIM_HOST) {</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; MAC_LEN; i++)</span><br><span class="line">		pkt-&gt;eth_hdr.dst_mac[i] = pkt-&gt;arp_hdr.dst_mac[i] =  VICTIM_MAC[i];</span><br><span class="line">	pkt-&gt;arp_hdr.src_ip = inet_addr(GATEWAY_IP);</span><br><span class="line">	pkt-&gt;arp_hdr.dst_ip = inet_addr(VICTIM_IP);</span><br><span class="line">}</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (flag == TO_VICTIM_GATEWAY) {</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; MAC_LEN; i++)</span><br><span class="line">		pkt-&gt;eth_hdr.dst_mac[i] = pkt-&gt;arp_hdr.dst_mac[i] = GATEWAY_MAC[i];</span><br><span class="line">	pkt-&gt;arp_hdr.src_ip = inet_addr(VICTIM_IP);</span><br><span class="line">	pkt-&gt;arp_hdr.dst_ip = inet_addr(GATEWAY_IP);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>最后在一个循环中，不断发出 arp 请求包。</p>
+  <figure class="highlight c"><figcaption><span>arp.c</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (<span class="number">1</span>) {</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"Press ctrl+C to stop attack...\n"</span>);</span><br><span class="line">	<span class="keyword">if</span>(attack_host){</span><br><span class="line">		<span class="keyword">if</span> (pcap_sendpacket(handle, (<span class="type">unsigned</span> <span class="type">char</span> *)&amp;pkt_host, <span class="keyword">sizeof</span>(ARP_PKT)) != <span class="number">0</span>)</span><br><span class="line">			<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"\nError sending the packet: \n"</span>, pcap_geterr(handle));</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"attack %s...\n"</span>, VICTIM_IP);</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">if</span>(attack_gateway){</span><br><span class="line">		<span class="keyword">if</span> (pcap_sendpacket(handle, (<span class="type">unsigned</span> <span class="type">char</span> *)&amp;pkt_gateway, <span class="keyword">sizeof</span>(ARP_PKT)) != <span class="number">0</span>)</span><br><span class="line">			<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"\nError sending the packet: \n"</span>, pcap_geterr(handle));</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"attack %s...\n"</span>, GATEWAY_IP);</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p>前述截图中输出了 attack xxx，说明 ARP 包被成功发送。</p>
+<h2 id="总结">总结</h2>
+<h3 id="软件使用方面">软件使用方面</h3>
+<ol>
+<li>WinArpAttacker 的兼容性在 win10 中略差，启动前需要先行调整为兼容模式，以防止闪退。</li>
+<li>WinArpAttacker 扫描主机时，要注意选择虚拟机所在的 VMware 网卡，否则扫描不到虚拟机，同时要注意仔细核对目标 ip 和 mac 地址，防止其对正常影响的监测机产生影响，误伤到自己或其他无辜的局域网用户。</li>
+</ol>
+<h3 id="ARP知识方面">ARP 知识方面</h3>
+<p>掌握了 ARP 网络包的组成和构建，并尝试在结构体的帮助下，使用 C 语言编程实现 ARP 请求包的发送。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="Jason Ren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Jason Ren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Jason Ren
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/" title="ARP 欺骗">https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-twitter"></i>
+            </span>
+
+            <span class="label">Twitter</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-telegram"></i>
+            </span>
+
+            <span class="label">Telegram</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <span class="social-link">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </span>
+
+          <img class="social-item-img" src="/images/gongzhonghao.jpg">
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-zhihu"></i>
+            </span>
+
+            <span class="label">知乎</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络空间安全</a>
+              <a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络安全</a>
+          </div>
+
+        
+  <div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a>
+      <a class="a2a_button_facebook"></a>
+      <a class="a2a_button_twitter"></a>
+      <a class="a2a_button_telegram"></a>
+      <a class="a2a_button_douban"></a>
+      <a class="a2a_button_mastodon"></a>
+      <a class="a2a_button_sina_weibo"></a>
+      <a class="a2a_button_wechat"></a>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/09/26/experiments/oskernel/using-rhel-and-gcc/" rel="prev" title="Red Hat Linux 的安装和使用">
+                  <i class="fa fa-chevron-left"></i> Red Hat Linux 的安装和使用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/10/08/experiments/security/vulnerability_analysis/shellcode/" rel="next" title="二进制漏洞">
+                  二进制漏洞 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3 </a>
+  </div>
+
+<div class="copyright">
+  © 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason Ren</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">96k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:50</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script>
+  
+
+
+  
+
+  
+
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2019/09/29/experiments/security/web/arp/"}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+
+
+<script type="text/javascript" src="/js/bundle.js"></script></body></html>

@@ -1,2 +1,720 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0"><link rel="preconnect" href="https://fonts.geekzu.org" crossorigin=""><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin=""><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script><script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><meta name="description" content="目的 了解入侵检测的基本原理，尝试在 Windows XP 下配置 Snort IDS 并完成基于 Snort 的攻击检测。尝试利用 Snort 规则语法自己编写简单的 Snort 规则。"><meta property="og:type" content="article"><meta property="og:title" content="入侵检测"><meta property="og:url" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/"><meta property="og:site_name" content="随心记"><meta property="og:description" content="目的 了解入侵检测的基本原理，尝试在 Windows XP 下配置 Snort IDS 并完成基于 Snort 的攻击检测。尝试利用 Snort 规则语法自己编写简单的 Snort 规则。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/0.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/1.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/2.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/3.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/4.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/6.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/7.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/8.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/9.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/10.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/11.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/12.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/13.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/14.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/15.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/16.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/17.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/18.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/19.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/20.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/21.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/22.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/24.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/25.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/26.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/27.png"><meta property="article:published_time" content="2019-11-25T12:12:01.000Z"><meta property="article:modified_time" content="2023-05-29T04:01:15.192Z"><meta property="article:author" content="Jason Ren"><meta property="article:tag" content="网络空间安全"><meta property="article:tag" content="网络安全"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/0.png"><link rel="canonical" href="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/","path":"2019/11/25/experiments/security/web/ids/","title":"入侵检测"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>入侵检测 | 随心记</title><link rel="dns-prefetch" href="https://blog-manage.jason0743.space/"><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript><link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
-</head><body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><div class="column"><header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">随心记</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">展现安全态度</p></div><div class="site-nav-right"><div class="toggle popup-trigger" aria-label="搜索" role="button"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></header><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8B%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.</span> <span class="nav-text">入侵检测定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Snort%E8%BD%AF%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">Snort 软件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">实验过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AESnort%E7%8E%AF%E5%A2%83"><span class="nav-number">3.1.</span> <span class="nav-text">配置 Snort 环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0UDP%E8%A7%84%E5%88%99"><span class="nav-number">3.2.</span> <span class="nav-text">添加 UDP 规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AB%E4%B9%89"><span class="nav-number">3.2.1.</span> <span class="nav-text">含义</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%8F%8A%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">实验结果及分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%B7%B1%E7%BC%96%E5%86%99Snort%E8%A7%84%E5%88%99%EF%BC%9Amytelnet-rules"><span class="nav-number">4.1.</span> <span class="nav-text">自己编写 Snort 规则：mytelnet.rules</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8Snort%E6%A3%80%E6%B5%8B%E7%BD%91%E7%BB%9C%E6%89%AB%E6%8F%8F%E6%94%BB%E5%87%BB"><span class="nav-number">4.2.</span> <span class="nav-text">利用 Snort 检测网络扫描攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">6.</span> <span class="nav-text">补充</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png"><p class="site-author-name" itemprop="name">Jason Ren</p><div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div></div><div class="site-state-wrap animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">60</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">46</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">30</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author animated"><span class="links-of-author-item"><a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a> </span><span class="links-of-author-item"><a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a> </span><span class="links-of-author-item"><a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a> </span><span class="links-of-author-item"><a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a></span></div></div></div><div class="back-to-top animated" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside></div><div class="main-inner post posts-expand"><div class="post-block"><article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/"><span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar-v1.png"><meta itemprop="name" content="Jason Ren"></span><span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization"><meta itemprop="name" content="随心记"><meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔"></span><span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="入侵检测 | 随心记"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">入侵检测</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-11-25 20:12:01" itemprop="dateCreated datePublished" datetime="2019-11-25T20:12:01+08:00">2019-11-25</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar-check"></i> </span><span class="post-meta-item-text">更新于</span> <time title="修改时间：2023-05-29 12:01:15" itemprop="dateModified" datetime="2023-05-29T12:01:15+08:00">2023-05-29</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E5%AE%9E%E9%AA%8C/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">网络安全</span></a> </span></span><span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span id="busuanzi_value_page_pv"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Waline：</span> <a title="waline" href="/2019/11/25/experiments/security/web/ids/#waline" itemprop="discussionUrl"><span class="post-comments-count waline-comment-count" data-path="/2019/11/25/experiments/security/web/ids/" itemprop="commentCount"></span> </a></span><span class="post-meta-item" title="阅读次数"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="waline-pageview-count" data-path="/2019/11/25/experiments/security/web/ids/"></span> </span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>1.9k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 ≈</span> <span>7 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><h2 id="目的">目的</h2><p>了解入侵检测的基本原理，尝试在 Windows XP 下配置 Snort IDS 并完成基于 Snort 的攻击检测。尝试利用 Snort 规则语法自己编写简单的 Snort 规则。</p><span id="more"></span><div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p></div><h2 id="原理">原理</h2><h3 id="入侵检测定义">入侵检测定义</h3><p>入侵检测是防火墙的合理补充，帮助系统对付网络攻击，扩展了系统管理员的安全管理能力 (包括安全审计、监视、进攻识别和响应)，提高了信息安全基础结构的完整性。它从计算机网络系统中的若干关键点收集信息，并分析这些信息，看看网络中是否有违反安全策略的行为和遭到袭击的迹象。入侵检测被认为是防火墙之后的第二道安全闸门，在不影响网络性能的情况下能对网络进行监测，从而提供对内部攻击、外部攻击和误操作的实时保护。</p><h3 id="Snort软件">Snort 软件</h3><p><a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.snort.org/">Snort</a> 是由 Sourcefire 开发的一个开源的网络入侵检测系统。用 C 语言编写的开放源代码软件。它是一个跨平台、轻量级的网络入侵检测软件。它结合了协议、特征和基于异常的检测，是目前使用最多的 IDS/IPS 系统。</p><p>一条 snort 规则包括包含规则头和规则选项两部分；snort 规则如下：</p><ol><li>Snort 规则应写在一行，若需多行，应用 <code>\</code> 来拆分。</li><li>规则头包含规则的动作，协议，源和目标的 IP 地址和端口信息</li><li>规则选项部分包含细节、具体的描述和约定。</li></ol><h2 id="实验过程">实验过程</h2><h3 id="配置Snort环境">配置 Snort 环境</h3><p>首先装好 Snort 软件。用 <code>snort -W</code> 命令测试安装正确性</p><img data-src="/2019/11/25/experiments/security/web/ids/0.png" width="200" height="200"> <img data-src="/2019/11/25/experiments/security/web/ids/1.png" width="200" height="200" title="界面上显示了“小猪嘴”和版本号，即宣告安装成功"><ul><li><p>运行 <code>snort -i 1</code> 可以进入嗅探模式，显示如下</p><img data-src="/2019/11/25/experiments/security/web/ids/2.png" width="250" height="250"></li><li><p>运行 <code>snort -de -1</code> 进入的是数据包记录器模式。我把日志记录在了 C 盘的 Snort/log 文件夹下，此文件可以用 Wireshark 打开。</p><img data-src="/2019/11/25/experiments/security/web/ids/3.png"> <img data-src="/2019/11/25/experiments/security/web/ids/4.png"></li><li><p>根据实验指导书做一些配置修改后，用以下命令启动攻击检测模式。</p><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">snort -c <span class="string">"path/to/snort.conf"</span> -l <span class="string">"path/to/logdir"</span></span><br></pre></td></tr></tbody></table></figure><ul><li>此时开始了攻击检测模式，可以到 <code>C:/Snort/log</code> 下查看告警日志。 <img data-src="/2019/11/25/experiments/security/web/ids/6.png" width="200" height="200"> <img data-src="/2019/11/25/experiments/security/web/ids/7.png" width="200" height="200"></li><li>不过里面没有 UDP 包告警的相关的信息…… 是因为默认的社区规则里面并没有针对这个情况进行专门配置 <img data-src="/2019/11/25/experiments/security/web/ids/8.png" width="200" height="200"></li></ul></li></ul><h3 id="添加UDP规则">添加 UDP 规则</h3><ol><li><p>在本地添加一条 UDP 规则</p><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert udp any any &lt;&gt;$HOME_NET any (msg:”udp ids/dns-version-query”;content:”version”;)</span><br></pre></td></tr></tbody></table></figure><div class="note info"><h4 id="含义">含义</h4><p>这条规则的含义是：对一条 UDP 规则生成一条警报并记录这个包，此规则针对任意 UDP 协议的非本地任何地址任何端口双方向（HOME_NET 在 snort.conf 中有配置，应该配置为本机的地址），发送一条信息，内容为”udp ids/dns-version-query”，包含”version” 字符即匹配</p></div><img data-src="/2019/11/25/experiments/security/web/ids/9.png"></li><li><p>由上图得知，我的电脑的 <code>HOME_NET</code> 值应该为 192.168.235.136。将规则加入 local.rules 中，注释掉其他的 rules，只运行自己写的 rules。</p><img data-src="/2019/11/25/experiments/security/web/ids/10.png"><div class="note warning"><p>最终规则语句调整为 <code>alert udp any any &lt;&gt; $HOME_NET any (sid:xxxx;msg:"udp ids/dns-version-query";content:"version";)</code>，<code>&lt;&gt;</code> 两侧必须有空格，每条规则必须有一个 sid 值，msg 必须包含在英文引号中。</p></div></li><li><p>在另一台虚拟机上运行 UDP Flood 工具，对 135 端口进行扫描攻击。注意所发的信息要包含<code>”version”</code> 字符串，才会有报警（否则不会匹配规则）。</p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/11.png"></div><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/12.png"></div></div></div><ul><li>alert.ids 和同期所记录 log 用 wireshark 打开的结果如上图所示。</li></ul></li></ol><h2 id="实验结果及分析">实验结果及分析</h2><h3 id="自己编写Snort规则：mytelnet-rules">自己编写 Snort 规则：<code>mytelnet.rules</code></h3><div class="note info"><p>要求：记录外网对内网的 Telnet 连接企图，并发出下面的警告：External net attempt to access internal telnet server。</p></div><ul><li><p>根据 snort 规则的相关编写知识，得到相应的 snort 规则应该为：</p><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert tcp !$HOME_NET any -&gt; $HOME_NET 23 (msg:"External net attempt to access internal telnet server";sid:xxxx;)</span><br></pre></td></tr></tbody></table></figure><img data-src="/2019/11/25/experiments/security/web/ids/13.png" width="200" height="200"></li><li><p>装入 local.rules 进行测试，然后用外网 telnet snort 所在的虚拟机地址。测试结果如下：（测试机需要事先开启 telnet 服务）</p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/14.png"></div><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/15.png"></div><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/16.png"></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/17.png"></div></div></div><p>果然在 <code>alert.ids</code> 中有相应记录</p></li></ul><h3 id="利用Snort检测网络扫描攻击">利用 Snort 检测网络扫描攻击</h3><p>为使 snort 具备端口扫描检测的能力，需要启用端口扫描检测插件，在 snort 中，这类插件通常通过预处理器的方式提供。</p><ul><li><p>在 <code>snort.conf</code> 中，找到 <code>sfportscan</code> 预处理器，把注释去掉以开启这个预处理器。 <img data-src="/2019/11/25/experiments/security/web/ids/18.png"></p><div class="note info"><p>其中 proto 参数代表欲检测的协议，取值有 tcp udp icmp ip all，各参数间空格分开，这里写 all 就行。 Memcap 代表分配给端口扫描的最大字节数，数字越高，越多节点可以被跟踪。Sense_level 用于检测端口扫描的敏感度水平。取值有 low medium high 三种。low 级别使用通用方法来查找响应错误，medium 会检测端口扫描和过滤端口扫描（那些没有收到响应的端口扫描），high 级别有最小的端口检测限制。这里设为了 high。除此以外，还有 scan_type、logfile、watchip、ignore_scanners 配置项，对于本实验的需求不大。</p></div></li></ul><ol><li><p>在一台攻击机上启动 nmap 进行扫描。同时在目标机上启动 snort。 <img data-src="/2019/11/25/experiments/security/web/ids/19.png"> <img data-src="/2019/11/25/experiments/security/web/ids/20.png"> <img data-src="/2019/11/25/experiments/security/web/ids/21.png"> <img data-src="/2019/11/25/experiments/security/web/ids/22.png"></p></li><li><p>结果只检测出了上述三个有效信息，没有像预期那样检测到扫描工具扫描的痕迹。</p><div class="note warning"><p>预期可能会检测出类似于 SCAN UPnP service discover attempt 这样的信息，可能是规则配置不力（忘记取消注释或者规则语句错误），或者是扫描行为不匹配当前本地已启用规则所致？</p></div></li></ol><h2 id="总结">总结</h2><p>通过几个小的 snort 配置实验，我对基于 snort 的入侵检测有了初步的了解，学习书写了几个简单的 snort 规则并测试其应用过后报警的效果。这个输出格式一般为：</p><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[**] [1:sid:rev] "msg" [**]</span><br><span class="line">[Classfication] [Priority:&lt;priority&gt;]</span><br><span class="line">[time] [from[ip:port]-&gt;dest[ip:port]]</span><br><span class="line">[protocol] [ttl] [tos] [id] [iplen] [dgmlen] [flags]</span><br><span class="line">[各协议包额外信息]</span><br></pre></td></tr></tbody></table></figure><h2 id="补充">补充</h2><p>重新使用其他扫描工具完成端口扫描实验，发现可以成功检测。说明上述检测不成功的原因应该是扫描动作与预期规则不匹配。我使用了 Nessus 3 版本完成了这一部分的实验。 <img data-src="/2019/11/25/experiments/security/web/ids/24.png"></p><ol><li><p>同时开启被扫描端的 snort，发现除了有尝试执行 shellcode 以外 (这个原来用 nmap 扫的时候也扫到了) 还发出了 SCAN 的警告，分类信息显示为 Attempted information leak（尝试泄露信息），基本可以确认 nessus 发出的扫描被我们检测出来了。 <img data-src="/2019/11/25/experiments/security/web/ids/25.png"> <img data-src="/2019/11/25/experiments/security/web/ids/26.png"></p></li><li><p>此扫描还尝试利用 NETBIOS 登录来取得用户权限，以获取后续漏洞信息。 <img data-src="/2019/11/25/experiments/security/web/ids/27.png"></p></li></ol></div><footer class="post-footer"><div class="reward-container"><div>请我一杯咖啡吧！</div><button>赞赏</button><div class="post-reward"><div><img src="/images/wechatpay.png" alt="Jason Ren 微信"> <span>微信</span></div><div><img src="/images/alipay.jpg" alt="Jason Ren 支付宝"> <span>支付宝</span></div></div></div><div class="post-copyright"><ul><li class="post-copyright-author"><strong>本文作者： </strong>Jason Ren</li><li class="post-copyright-link"><strong>本文链接：</strong> <a href="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/" title="入侵检测">https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/</a></li><li class="post-copyright-license"><strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><div class="followme"><span>欢迎关注我的其它发布渠道</span><div class="social-list"><div class="social-item"><a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-twitter"></i> </span><span class="label">Twitter</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-telegram"></i> </span><span class="label">Telegram</span></a></div><div class="social-item"><span class="social-link"><span class="icon"><i class="fab fa-weixin"></i> </span><span class="label">WeChat</span> </span><img class="social-item-img" src="/images/gongzhonghao.jpg"></div><div class="social-item"><a target="_blank" class="social-link" href="/atom.xml"><span class="icon"><i class="fa fa-rss"></i> </span><span class="label">RSS</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-zhihu"></i> </span><span class="label">知乎</span></a></div></div></div><div class="post-tags"><a href="/tags/%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络空间安全</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络安全</a></div><div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style"><a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a> <a class="a2a_button_facebook"></a> <a class="a2a_button_twitter"></a> <a class="a2a_button_telegram"></a> <a class="a2a_button_douban"></a> <a class="a2a_button_mastodon"></a> <a class="a2a_button_sina_weibo"></a> <a class="a2a_button_wechat"></a></div><div class="post-nav"><div class="post-nav-item"><a href="/2019/11/24/experiments/oskernel/process-communication/" rel="prev" title="进程通信实验"><i class="fa fa-chevron-left"></i> 进程通信实验</a></div><div class="post-nav-item"><a href="/2019/11/29/experiments/security/software/fuzzing/" rel="next" title="漏洞挖掘与模糊测试">漏洞挖掘与模糊测试 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="waline"></div></div></main><footer class="footer"><div class="footer-inner"><div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3</a></div><div class="copyright">© 2020 – <span itemprop="copyrightYear">2023</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">Jason Ren</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">96k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">5:50</span></span></div><div class="busuanzi-count"><span class="post-meta-item" id="busuanzi_container_site_uv"><span class="post-meta-item-icon"><i class="fa fa-user"></i> </span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span> </span></span><span class="post-meta-item" id="busuanzi_container_site_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div><div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动</div></div></footer><div class="toggle sidebar-toggle" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><div class="sidebar-dimmer"></div><div class="reading-progress-bar"></div><a role="button" class="book-mark-link book-mark-link-fixed"></a> <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin:130px 106px" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script><script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script><script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2019/11/25/experiments/security/web/ids/"}</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css"><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.waline.el).then(()=>NexT.utils.getScript(CONFIG.waline.libUrl,{condition:window.Waline})).then(()=>Waline.init(Object.assign({},CONFIG.waline,{el:document.querySelector(CONFIG.waline.el)})))})</script><script type="text/javascript" src="/js/bundle.js"></script></body></html>
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+<link rel="preconnect" href="https://fonts.geekzu.org" crossorigin="">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script>
+
+    <meta name="description" content="目的 了解入侵检测的基本原理，尝试在 Windows XP 下配置 Snort IDS 并完成基于 Snort 的攻击检测。尝试利用 Snort 规则语法自己编写简单的 Snort 规则。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="入侵检测">
+<meta property="og:url" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/">
+<meta property="og:site_name" content="随心记">
+<meta property="og:description" content="目的 了解入侵检测的基本原理，尝试在 Windows XP 下配置 Snort IDS 并完成基于 Snort 的攻击检测。尝试利用 Snort 规则语法自己编写简单的 Snort 规则。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/0.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/1.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/3.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/4.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/6.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/7.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/8.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/9.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/10.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/11.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/12.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/13.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/14.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/15.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/16.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/17.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/18.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/19.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/20.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/21.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/22.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/24.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/25.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/26.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/27.png">
+<meta property="article:published_time" content="2019-11-25T12:12:01.000Z">
+<meta property="article:modified_time" content="2023-06-04T08:34:47.179Z">
+<meta property="article:author" content="Jason Ren">
+<meta property="article:tag" content="网络空间安全">
+<meta property="article:tag" content="网络安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/0.png">
+
+
+<link rel="canonical" href="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/","path":"2019/11/25/experiments/security/web/ids/","title":"入侵检测"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>入侵检测 | 随心记</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="https://blog-manage.jason0743.space/">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">随心记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">展现安全态度</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8B%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.</span> <span class="nav-text">入侵检测定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Snort%E8%BD%AF%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">Snort 软件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">实验过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AESnort%E7%8E%AF%E5%A2%83"><span class="nav-number">3.1.</span> <span class="nav-text">配置 Snort 环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0UDP%E8%A7%84%E5%88%99"><span class="nav-number">3.2.</span> <span class="nav-text">添加 UDP 规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AB%E4%B9%89"><span class="nav-number">3.2.1.</span> <span class="nav-text">含义</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%8F%8A%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">实验结果及分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%B7%B1%E7%BC%96%E5%86%99Snort%E8%A7%84%E5%88%99%EF%BC%9Amytelnet-rules"><span class="nav-number">4.1.</span> <span class="nav-text">自己编写 Snort 规则：mytelnet.rules</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8Snort%E6%A3%80%E6%B5%8B%E7%BD%91%E7%BB%9C%E6%89%AB%E6%8F%8F%E6%94%BB%E5%87%BB"><span class="nav-number">4.2.</span> <span class="nav-text">利用 Snort 检测网络扫描攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">6.</span> <span class="nav-text">补充</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png">
+  <p class="site-author-name" itemprop="name">Jason Ren</p>
+  <div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-v1.png">
+      <meta itemprop="name" content="Jason Ren">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随心记">
+      <meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔">
+    </span>
+
+    <span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="入侵检测 | 随心记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          入侵检测
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-11-25 20:12:01" itemprop="dateCreated datePublished" datetime="2019-11-25T20:12:01+08:00">2019-11-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-06-04 16:34:47" itemprop="dateModified" datetime="2023-06-04T16:34:47+08:00">2023-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">网络安全</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/11/25/experiments/security/web/ids/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/11/25/experiments/security/web/ids/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/2019/11/25/experiments/security/web/ids/"></span>
+    </span>
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="目的">目的</h2>
+<p>了解入侵检测的基本原理，尝试在 Windows XP 下配置 Snort IDS 并完成基于 Snort 的攻击检测。尝试利用 Snort 规则语法自己编写简单的 Snort 规则。</p>
+<span id="more"></span>
+<div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p>
+</div>
+<h2 id="原理">原理</h2>
+<h3 id="入侵检测定义">入侵检测定义</h3>
+<p>入侵检测是防火墙的合理补充，帮助系统对付网络攻击，扩展了系统管理员的安全管理能力 (包括安全审计、监视、进攻识别和响应)，提高了信息安全基础结构的完整性。它从计算机网络系统中的若干关键点收集信息，并分析这些信息，看看网络中是否有违反安全策略的行为和遭到袭击的迹象。入侵检测被认为是防火墙之后的第二道安全闸门，在不影响网络性能的情况下能对网络进行监测，从而提供对内部攻击、外部攻击和误操作的实时保护。</p>
+<h3 id="Snort软件">Snort 软件</h3>
+<p><a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.snort.org/">Snort</a> 是由 Sourcefire 开发的一个开源的网络入侵检测系统。用 C 语言编写的开放源代码软件。它是一个跨平台、轻量级的网络入侵检测软件。它结合了协议、特征和基于异常的检测，是目前使用最多的 IDS/IPS 系统。</p>
+<p>一条 snort 规则包括包含规则头和规则选项两部分；snort 规则如下：</p>
+<ol>
+<li>Snort 规则应写在一行，若需多行，应用 <code>\</code> 来拆分。</li>
+<li>规则头包含规则的动作，协议，源和目标的 IP 地址和端口信息</li>
+<li>规则选项部分包含细节、具体的描述和约定。</li>
+</ol>
+<h2 id="实验过程">实验过程</h2>
+<h3 id="配置Snort环境">配置 Snort 环境</h3>
+<p>首先装好 Snort 软件。用 <code>snort -W</code> 命令测试安装正确性</p>
+<img data-src="/2019/11/25/experiments/security/web/ids/0.png" class="" width="200" height="200">
+<img data-src="/2019/11/25/experiments/security/web/ids/1.png" class="" width="200" height="200" title="界面上显示了“小猪嘴”和版本号，即宣告安装成功">
+<ul>
+<li>
+<p>运行 <code>snort -i 1</code> 可以进入嗅探模式，显示如下</p>
+  <img data-src="/2019/11/25/experiments/security/web/ids/2.png" class="" width="250" height="250">
+</li>
+<li>
+<p>运行 <code>snort -de -1</code> 进入的是数据包记录器模式。我把日志记录在了 C 盘的 Snort/log 文件夹下，此文件可以用 Wireshark 打开。</p>
+  <img data-src="/2019/11/25/experiments/security/web/ids/3.png" class=""> <img data-src="/2019/11/25/experiments/security/web/ids/4.png" class="">
+</li>
+<li>
+<p>根据实验指导书做一些配置修改后，用以下命令启动攻击检测模式。</p>
+  <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">snort -c <span class="string">"path/to/snort.conf"</span> -l <span class="string">"path/to/logdir"</span></span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>此时开始了攻击检测模式，可以到 <code>C:/Snort/log</code> 下查看告警日志。 <img data-src="/2019/11/25/experiments/security/web/ids/6.png" class="" width="200" height="200"> <img data-src="/2019/11/25/experiments/security/web/ids/7.png" class="" width="200" height="200"></li>
+<li>不过里面没有 UDP 包告警的相关的信息…… 是因为默认的社区规则里面并没有针对这个情况进行专门配置 <img data-src="/2019/11/25/experiments/security/web/ids/8.png" class="" width="200" height="200"></li>
+</ul>
+</li>
+</ul>
+<h3 id="添加UDP规则">添加 UDP 规则</h3>
+<ol>
+<li>
+<p>在本地添加一条 UDP 规则</p>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert udp any any &lt;&gt;$HOME_NET any (msg:”udp ids/dns-version-query”;content:”version”;)</span><br></pre></td></tr></tbody></table></figure>
+ <div class="note info"><h4 id="含义">含义</h4>
+<p>这条规则的含义是：对一条 UDP 规则生成一条警报并记录这个包，此规则针对任意 UDP 协议的非本地任何地址任何端口双方向（HOME_NET 在 snort.conf 中有配置，应该配置为本机的地址），发送一条信息，内容为”udp ids/dns-version-query”，包含”version” 字符即匹配</p>
+</div>
+ <img data-src="/2019/11/25/experiments/security/web/ids/9.png" class="">
+</li>
+<li>
+<p>由上图得知，我的电脑的 <code>HOME_NET</code> 值应该为 192.168.235.136。将规则加入 local.rules 中，注释掉其他的 rules，只运行自己写的 rules。</p>
+ <img data-src="/2019/11/25/experiments/security/web/ids/10.png" class="">
+ <div class="note warning"><p>最终规则语句调整为 <code>alert udp any any &lt;&gt; $HOME_NET any (sid:xxxx;msg:"udp ids/dns-version-query";content:"version";)</code>，<code>&lt;&gt;</code> 两侧必须有空格，每条规则必须有一个 sid 值，msg 必须包含在英文引号中。</p>
+</div>
+</li>
+<li>
+<p>在另一台虚拟机上运行 UDP Flood 工具，对 135 端口进行扫描攻击。注意所发的信息要包含<code>”version”</code> 字符串，才会有报警（否则不会匹配规则）。</p>
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/11.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/12.png" class=""></div></div></div>
+<ul>
+<li>alert.ids 和同期所记录 log 用 wireshark 打开的结果如上图所示。</li>
+</ul>
+</li>
+</ol>
+<h2 id="实验结果及分析">实验结果及分析</h2>
+<h3 id="自己编写Snort规则：mytelnet-rules">自己编写 Snort 规则：<code>mytelnet.rules</code></h3>
+<div class="note info"><p>要求：记录外网对内网的 Telnet 连接企图，并发出下面的警告：External net attempt to access internal telnet server。</p>
+</div>
+<ul>
+<li>
+<p>根据 snort 规则的相关编写知识，得到相应的 snort 规则应该为：</p>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert tcp !$HOME_NET any -&gt; $HOME_NET 23 (msg:"External net attempt to access internal telnet server";sid:xxxx;)</span><br></pre></td></tr></tbody></table></figure>
+  <img data-src="/2019/11/25/experiments/security/web/ids/13.png" class="" width="200" height="200">
+</li>
+<li>
+<p>装入 local.rules 进行测试，然后用外网 telnet snort 所在的虚拟机地址。测试结果如下：（测试机需要事先开启 telnet 服务）</p>
+  <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/14.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/15.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/16.png" class=""></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/17.png" class=""></div></div></div>
+<p>果然在 <code>alert.ids</code> 中有相应记录</p>
+</li>
+</ul>
+<h3 id="利用Snort检测网络扫描攻击">利用 Snort 检测网络扫描攻击</h3>
+<p>为使 snort 具备端口扫描检测的能力，需要启用端口扫描检测插件，在 snort 中，这类插件通常通过预处理器的方式提供。</p>
+<ul>
+<li>
+<p>在 <code>snort.conf</code> 中，找到 <code>sfportscan</code> 预处理器，把注释去掉以开启这个预处理器。 <img data-src="/2019/11/25/experiments/security/web/ids/18.png" class=""></p>
+  <div class="note info"><p>其中 proto 参数代表欲检测的协议，取值有 tcp udp icmp ip all，各参数间空格分开，这里写 all 就行。 Memcap 代表分配给端口扫描的最大字节数，数字越高，越多节点可以被跟踪。Sense_level 用于检测端口扫描的敏感度水平。取值有 low medium high 三种。low 级别使用通用方法来查找响应错误，medium 会检测端口扫描和过滤端口扫描（那些没有收到响应的端口扫描），high 级别有最小的端口检测限制。这里设为了 high。除此以外，还有 scan_type、logfile、watchip、ignore_scanners 配置项，对于本实验的需求不大。</p>
+</div>
+</li>
+</ul>
+<ol>
+<li>
+<p>在一台攻击机上启动 nmap 进行扫描。同时在目标机上启动 snort。 <img data-src="/2019/11/25/experiments/security/web/ids/19.png" class=""> <img data-src="/2019/11/25/experiments/security/web/ids/20.png" class=""> <img data-src="/2019/11/25/experiments/security/web/ids/21.png" class=""> <img data-src="/2019/11/25/experiments/security/web/ids/22.png" class=""></p>
+</li>
+<li>
+<p>结果只检测出了上述三个有效信息，没有像预期那样检测到扫描工具扫描的痕迹。</p>
+ <div class="note warning"><p>预期可能会检测出类似于 SCAN UPnP service discover attempt 这样的信息，可能是规则配置不力（忘记取消注释或者规则语句错误），或者是扫描行为不匹配当前本地已启用规则所致？</p>
+</div>
+</li>
+</ol>
+<h2 id="总结">总结</h2>
+<p>通过几个小的 snort 配置实验，我对基于 snort 的入侵检测有了初步的了解，学习书写了几个简单的 snort 规则并测试其应用过后报警的效果。这个输出格式一般为：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[**] [1:sid:rev] "msg" [**]</span><br><span class="line">[Classfication] [Priority:&lt;priority&gt;]</span><br><span class="line">[time] [from[ip:port]-&gt;dest[ip:port]]</span><br><span class="line">[protocol] [ttl] [tos] [id] [iplen] [dgmlen] [flags]</span><br><span class="line">[各协议包额外信息]</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="补充">补充</h2>
+<p>重新使用其他扫描工具完成端口扫描实验，发现可以成功检测。说明上述检测不成功的原因应该是扫描动作与预期规则不匹配。我使用了 Nessus 3 版本完成了这一部分的实验。 <img data-src="/2019/11/25/experiments/security/web/ids/24.png" class=""></p>
+<ol>
+<li>
+<p>同时开启被扫描端的 snort，发现除了有尝试执行 shellcode 以外 (这个原来用 nmap 扫的时候也扫到了) 还发出了 SCAN 的警告，分类信息显示为 Attempted information leak（尝试泄露信息），基本可以确认 nessus 发出的扫描被我们检测出来了。 <img data-src="/2019/11/25/experiments/security/web/ids/25.png" class=""> <img data-src="/2019/11/25/experiments/security/web/ids/26.png" class=""></p>
+</li>
+<li>
+<p>此扫描还尝试利用 NETBIOS 登录来取得用户权限，以获取后续漏洞信息。 <img data-src="/2019/11/25/experiments/security/web/ids/27.png" class=""></p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="Jason Ren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Jason Ren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Jason Ren
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/" title="入侵检测">https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-twitter"></i>
+            </span>
+
+            <span class="label">Twitter</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-telegram"></i>
+            </span>
+
+            <span class="label">Telegram</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <span class="social-link">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </span>
+
+          <img class="social-item-img" src="/images/gongzhonghao.jpg">
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-zhihu"></i>
+            </span>
+
+            <span class="label">知乎</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络空间安全</a>
+              <a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络安全</a>
+          </div>
+
+        
+  <div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a>
+      <a class="a2a_button_facebook"></a>
+      <a class="a2a_button_twitter"></a>
+      <a class="a2a_button_telegram"></a>
+      <a class="a2a_button_douban"></a>
+      <a class="a2a_button_mastodon"></a>
+      <a class="a2a_button_sina_weibo"></a>
+      <a class="a2a_button_wechat"></a>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/11/24/experiments/oskernel/process-communication/" rel="prev" title="进程通信实验">
+                  <i class="fa fa-chevron-left"></i> 进程通信实验
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/11/29/experiments/security/software/fuzzing/" rel="next" title="漏洞挖掘与模糊测试">
+                  漏洞挖掘与模糊测试 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3 </a>
+  </div>
+
+<div class="copyright">
+  © 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason Ren</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">96k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:50</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script>
+  
+
+
+  
+
+  
+
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2019/11/25/experiments/security/web/ids/"}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+
+
+<script type="text/javascript" src="/js/bundle.js"></script></body></html>

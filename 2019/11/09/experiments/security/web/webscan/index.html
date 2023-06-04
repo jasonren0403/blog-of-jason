@@ -1,15 +1,844 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0"><link rel="preconnect" href="https://fonts.geekzu.org" crossorigin=""><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin=""><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script><script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><meta name="description" content="目标 了解网络扫描的原理和应用，使用 xscan、nmap 或 nessus 其中的任意一种常见的扫描软件对某主机进行端口、服务、漏洞扫描，分析数据包交互过程。"><meta property="og:type" content="article"><meta property="og:title" content="网络扫描"><meta property="og:url" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/"><meta property="og:site_name" content="随心记"><meta property="og:description" content="目标 了解网络扫描的原理和应用，使用 xscan、nmap 或 nessus 其中的任意一种常见的扫描软件对某主机进行端口、服务、漏洞扫描，分析数据包交互过程。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/0.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/1.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/2.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/3.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/4.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/6.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/7.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/8.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/9.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/10.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/14.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/15.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/16.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/17.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/18.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/19.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/true-info.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/true-info2.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/true-mac.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/true-php.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/23.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/24.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/28.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/29.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/30.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/31.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/32.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/res2-1.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/res2-2.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/33.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/34.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/35.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/36.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/37.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/38.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/39.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/40.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/41.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/42.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/43.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/44.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/45.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/res3-1.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/res3-2.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/res3-3.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/46.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/47.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/48.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/49.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/50.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/51.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/53.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/52.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/55.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/54.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/57.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/58.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/59.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/60.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/61.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/62.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/63.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex0.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex1.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex2.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex3.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex4.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex5.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex6.png"><meta property="article:published_time" content="2019-11-09T12:35:17.000Z"><meta property="article:modified_time" content="2023-05-29T04:01:15.200Z"><meta property="article:author" content="Jason Ren"><meta property="article:tag" content="网络空间安全"><meta property="article:tag" content="网络安全"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/0.png"><link rel="canonical" href="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/","path":"2019/11/09/experiments/security/web/webscan/","title":"网络扫描"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>网络扫描 | 随心记</title><link rel="dns-prefetch" href="https://blog-manage.jason0743.space/"><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript><link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
-</head><body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><div class="column"><header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">随心记</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">展现安全态度</p></div><div class="site-nav-right"><div class="toggle popup-trigger" aria-label="搜索" role="button"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></header><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87"><span class="nav-number">1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%AB%E6%8F%8F"><span class="nav-number">2.1.</span> <span class="nav-text">扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E6%89%AB%E6%8F%8F"><span class="nav-number">2.2.</span> <span class="nav-text">主机扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-number">2.3.</span> <span class="nav-text">端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%86%E5%88%AB"><span class="nav-number">2.4.</span> <span class="nav-text">操作系统识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F"><span class="nav-number">2.5.</span> <span class="nav-text">漏洞扫描</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%E5%92%8C%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF"><span class="nav-number">3.</span> <span class="nav-text">步骤和关键技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E3%80%81%E6%9C%8D%E5%8A%A1%E5%92%8C%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-number">3.1.</span> <span class="nav-text">主机、服务和端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F-2"><span class="nav-number">3.2.</span> <span class="nav-text">漏洞扫描</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mysql-start-up%E5%90%AF%E5%8A%A8%E9%A1%B9%E6%8F%90%E6%9D%83"><span class="nav-number">3.2.1.</span> <span class="nav-text">mysql_start_up 启动项提权</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">数据和分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%E6%89%AB%E6%8F%8F"><span class="nav-number">4.1.</span> <span class="nav-text">基本信息扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F%E5%8F%8A%E5%88%A9%E7%94%A8"><span class="nav-number">4.2.</span> <span class="nav-text">漏洞扫描及利用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B6%E8%8E%B7"><span class="nav-number">5.</span> <span class="nav-text">收获</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">6.</span> <span class="nav-text">补充</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png"><p class="site-author-name" itemprop="name">Jason Ren</p><div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div></div><div class="site-state-wrap animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">60</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">46</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">30</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author animated"><span class="links-of-author-item"><a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a> </span><span class="links-of-author-item"><a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a> </span><span class="links-of-author-item"><a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a> </span><span class="links-of-author-item"><a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a></span></div></div></div><div class="back-to-top animated" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside></div><div class="main-inner post posts-expand"><div class="post-block"><article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/"><span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar-v1.png"><meta itemprop="name" content="Jason Ren"></span><span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization"><meta itemprop="name" content="随心记"><meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔"></span><span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="网络扫描 | 随心记"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">网络扫描</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-11-09 20:35:17" itemprop="dateCreated datePublished" datetime="2019-11-09T20:35:17+08:00">2019-11-09</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar-check"></i> </span><span class="post-meta-item-text">更新于</span> <time title="修改时间：2023-05-29 12:01:15" itemprop="dateModified" datetime="2023-05-29T12:01:15+08:00">2023-05-29</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E5%AE%9E%E9%AA%8C/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">网络安全</span></a> </span></span><span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span id="busuanzi_value_page_pv"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Waline：</span> <a title="waline" href="/2019/11/09/experiments/security/web/webscan/#waline" itemprop="discussionUrl"><span class="post-comments-count waline-comment-count" data-path="/2019/11/09/experiments/security/web/webscan/" itemprop="commentCount"></span> </a></span><span class="post-meta-item" title="阅读次数"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="waline-pageview-count" data-path="/2019/11/09/experiments/security/web/webscan/"></span> </span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>3.9k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 ≈</span> <span>14 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><h2 id="目标">目标</h2><p>了解网络扫描的原理和应用，使用 xscan、nmap 或 nessus 其中的任意一种常见的扫描软件对某主机进行端口、服务、漏洞扫描，分析数据包交互过程。</p><span id="more"></span><div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p></div><h2 id="原理">原理</h2><h3 id="扫描">扫描</h3><p>网络扫描是确认网络运行的主机的工作程序，或是为了对主机进行攻击，或是为了网络安全评估。网络扫描程序，如 Ping 扫射和端口扫描，返回关于哪个 IP 地址映射有主机连接到因特网上的并是工作的，这些主机提供什么样的服务的信息。另一种扫描方法是反向映射，返回关于哪个 IP 地址上没有映射出活动的主机的信息，这使攻击者能假设出可行的地址。网络漏洞扫描器是网络入侵者收集信息的重要手段，主要用于扫描目标主机识别其工作状态（开 / 关机）、识别目标主机端口的状态（监听 / 关闭）、识别目标主机系统及服务程序的类型和版本、根据已知漏洞信息，分析系统脆弱点、生成扫描结果报告。</p><h3 id="主机扫描">主机扫描</h3><p>主机扫描的目的是确定在目标网络上的主机是否可达。这是信息收集的初级阶段，其效果直接影响到后续的扫描。常见扫描手段有 ICMP Echo 扫描、ICMP Sweep 扫描、Broadcast ICMP 扫描、Non-Echo ICMP 扫描等。防火墙和网络过滤设备常常导致传统的探测手段变得无效。为了突破这种限制，必须采用一些非常规的手段，利用 ICMP 协议提供网络间传送错误信息的手段，往往可以更有效的达到目的。</p><h3 id="端口扫描">端口扫描</h3><p>确定目标主机可达后，使用端口扫描技术，发现目标主机的开放端口，包括网络协议和各种应用监听的端口。有开放扫描、隐蔽扫描、半开放扫描三种方式。</p><h3 id="操作系统识别">操作系统识别</h3><p>根据各个 OS 在 TCP/IP 协议栈实现上的不同特点，采用黑盒测试方法，通过研究其对各种探测的响应形成识别指纹，进而识别目标主机运行的操作系统。根据采集指纹信息的方式，又可以分为主动扫描和被动扫描两种方式。</p><h3 id="漏洞扫描">漏洞扫描</h3><p>在端口扫描后得知目标主机开启的端口以及端口上的网络服务，将这些相关信息与网络漏洞扫描系统提供的漏洞库进行匹配，查看是否有满足匹配条件的漏洞存在。通过模拟黑客的攻击手法，对目标主机系统进行攻击性的安全漏洞扫描，如测试弱势口令等。若模拟攻击成功，则表明目标主机系统存在安全漏洞。</p><h2 id="步骤和关键技术">步骤和关键技术</h2><h3 id="主机、服务和端口扫描">主机、服务和端口扫描</h3><div class="note info"><p>本次使用的扫描工具为 nmap6.49<br><img data-src="/2019/11/09/experiments/security/web/webscan/0.png"></p></div><p>对目标机所在地址及地址段进行了 Regular scan、Ping scan、Intense scan 三种扫描。</p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/1.png" title="Regular scan"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/2.png" title="Ping scan"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/3.png" title="Intense scan"></div></div></div><p>另外尝试了 Maimon 扫描（下图）。扫描结果见 “数据与分析” 部分。 <img data-src="/2019/11/09/experiments/security/web/webscan/4.png" title="Maimon"></p><div class="note info"><p>本部分 3.1 实验中，探测机 IP 为 192.168.235.136，运行 Windows XP 系统。被探测机 IP 为 192.168.235.138，运行 Windows Server 2012 系统。</p></div><h3 id="漏洞扫描-2">漏洞扫描</h3><p>本部分实验使用了 Kali Linux 自带的 metasploit 工具，它是一个开源的安全漏洞检测工具，可以帮助安全和 IT 专业人士识别安全性问题，验证漏洞的缓解措施，并管理专家驱动的安全性进行评估，提供真正的安全风险情报。</p><div class="note info"><p>本部分使用的扫描机 IP 为 192.168.235.132，运行 Kali Linux；被扫描机 IP 为 192.168.235.136，运行 Windows XP 系统。</p></div><img data-src="/2019/11/09/experiments/security/web/webscan/6.png" title="metasploit主界面"><ol><li><p>打开 metasploit 主界面，输入 <code>show exploits</code> 查看所有漏洞的列表 <img data-src="/2019/11/09/experiments/security/web/webscan/7.png"></p><ul><li>按照字母顺序，列表从左到右分别是漏洞名称、披露日期、可利用性、描述，其中漏洞的命名格式是 "平台 / 类型 / 具体应用简称"。由于我的 Kali 版本并不是最新的，所以披露日期可能比较偏早（与此同时，msf 的最新版本已经是 5.0 了）。</li></ul></li><li><p>本次实验中，选择 <code>mysql_start_up</code> 漏洞进行复现。 <img data-src="/2019/11/09/experiments/security/web/webscan/8.png"></p><div class="note info"><h4 id="mysql-start-up启动项提权">mysql_start_up 启动项提权</h4><p>在数据库中添加一个表格，将 <code>vbs</code> 或 <code>bat</code> 代码写入表中，内有 <code>net user</code> 创建后门用户指令，然后运行以下语句</p><figure class="highlight sql"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> \ <span class="keyword">from</span> a <span class="keyword">into</span> outfile "%startup%\\a.vbs";</span><br></pre></td></tr></tbody></table></figure>导出脚本，并添加到系统启动项 [^1]。</div></li><li><p>msf 下 <code>mysql_start_up</code> 提权只需要知道一组数据库用户名和密码，但有一定的成功几率，需要多试几次，对英文版系统支持较好。</p><ul><li>命令行下输入 <code>use &lt;漏洞全名&gt;</code>，进入漏洞利用模式。<code>show targets</code> 的结果代表了 Windows 上的 MySQL 可能会被利用。 <img data-src="/2019/11/09/experiments/security/web/webscan/9.png"></li></ul></li><li><p><code>show payloads</code> 可以查看所有载荷列表，载荷（payloads）是一串代码中主要的操作部分，在漏洞利用中充当主要的位置。 <img data-src="/2019/11/09/experiments/security/web/webscan/10.png" title="可用载荷列表"></p><div class="tabs" id="payloads"><ul class="nav-tabs"><li class="tab active"><a href="#payloads-1"><code>generic/shell_reverse_tcp</code> 利用方法</a></li><li class="tab"><a href="#payloads-2"><code>windows/messagebox</code> 利用方法</a></li></ul><div class="tab-content"><div class="tab-pane active" id="payloads-1"><pre><code>&lt;img src="/2019/11/09/experiments/security/web/webscan/11.png" class=""&gt;
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+<link rel="preconnect" href="https://fonts.geekzu.org" crossorigin="">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script>
+
+    <meta name="description" content="目标 了解网络扫描的原理和应用，使用 xscan、nmap 或 nessus 其中的任意一种常见的扫描软件对某主机进行端口、服务、漏洞扫描，分析数据包交互过程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络扫描">
+<meta property="og:url" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/">
+<meta property="og:site_name" content="随心记">
+<meta property="og:description" content="目标 了解网络扫描的原理和应用，使用 xscan、nmap 或 nessus 其中的任意一种常见的扫描软件对某主机进行端口、服务、漏洞扫描，分析数据包交互过程。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/0.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/1.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/3.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/4.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/6.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/7.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/8.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/9.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/10.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/14.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/15.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/16.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/17.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/18.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/19.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/true-info.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/true-info2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/true-mac.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/true-php.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/23.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/24.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/28.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/29.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/30.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/31.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/32.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/res2-1.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/res2-2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/33.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/34.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/35.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/36.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/37.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/38.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/39.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/40.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/41.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/42.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/43.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/44.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/45.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/res3-1.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/res3-2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/res3-3.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/46.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/47.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/48.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/49.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/50.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/51.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/53.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/52.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/55.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/54.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/57.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/58.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/59.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/60.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/61.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/62.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/63.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex0.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex1.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex3.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex4.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex5.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/ex6.png">
+<meta property="article:published_time" content="2019-11-09T12:35:17.000Z">
+<meta property="article:modified_time" content="2023-06-04T08:34:47.187Z">
+<meta property="article:author" content="Jason Ren">
+<meta property="article:tag" content="网络空间安全">
+<meta property="article:tag" content="网络安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/0.png">
+
+
+<link rel="canonical" href="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/","path":"2019/11/09/experiments/security/web/webscan/","title":"网络扫描"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>网络扫描 | 随心记</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="https://blog-manage.jason0743.space/">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">随心记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">展现安全态度</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87"><span class="nav-number">1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%AB%E6%8F%8F"><span class="nav-number">2.1.</span> <span class="nav-text">扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E6%89%AB%E6%8F%8F"><span class="nav-number">2.2.</span> <span class="nav-text">主机扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-number">2.3.</span> <span class="nav-text">端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%86%E5%88%AB"><span class="nav-number">2.4.</span> <span class="nav-text">操作系统识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F"><span class="nav-number">2.5.</span> <span class="nav-text">漏洞扫描</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%E5%92%8C%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF"><span class="nav-number">3.</span> <span class="nav-text">步骤和关键技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E3%80%81%E6%9C%8D%E5%8A%A1%E5%92%8C%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-number">3.1.</span> <span class="nav-text">主机、服务和端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F-2"><span class="nav-number">3.2.</span> <span class="nav-text">漏洞扫描</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mysql-start-up%E5%90%AF%E5%8A%A8%E9%A1%B9%E6%8F%90%E6%9D%83"><span class="nav-number">3.2.1.</span> <span class="nav-text">mysql_start_up 启动项提权</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">数据和分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%E6%89%AB%E6%8F%8F"><span class="nav-number">4.1.</span> <span class="nav-text">基本信息扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F%E5%8F%8A%E5%88%A9%E7%94%A8"><span class="nav-number">4.2.</span> <span class="nav-text">漏洞扫描及利用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B6%E8%8E%B7"><span class="nav-number">5.</span> <span class="nav-text">收获</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">6.</span> <span class="nav-text">补充</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png">
+  <p class="site-author-name" itemprop="name">Jason Ren</p>
+  <div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-v1.png">
+      <meta itemprop="name" content="Jason Ren">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随心记">
+      <meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔">
+    </span>
+
+    <span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="网络扫描 | 随心记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网络扫描
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-11-09 20:35:17" itemprop="dateCreated datePublished" datetime="2019-11-09T20:35:17+08:00">2019-11-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-06-04 16:34:47" itemprop="dateModified" datetime="2023-06-04T16:34:47+08:00">2023-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">网络安全</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/11/09/experiments/security/web/webscan/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/11/09/experiments/security/web/webscan/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/2019/11/09/experiments/security/web/webscan/"></span>
+    </span>
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="目标">目标</h2>
+<p>了解网络扫描的原理和应用，使用 xscan、nmap 或 nessus 其中的任意一种常见的扫描软件对某主机进行端口、服务、漏洞扫描，分析数据包交互过程。</p>
+<span id="more"></span>
+<div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p>
+</div>
+<h2 id="原理">原理</h2>
+<h3 id="扫描">扫描</h3>
+<p>网络扫描是确认网络运行的主机的工作程序，或是为了对主机进行攻击，或是为了网络安全评估。网络扫描程序，如 Ping 扫射和端口扫描，返回关于哪个 IP 地址映射有主机连接到因特网上的并是工作的，这些主机提供什么样的服务的信息。另一种扫描方法是反向映射，返回关于哪个 IP 地址上没有映射出活动的主机的信息，这使攻击者能假设出可行的地址。网络漏洞扫描器是网络入侵者收集信息的重要手段，主要用于扫描目标主机识别其工作状态（开 / 关机）、识别目标主机端口的状态（监听 / 关闭）、识别目标主机系统及服务程序的类型和版本、根据已知漏洞信息，分析系统脆弱点、生成扫描结果报告。</p>
+<h3 id="主机扫描">主机扫描</h3>
+<p>主机扫描的目的是确定在目标网络上的主机是否可达。这是信息收集的初级阶段，其效果直接影响到后续的扫描。常见扫描手段有 ICMP Echo 扫描、ICMP Sweep 扫描、Broadcast ICMP 扫描、Non-Echo ICMP 扫描等。防火墙和网络过滤设备常常导致传统的探测手段变得无效。为了突破这种限制，必须采用一些非常规的手段，利用 ICMP 协议提供网络间传送错误信息的手段，往往可以更有效的达到目的。</p>
+<h3 id="端口扫描">端口扫描</h3>
+<p>确定目标主机可达后，使用端口扫描技术，发现目标主机的开放端口，包括网络协议和各种应用监听的端口。有开放扫描、隐蔽扫描、半开放扫描三种方式。</p>
+<h3 id="操作系统识别">操作系统识别</h3>
+<p>根据各个 OS 在 TCP/IP 协议栈实现上的不同特点，采用黑盒测试方法，通过研究其对各种探测的响应形成识别指纹，进而识别目标主机运行的操作系统。根据采集指纹信息的方式，又可以分为主动扫描和被动扫描两种方式。</p>
+<h3 id="漏洞扫描">漏洞扫描</h3>
+<p>在端口扫描后得知目标主机开启的端口以及端口上的网络服务，将这些相关信息与网络漏洞扫描系统提供的漏洞库进行匹配，查看是否有满足匹配条件的漏洞存在。通过模拟黑客的攻击手法，对目标主机系统进行攻击性的安全漏洞扫描，如测试弱势口令等。若模拟攻击成功，则表明目标主机系统存在安全漏洞。</p>
+<h2 id="步骤和关键技术">步骤和关键技术</h2>
+<h3 id="主机、服务和端口扫描">主机、服务和端口扫描</h3>
+<div class="note info"><p>本次使用的扫描工具为 nmap6.49<br>
+<img data-src="/2019/11/09/experiments/security/web/webscan/0.png" class=""></p>
+</div>
+<p>对目标机所在地址及地址段进行了 Regular scan、Ping scan、Intense scan 三种扫描。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/1.png" class="" title="Regular scan"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/2.png" class="" title="Ping scan"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/3.png" class="" title="Intense scan"></div></div></div>
+<p>另外尝试了 Maimon 扫描（下图）。扫描结果见 “数据与分析” 部分。 <img data-src="/2019/11/09/experiments/security/web/webscan/4.png" class="" title="Maimon"></p>
+<div class="note info"><p>本部分 3.1 实验中，探测机 IP 为 192.168.235.136，运行 Windows XP 系统。被探测机 IP 为 192.168.235.138，运行 Windows Server 2012 系统。</p>
+</div>
+<h3 id="漏洞扫描-2">漏洞扫描</h3>
+<p>本部分实验使用了 Kali Linux 自带的 metasploit 工具，它是一个开源的安全漏洞检测工具，可以帮助安全和 IT 专业人士识别安全性问题，验证漏洞的缓解措施，并管理专家驱动的安全性进行评估，提供真正的安全风险情报。</p>
+<div class="note info"><p>本部分使用的扫描机 IP 为 192.168.235.132，运行 Kali Linux；被扫描机 IP 为 192.168.235.136，运行 Windows XP 系统。</p>
+</div>
+<img data-src="/2019/11/09/experiments/security/web/webscan/6.png" class="" title="metasploit主界面">
+<ol>
+<li>
+<p>打开 metasploit 主界面，输入 <code>show exploits</code> 查看所有漏洞的列表 <img data-src="/2019/11/09/experiments/security/web/webscan/7.png" class=""></p>
+<ul>
+<li>按照字母顺序，列表从左到右分别是漏洞名称、披露日期、可利用性、描述，其中漏洞的命名格式是 "平台 / 类型 / 具体应用简称"。由于我的 Kali 版本并不是最新的，所以披露日期可能比较偏早（与此同时，msf 的最新版本已经是 5.0 了）。</li>
+</ul>
+</li>
+<li>
+<p>本次实验中，选择 <code>mysql_start_up</code> 漏洞进行复现。 <img data-src="/2019/11/09/experiments/security/web/webscan/8.png" class=""></p>
+ <div class="note info"><h4 id="mysql-start-up启动项提权">mysql_start_up 启动项提权</h4>
+<p>在数据库中添加一个表格，将 <code>vbs</code> 或 <code>bat</code> 代码写入表中，内有 <code>net user</code> 创建后门用户指令，然后运行以下语句</p>
+<figure class="highlight sql"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> \ <span class="keyword">from</span> a <span class="keyword">into</span> outfile "%startup%\\a.vbs";</span><br></pre></td></tr></tbody></table></figure> 导出脚本，并添加到系统启动项 [^1]。</div>
+</li>
+<li>
+<p>msf 下 <code>mysql_start_up</code> 提权只需要知道一组数据库用户名和密码，但有一定的成功几率，需要多试几次，对英文版系统支持较好。</p>
+<ul>
+<li>命令行下输入 <code>use &lt;漏洞全名&gt;</code>，进入漏洞利用模式。<code>show targets</code> 的结果代表了 Windows 上的 MySQL 可能会被利用。 <img data-src="/2019/11/09/experiments/security/web/webscan/9.png" class=""></li>
+</ul>
+</li>
+<li>
+<p><code>show payloads</code> 可以查看所有载荷列表，载荷（payloads）是一串代码中主要的操作部分，在漏洞利用中充当主要的位置。 <img data-src="/2019/11/09/experiments/security/web/webscan/10.png" class="" title="可用载荷列表"></p>
+ <div class="tabs" id="payloads"><ul class="nav-tabs"><li class="tab active"><a href="#payloads-1"><code>generic/shell_reverse_tcp</code> 利用方法</a></li><li class="tab"><a href="#payloads-2"><code>windows/messagebox</code> 利用方法</a></li></ul><div class="tab-content"><div class="tab-pane active" id="payloads-1"><pre><code>&lt;img src="/2019/11/09/experiments/security/web/webscan/11.png" class=""&gt;
 set payload "payload_name"可以设定使用的payload，show options可以查看该payload利用到的所有参数，我们所要做的是将所有required部分填上我们需要的值。
 &lt;div class="group-picture"&gt;&lt;div class="group-picture-row"&gt;&lt;div class="group-picture-column"&gt;&lt;img src="/2019/11/09/experiments/security/web/webscan/12.png" class=""&gt;&lt;/div&gt;&lt;div class="group-picture-column"&gt;&lt;img src="/2019/11/09/experiments/security/web/webscan/13.png" class=""&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
 设置完成后，使用`exploit`命令开始利用漏洞。
 
 &lt;div class="note success no-icon"&gt;&lt;p&gt;从输出上来看，目标机上已经被传送了一个后门文件&lt;code&gt;wKpyl.exe&lt;/code&gt;，它需要我们手动清除。&lt;br&gt;
-</code></pre><p><img data-src="/2019/11/09/experiments/security/web/webscan/14.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/15.png"><br><br>目标机的相应位置上确实被置入了一个这样的后门程序。</p><p></p><ul><li>由于漏洞披露已经有了一段时间，当我拖到宿主机准备分析时，杀毒软件报毒（这说明漏洞库已经收录了漏洞相关信息），其类型为后门病毒。这个可执行文件的部分属性如下。<br><img data-src="/2019/11/09/experiments/security/web/webscan/16.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/17.png"><ul><li>由于这是开机启动型后门，所以需要重新启动 server 才会奏效。</li></ul></li></ul></div></div><div class="tab-pane" id="payloads-2"><pre><code>&lt;details class="note info"&gt;&lt;summary&gt;&lt;p&gt;总结&lt;/p&gt;
-</code></pre><p>顾名思义，就是弹个框，告诉用户 “你被攻击了”。算是一个能 “看得见” 的有效漏洞利用。</p>和（1）类似，首先 set payload，然后 show options。观察参数，发现 “可视化” 的部分在于 <code>text</code> 和 <code>title</code>，我们决定给它加一点特效（笑）。<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/18.png"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/19.png"></div></div></div><pre><code>&lt;img src="/2019/11/09/experiments/security/web/webscan/20.png" class="" title="exploit!"&gt;
+</code></pre>
+<p><img data-src="/2019/11/09/experiments/security/web/webscan/14.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/15.png" class=""><br><br>
+目标机的相应位置上确实被置入了一个这样的后门程序。</p><p></p>
+<ul>
+<li>由于漏洞披露已经有了一段时间，当我拖到宿主机准备分析时，杀毒软件报毒（这说明漏洞库已经收录了漏洞相关信息），其类型为后门病毒。这个可执行文件的部分属性如下。<br>
+<img data-src="/2019/11/09/experiments/security/web/webscan/16.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/17.png" class="">
+<ul>
+<li>由于这是开机启动型后门，所以需要重新启动 server 才会奏效。</li>
+</ul>
+</li>
+</ul>
+</div></div><div class="tab-pane" id="payloads-2"><pre><code>&lt;details class="note info"&gt;&lt;summary&gt;&lt;p&gt;总结&lt;/p&gt;
+</code></pre>
+
+<p>顾名思义，就是弹个框，告诉用户 “你被攻击了”。算是一个能 “看得见” 的有效漏洞利用。</p>
+
+	和（1）类似，首先 set payload，然后 show options。观察参数，发现 “可视化” 的部分在于 <code>text</code> 和 <code>title</code>，我们决定给它加一点特效（笑）。
+	<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/18.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/19.png" class=""></div></div></div>
+<pre><code>&lt;img src="/2019/11/09/experiments/security/web/webscan/20.png" class="" title="exploit!"&gt;
 输入&lt;code&gt;exploit&lt;/code&gt;开始利用。观察输出，发现它也是向目标输出了一个&lt;code&gt;exe&lt;/code&gt;可执行文件，放入了启动项中。
 &lt;img src="/2019/11/09/experiments/security/web/webscan/21.png" class=""&gt;
 
 重启Win Server后，系统弹出了这个MessageBox，证明上述漏洞被有效利用且能成功执行payload程序。 &lt;img src="/2019/11/09/experiments/security/web/webscan/22.png" class=""&gt;
-</code></pre></div></div></li></ol><h2 id="数据和分析">数据和分析</h2><p>下面以 Wireshark 抓包的角度来分析本次实验的数据交互情况。</p><div class="note info"><p>目标主机情况如下</p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/true-info.png" title="目标机网络配置"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/true-info2.png" title="目标机网络配置2"></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/true-mac.png" title="目标机MAC地址"></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/true-php.png" title="目标机php版本"></div></div></div></div><h3 id="基本信息扫描">基本信息扫描</h3><div class="tabs" id="basic_scan"><ul class="nav-tabs"><li class="tab active"><a href="#basic_scan-1">Regular Scan 扫描</a></li><li class="tab"><a href="#basic_scan-2">Ping Scan 扫描</a></li><li class="tab"><a href="#basic_scan-3">Intense Scan 扫描</a></li><li class="tab"><a href="#basic_scan-4">Maimon 扫描</a></li></ul><div class="tab-content"><div class="tab-pane active" id="basic_scan-1"><p>从下图可以看到，这是一个典型的 TCP SYN 扫描，是半开放扫描。<br><img data-src="/2019/11/09/experiments/security/web/webscan/23.png"><br><img data-src="/2019/11/09/experiments/security/web/webscan/24.png"><br>扫描机不断向目标机不同端口发送 SYN 包，请求一次连接，而在目标机回复 SYN+ACK 时，自己发送一个 RST 包停止连接。SYN+ACK 的回复代表目标机的端口正处于监听状态，可以代表端口的开启情况。</p><p>目标机的 80 端口和 8080 端口处于监听状态，是开启的。</p><p>Regular Scan 的输出：</p><figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Nmap scan report for 192.168.235.138</span><br><span class="line">Host is up (0.0022s latency).</span><br><span class="line">Not shown: 998 filtered ports</span><br><span class="line">PORT     STATE SERVICE</span><br><span class="line">80/tcp   open  http</span><br><span class="line">8080/tcp open  http-proxy</span><br><span class="line">MAC Address: 00:0C:29:18:BE:BF (VMware)</span><br></pre></td></tr></tbody></table></figure><p>基本上都是对的。</p></div><div class="tab-pane" id="basic_scan-2"><p>我用 ping scan 扫描了 <code>192.168.1.0/24</code> 整个网段，可以看到密集的 ICMP 请求，是在做 ping 操作。<br><img data-src="/2019/11/09/experiments/security/web/webscan/28.png"><br><img data-src="/2019/11/09/experiments/security/web/webscan/29.png"></p><p>短时间内同时向多个 IP 地址发送了 type13 的 ICMP timestamp request 请求，这是一种 Non-Echo 的 ICMP 扫描。</p><p>针对每一个地址，它经历了以下过程</p><ol><li>扫描机向目标主机发送了 ICMP Echo Request (type 8) 数据包，等待回复的 ICMP Echo Reply 包 (type 0)，这是 ICMP Echo 的扫描技术。 <img data-src="/2019/11/09/experiments/security/web/webscan/30.png"></li><li>Echo Request 是同时向多个主机做出的并行扫描动作，因此，也用到了 ICMP Sweep 扫描。 <img data-src="/2019/11/09/experiments/security/web/webscan/31.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/32.png"></li><li>但是，扫描结果并不太准确，192.168.235.138 虽然是在线主机，但是可能是上一次扫描遗留下来的结果。我只扫描了 192.168.1.0 的地址段。<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/res2-1.png"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/res2-2.png"></div></div></div></li></ol></div><div class="tab-pane" id="basic_scan-3"><ol><li><p>先进行端口的探测，使用 SYN 扫描。 <img data-src="/2019/11/09/experiments/security/web/webscan/33.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/34.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/35.png"> 与可联通的端口建立握手连接，预备后续探测。</p></li><li><p>通过 HTTP 协议访问根目录，Server 响应暴露目标机的服务类型。 <img data-src="/2019/11/09/experiments/security/web/webscan/36.png"></p></li><li><p>通过 OPTIONS 请求，探求目标机的支持服务类型，紧接着目标机向其 DNS 服务器发动了一次向 www.360se.net 的解析请求。 <img data-src="/2019/11/09/experiments/security/web/webscan/37.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/38.png"></p></li><li><p>在整个扫描期间，可以发现目标机不停地在向 <code>133.130.101.150</code> 这个 IP 发送带有 SYN、ECN、CWR 标志的 TCP 包。</p></li><li><p>故意请求一个可能并不存在的地址，或构造不合法的请求方式，从返回错误中也可以暴露服务器所开设的服务信息。就算是 404 Not Found，返回头中也可能携带服务信息。 <img data-src="/2019/11/09/experiments/security/web/webscan/39.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/40.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/41.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/42.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/43.png"></p></li><li><p>使用一个已存在的网页进行验证，扫描结束。 <img data-src="/2019/11/09/experiments/security/web/webscan/44.png"></p></li><li><p>另外，观察每次发送带有 <code>PSH|FIN</code> 标记的请求时，目标机回复的应答包中，确认序列号为攻击者序列数 + 1，可以从这里提取出目标机操作系统为 Windows，这是 ACK 扫描 —— 一种检测目标主机操作系统的方法。<img data-src="/2019/11/09/experiments/security/web/webscan/45.png"></p></li><li><p>以下是扫描结果</p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/res3-1.png" title="端口和主机情况"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/res3-2.png" title="其他基本信息"></div></div></div></li></ol><img data-src="/2019/11/09/experiments/security/web/webscan/res3-3.png"></div><div class="tab-pane" id="basic_scan-4"><ol><li>首先上扫描结果。可以看到扫描结果基本正确，操作系统也比较准确。 <img data-src="/2019/11/09/experiments/security/web/webscan/46.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/47.png"></li><li>它比 Intense 扫描多扫出了一个 3306 端口，它是怎么发现的呢？<div class="note primary"><p>在 SYN 扫描时，它就发现了 3306 号端口（3306 号端口给它发送了 SYN+ACK），再一连接，Server 就会回复 Server Greeting，从而发现了 3306 号端口的存在，版本号也随 Server Greeting 的发出而同时泄露。<br></p></div></li></ol><p><img data-src="/2019/11/09/experiments/security/web/webscan/48.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/49.png"></p><p></p></div><ol start="3"><li>预先的扫描是和（3）中一样的 SYN 方法。Maimon 还会进行重试。<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/50.png" title="发送多个SYN包"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/51.png" title="发动重试"></div></div></div></li><li>但在端口扫描前，maimon 会先发送 FIN+ACK 请求关闭连接，这样做的目的可能是重置状态，减少干扰。 <img data-src="/2019/11/09/experiments/security/web/webscan/53.png"></li><li>扫描期间，还可以看到目标机的 TLS 通信过程。含义推测是要进行 443 号端口相关的验证，需要用到这些协议。<br><img data-src="/2019/11/09/experiments/security/web/webscan/52.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/55.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/54.png"><div class="note info"><p>这里应该是在进行操作系统指纹的探查，依据是带有 PSH 标志的 ACK 包，不过负责这里验证的 IP 不再是探测机的 IP！</p></div></li></ol></div><pre><code>做完这些检测后，被扫描机发送RST+ACK关闭连接，接下来做服务检测。验证方法与（3）类似，不再赘述。 &lt;img src="/2019/11/09/experiments/security/web/webscan/56.png" class=""&gt;
-</code></pre></div><h3 id="漏洞扫描及利用">漏洞扫描及利用</h3><ol><li>首先利用已知的一组用户名密码登录 MySQL 服务器。 <img data-src="/2019/11/09/experiments/security/web/webscan/57.png"></li><li>向表中插入二进制数据，在传之前还做了一些事情。 <img data-src="/2019/11/09/experiments/security/web/webscan/58.png" title="应该是很长的sql语句的拆分"></li><li>查询服务器的操作系统。<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/59.png" title="询问"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/60.png" title="响应回答"></div></div></div></li><li>查询操作系统临时表目录。<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/61.png" title="询问"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/62.png" title="响应回答"></div></div></div></li><li><code>select xxx info dumpfile</code> 是最关键的一步。漏洞利用关键点。由于相关防护不到位，服务器接受了这个请求，把二进制数据导出了文件，并添加到了启动项文件夹中。做完这个操作后，攻击机就发送 FIN+ACK 与服务器断开了链接。<img data-src="/2019/11/09/experiments/security/web/webscan/63.png"><div class="note info no-icon"><p>弹框时的数据交互情况类似。</p></div></li></ol><h2 id="收获">收获</h2><p>通过使用扫描软件对于某主机进行扫描，再进行抓包分析，直观的看到了主机扫描数据交互的过程，理解了网络扫描的基本原理和不同扫描方法的特点。使用 metasploit 尝试了漏洞的利用，体验了漏洞的表现和侵入性。</p><h2 id="补充">补充</h2><ol><li><p>做完 “漏洞扫描” 实验的 metasploit 部分后，我才发现 metasploit 是漏洞利用软件而非漏洞扫描软件。重新上网查找相关资料，发现存在扫描漏洞的 nmap 脚本 <a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/vulnersCom/nmap-vulners">nmap-vulners</a>，决定使用这个脚本重新完成本部分实验和分析。</p></li><li><p>使用 <code>-script</code> 选项指定 <code>nse</code> 脚本位置。扫描几乎如同普通扫描，也扫出了三个开放端口。</p><img data-src="/2019/11/09/experiments/security/web/webscan/ex0.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/ex1.png"> <img data-src="/2019/11/09/experiments/security/web/webscan/ex2.png"></li><li><p>但是没有看到漏洞相关的信息输出。我换用 kali linux 重新进行扫描，得到了以下结果 <img data-src="/2019/11/09/experiments/security/web/webscan/ex3.png"></p></li><li><p>以上结果表明系统确实存在了很多 cve 漏洞，甚至还有 2019 年的新漏洞，随便打开一个网页看看：<a target="_blank" rel="noopener external nofollow noreferrer" href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-0211">http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-0211</a> （nmap 给的页面链接过不了验证码）</p><blockquote class="blockquote-center"><p>CVE-2019-0211 是一种特权升级漏洞，在 Apache HTTP Server 2.4 版本 2.4.17 至 2.4.38 中，使用 MPM 事件，工作者或 prefork，在权限较低的子进程或线程（包括进程内脚本解释器执行的脚本）中执行的代码可以执行任意代码通过操纵记分板，父进程（通常是 root）的权限。非 Unix 系统不受影响。</p></blockquote><div class="note default"><p>按说这个漏洞对于 Win Server 来说没影响，如果检测了目标操作系统的话，这个漏洞的重要性可能就会下降了。</p></div></li><li><p>对扫描过程抓包，发现前半部分与扫描端口、服务时基本一致，假如端口开放，目标机会发回 SYN+ACK 包，此时自己再发出 RST 包 <img data-src="/2019/11/09/experiments/security/web/webscan/ex4.png"></p></li><li><p>中间服务探测的过程与 intense 扫描基本一致，后期 vulners 检测工具与它自己的服务器进行了交互，可能是为了将特征与自己的数据库比对。</p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/ex5.png"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/ex6.png"></div></div></div></li></ol></div><footer class="post-footer"><div class="reward-container"><div>请我一杯咖啡吧！</div><button>赞赏</button><div class="post-reward"><div><img src="/images/wechatpay.png" alt="Jason Ren 微信"> <span>微信</span></div><div><img src="/images/alipay.jpg" alt="Jason Ren 支付宝"> <span>支付宝</span></div></div></div><div class="post-copyright"><ul><li class="post-copyright-author"><strong>本文作者： </strong>Jason Ren</li><li class="post-copyright-link"><strong>本文链接：</strong> <a href="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/" title="网络扫描">https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/</a></li><li class="post-copyright-license"><strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><div class="followme"><span>欢迎关注我的其它发布渠道</span><div class="social-list"><div class="social-item"><a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-twitter"></i> </span><span class="label">Twitter</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-telegram"></i> </span><span class="label">Telegram</span></a></div><div class="social-item"><span class="social-link"><span class="icon"><i class="fab fa-weixin"></i> </span><span class="label">WeChat</span> </span><img class="social-item-img" src="/images/gongzhonghao.jpg"></div><div class="social-item"><a target="_blank" class="social-link" href="/atom.xml"><span class="icon"><i class="fa fa-rss"></i> </span><span class="label">RSS</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-zhihu"></i> </span><span class="label">知乎</span></a></div></div></div><div class="post-tags"><a href="/tags/%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络空间安全</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络安全</a></div><div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style"><a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a> <a class="a2a_button_facebook"></a> <a class="a2a_button_twitter"></a> <a class="a2a_button_telegram"></a> <a class="a2a_button_douban"></a> <a class="a2a_button_mastodon"></a> <a class="a2a_button_sina_weibo"></a> <a class="a2a_button_wechat"></a></div><div class="post-nav"><div class="post-nav-item"><a href="/2019/11/08/diarys/bupt-18/" rel="prev" title="北邮小日记 —— 第十八期"><i class="fa fa-chevron-left"></i> 北邮小日记 —— 第十八期</a></div><div class="post-nav-item"><a href="/2019/11/11/experiments/oskernel/file-system/" rel="next" title="文件系统实验">文件系统实验 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="waline"></div></div></main><footer class="footer"><div class="footer-inner"><div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3</a></div><div class="copyright">© 2020 – <span itemprop="copyrightYear">2023</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">Jason Ren</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">96k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">5:50</span></span></div><div class="busuanzi-count"><span class="post-meta-item" id="busuanzi_container_site_uv"><span class="post-meta-item-icon"><i class="fa fa-user"></i> </span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span> </span></span><span class="post-meta-item" id="busuanzi_container_site_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div><div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动</div></div></footer><div class="toggle sidebar-toggle" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><div class="sidebar-dimmer"></div><div class="reading-progress-bar"></div><a role="button" class="book-mark-link book-mark-link-fixed"></a> <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin:130px 106px" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script><script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script><script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2019/11/09/experiments/security/web/webscan/"}</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css"><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.waline.el).then(()=>NexT.utils.getScript(CONFIG.waline.libUrl,{condition:window.Waline})).then(()=>Waline.init(Object.assign({},CONFIG.waline,{el:document.querySelector(CONFIG.waline.el)})))})</script><script type="text/javascript" src="/js/bundle.js"></script></body></html>
+</code></pre></div></div>
+</li>
+</ol>
+<h2 id="数据和分析">数据和分析</h2>
+<p>下面以 Wireshark 抓包的角度来分析本次实验的数据交互情况。</p>
+<div class="note info"><p>目标主机情况如下</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/true-info.png" class="" title="目标机网络配置"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/true-info2.png" class="" title="目标机网络配置2"></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/true-mac.png" class="" title="目标机MAC地址"></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/true-php.png" class="" title="目标机php版本"></div></div></div></div>
+<h3 id="基本信息扫描">基本信息扫描</h3>
+<div class="tabs" id="basic_scan"><ul class="nav-tabs"><li class="tab active"><a href="#basic_scan-1">Regular Scan 扫描</a></li><li class="tab"><a href="#basic_scan-2">Ping Scan 扫描</a></li><li class="tab"><a href="#basic_scan-3">Intense Scan 扫描</a></li><li class="tab"><a href="#basic_scan-4">Maimon 扫描</a></li></ul><div class="tab-content"><div class="tab-pane active" id="basic_scan-1"><p>从下图可以看到，这是一个典型的 TCP SYN 扫描，是半开放扫描。<br>
+<img data-src="/2019/11/09/experiments/security/web/webscan/23.png" class=""><br>
+<img data-src="/2019/11/09/experiments/security/web/webscan/24.png" class=""><br>
+扫描机不断向目标机不同端口发送 SYN 包，请求一次连接，而在目标机回复 SYN+ACK 时，自己发送一个 RST 包停止连接。SYN+ACK 的回复代表目标机的端口正处于监听状态，可以代表端口的开启情况。</p>
+<p>目标机的 80 端口和 8080 端口处于监听状态，是开启的。</p>
+<p>Regular Scan 的输出：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Nmap scan report for 192.168.235.138</span><br><span class="line">Host is up (0.0022s latency).</span><br><span class="line">Not shown: 998 filtered ports</span><br><span class="line">PORT     STATE SERVICE</span><br><span class="line">80/tcp   open  http</span><br><span class="line">8080/tcp open  http-proxy</span><br><span class="line">MAC Address: 00:0C:29:18:BE:BF (VMware)</span><br></pre></td></tr></tbody></table></figure>
+<p>基本上都是对的。</p></div><div class="tab-pane" id="basic_scan-2"><p>我用 ping scan 扫描了 <code>192.168.1.0/24</code> 整个网段，可以看到密集的 ICMP 请求，是在做 ping 操作。<br>
+<img data-src="/2019/11/09/experiments/security/web/webscan/28.png" class=""><br>
+<img data-src="/2019/11/09/experiments/security/web/webscan/29.png" class=""></p>
+<p>短时间内同时向多个 IP 地址发送了 type13 的 ICMP timestamp request 请求，这是一种 Non-Echo 的 ICMP 扫描。</p>
+<p>针对每一个地址，它经历了以下过程</p>
+<ol>
+<li>扫描机向目标主机发送了 ICMP Echo Request (type 8) 数据包，等待回复的 ICMP Echo Reply 包 (type 0)，这是 ICMP Echo 的扫描技术。 <img data-src="/2019/11/09/experiments/security/web/webscan/30.png" class=""></li>
+<li>Echo Request 是同时向多个主机做出的并行扫描动作，因此，也用到了 ICMP Sweep 扫描。 <img data-src="/2019/11/09/experiments/security/web/webscan/31.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/32.png" class=""></li>
+<li>但是，扫描结果并不太准确，192.168.235.138 虽然是在线主机，但是可能是上一次扫描遗留下来的结果。我只扫描了 192.168.1.0 的地址段。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/res2-1.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/res2-2.png" class=""></div></div></div>
+</li>
+</ol></div><div class="tab-pane" id="basic_scan-3"><ol>
+<li>
+<p>先进行端口的探测，使用 SYN 扫描。 <img data-src="/2019/11/09/experiments/security/web/webscan/33.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/34.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/35.png" class=""> 与可联通的端口建立握手连接，预备后续探测。</p>
+</li>
+<li>
+<p>通过 HTTP 协议访问根目录，Server 响应暴露目标机的服务类型。 <img data-src="/2019/11/09/experiments/security/web/webscan/36.png" class=""></p>
+</li>
+<li>
+<p>通过 OPTIONS 请求，探求目标机的支持服务类型，紧接着目标机向其 DNS 服务器发动了一次向 www.360se.net 的解析请求。 <img data-src="/2019/11/09/experiments/security/web/webscan/37.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/38.png" class=""></p>
+</li>
+<li>
+<p>在整个扫描期间，可以发现目标机不停地在向 <code>133.130.101.150</code> 这个 IP 发送带有 SYN、ECN、CWR 标志的 TCP 包。</p>
+</li>
+<li>
+<p>故意请求一个可能并不存在的地址，或构造不合法的请求方式，从返回错误中也可以暴露服务器所开设的服务信息。就算是 404 Not Found，返回头中也可能携带服务信息。 <img data-src="/2019/11/09/experiments/security/web/webscan/39.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/40.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/41.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/42.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/43.png" class=""></p>
+</li>
+<li>
+<p>使用一个已存在的网页进行验证，扫描结束。 <img data-src="/2019/11/09/experiments/security/web/webscan/44.png" class=""></p>
+</li>
+<li>
+<p>另外，观察每次发送带有 <code>PSH|FIN</code> 标记的请求时，目标机回复的应答包中，确认序列号为攻击者序列数 + 1，可以从这里提取出目标机操作系统为 Windows，这是 ACK 扫描 —— 一种检测目标主机操作系统的方法。<img data-src="/2019/11/09/experiments/security/web/webscan/45.png" class=""></p>
+</li>
+<li>
+<p>以下是扫描结果</p>
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/res3-1.png" class="" title="端口和主机情况"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/res3-2.png" class="" title="其他基本信息"></div></div></div>
+</li>
+</ol>
+<img data-src="/2019/11/09/experiments/security/web/webscan/res3-3.png" class=""></div><div class="tab-pane" id="basic_scan-4"><ol>
+<li>首先上扫描结果。可以看到扫描结果基本正确，操作系统也比较准确。 <img data-src="/2019/11/09/experiments/security/web/webscan/46.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/47.png" class=""></li>
+<li>它比 Intense 扫描多扫出了一个 3306 端口，它是怎么发现的呢？ <div class="note primary"><p>在 SYN 扫描时，它就发现了 3306 号端口（3306 号端口给它发送了 SYN+ACK），再一连接，Server 就会回复 Server Greeting，从而发现了 3306 号端口的存在，版本号也随 Server Greeting 的发出而同时泄露。<br>
+</p></div></li>
+</ol>
+<p><img data-src="/2019/11/09/experiments/security/web/webscan/48.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/49.png" class=""></p><p></p>
+</div>
+<ol start="3">
+<li>预先的扫描是和（3）中一样的 SYN 方法。Maimon 还会进行重试。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/50.png" class="" title="发送多个SYN包"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/51.png" class="" title="发动重试"></div></div></div>
+</li>
+<li>但在端口扫描前，maimon 会先发送 FIN+ACK 请求关闭连接，这样做的目的可能是重置状态，减少干扰。 <img data-src="/2019/11/09/experiments/security/web/webscan/53.png" class=""></li>
+<li>扫描期间，还可以看到目标机的 TLS 通信过程。含义推测是要进行 443 号端口相关的验证，需要用到这些协议。<br>
+<img data-src="/2019/11/09/experiments/security/web/webscan/52.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/55.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/54.png" class=""> <div class="note info"><p>这里应该是在进行操作系统指纹的探查，依据是带有 PSH 标志的 ACK 包，不过负责这里验证的 IP 不再是探测机的 IP！</p>
+</div></li>
+</ol>
+</div> 
+<pre><code>做完这些检测后，被扫描机发送RST+ACK关闭连接，接下来做服务检测。验证方法与（3）类似，不再赘述。 &lt;img src="/2019/11/09/experiments/security/web/webscan/56.png" class=""&gt;
+</code></pre></div>
+<h3 id="漏洞扫描及利用">漏洞扫描及利用</h3>
+<ol>
+<li>首先利用已知的一组用户名密码登录 MySQL 服务器。 <img data-src="/2019/11/09/experiments/security/web/webscan/57.png" class=""></li>
+<li>向表中插入二进制数据，在传之前还做了一些事情。 <img data-src="/2019/11/09/experiments/security/web/webscan/58.png" class="" title="应该是很长的sql语句的拆分"></li>
+<li>查询服务器的操作系统。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/59.png" class="" title="询问"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/60.png" class="" title="响应回答"></div></div></div></li>
+<li>查询操作系统临时表目录。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/61.png" class="" title="询问"></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/62.png" class="" title="响应回答"></div></div></div></li>
+<li><code>select xxx info dumpfile</code> 是最关键的一步。漏洞利用关键点。由于相关防护不到位，服务器接受了这个请求，把二进制数据导出了文件，并添加到了启动项文件夹中。做完这个操作后，攻击机就发送 FIN+ACK 与服务器断开了链接。<img data-src="/2019/11/09/experiments/security/web/webscan/63.png" class=""> <div class="note info no-icon"><p>弹框时的数据交互情况类似。</p>
+</div>
+</li>
+</ol>
+<h2 id="收获">收获</h2>
+<p>通过使用扫描软件对于某主机进行扫描，再进行抓包分析，直观的看到了主机扫描数据交互的过程，理解了网络扫描的基本原理和不同扫描方法的特点。使用 metasploit 尝试了漏洞的利用，体验了漏洞的表现和侵入性。</p>
+<h2 id="补充">补充</h2>
+<ol>
+<li>
+<p>做完 “漏洞扫描” 实验的 metasploit 部分后，我才发现 metasploit 是漏洞利用软件而非漏洞扫描软件。重新上网查找相关资料，发现存在扫描漏洞的 nmap 脚本 <a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/vulnersCom/nmap-vulners">nmap-vulners</a>，决定使用这个脚本重新完成本部分实验和分析。</p>
+</li>
+<li>
+<p>使用 <code>-script</code> 选项指定 <code>nse</code> 脚本位置。扫描几乎如同普通扫描，也扫出了三个开放端口。</p>
+ <img data-src="/2019/11/09/experiments/security/web/webscan/ex0.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/ex1.png" class=""> <img data-src="/2019/11/09/experiments/security/web/webscan/ex2.png" class="">
+</li>
+<li>
+<p>但是没有看到漏洞相关的信息输出。我换用 kali linux 重新进行扫描，得到了以下结果 <img data-src="/2019/11/09/experiments/security/web/webscan/ex3.png" class=""></p>
+</li>
+<li>
+<p>以上结果表明系统确实存在了很多 cve 漏洞，甚至还有 2019 年的新漏洞，随便打开一个网页看看：<a target="_blank" rel="noopener external nofollow noreferrer" href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-0211">http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-0211</a> （nmap 给的页面链接过不了验证码）</p>
+ <blockquote class="blockquote-center">
+<p>CVE-2019-0211 是一种特权升级漏洞，在 Apache HTTP Server 2.4 版本 2.4.17 至 2.4.38 中，使用 MPM 事件，工作者或 prefork，在权限较低的子进程或线程（包括进程内脚本解释器执行的脚本）中执行的代码可以执行任意代码通过操纵记分板，父进程（通常是 root）的权限。非 Unix 系统不受影响。</p>
+
+</blockquote>
+ <div class="note default"><p>按说这个漏洞对于 Win Server 来说没影响，如果检测了目标操作系统的话，这个漏洞的重要性可能就会下降了。</p>
+</div>
+</li>
+<li>
+<p>对扫描过程抓包，发现前半部分与扫描端口、服务时基本一致，假如端口开放，目标机会发回 SYN+ACK 包，此时自己再发出 RST 包 <img data-src="/2019/11/09/experiments/security/web/webscan/ex4.png" class=""></p>
+</li>
+<li>
+<p>中间服务探测的过程与 intense 扫描基本一致，后期 vulners 检测工具与它自己的服务器进行了交互，可能是为了将特征与自己的数据库比对。</p>
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/ex5.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/ex6.png" class=""></div></div></div>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="Jason Ren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Jason Ren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Jason Ren
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/" title="网络扫描">https://blog.jason0743.space/2019/11/09/experiments/security/web/webscan/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-twitter"></i>
+            </span>
+
+            <span class="label">Twitter</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-telegram"></i>
+            </span>
+
+            <span class="label">Telegram</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <span class="social-link">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </span>
+
+          <img class="social-item-img" src="/images/gongzhonghao.jpg">
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-zhihu"></i>
+            </span>
+
+            <span class="label">知乎</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络空间安全</a>
+              <a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 网络安全</a>
+          </div>
+
+        
+  <div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a>
+      <a class="a2a_button_facebook"></a>
+      <a class="a2a_button_twitter"></a>
+      <a class="a2a_button_telegram"></a>
+      <a class="a2a_button_douban"></a>
+      <a class="a2a_button_mastodon"></a>
+      <a class="a2a_button_sina_weibo"></a>
+      <a class="a2a_button_wechat"></a>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/11/08/diarys/bupt-18/" rel="prev" title="北邮小日记 —— 第十八期">
+                  <i class="fa fa-chevron-left"></i> 北邮小日记 —— 第十八期
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/11/11/experiments/oskernel/file-system/" rel="next" title="文件系统实验">
+                  文件系统实验 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3 </a>
+  </div>
+
+<div class="copyright">
+  © 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason Ren</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">96k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:50</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script>
+  
+
+
+  
+
+  
+
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2019/11/09/experiments/security/web/webscan/"}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+
+
+<script type="text/javascript" src="/js/bundle.js"></script></body></html>

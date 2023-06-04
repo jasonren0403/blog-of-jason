@@ -1,3 +1,650 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0"><link rel="preconnect" href="https://fonts.geekzu.org" crossorigin=""><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin=""><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script><script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><meta name="description" content="前言 日常网友聊天时，总是会从视频网站中分享点东西，在分享的众多网站中，又以 b 站为主。在这个场景中，我想各位一定也会经常见到不少 b 站的短链接 b23.tv 域名了。这其中背后会有什么故事呢？"><meta property="og:type" content="article"><meta property="og:title" content="谈点 b23tv 短链接相关"><meta property="og:url" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/"><meta property="og:site_name" content="随心记"><meta property="og:description" content="前言 日常网友聊天时，总是会从视频网站中分享点东西，在分享的众多网站中，又以 b 站为主。在这个场景中，我想各位一定也会经常见到不少 b 站的短链接 b23.tv 域名了。这其中背后会有什么故事呢？"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-play-1.png"><meta property="og:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-play-2.png"><meta property="og:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-1.png"><meta property="og:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-2.png"><meta property="og:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-3.png"><meta property="article:published_time" content="2023-02-17T03:19:30.000Z"><meta property="article:modified_time" content="2023-05-29T04:01:15.224Z"><meta property="article:author" content="Jason Ren"><meta property="article:tag" content="frontend"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-play-1.png"><link rel="canonical" href="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/","path":"2023/02/17/works/frontend/what-is-behind-b23tv/","title":"谈点 b23tv 短链接相关"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>谈点 b23tv 短链接相关 | 随心记</title><link rel="dns-prefetch" href="https://blog-manage.jason0743.space/"><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript><link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
-</head><body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><div class="column"><header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">随心记</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">展现安全态度</p></div><div class="site-nav-right"><div class="toggle popup-trigger" aria-label="搜索" role="button"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></header><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%AD%E5%9F%9F%E5%90%8D"><span class="nav-number">2.</span> <span class="nav-text">短域名</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B1%E6%9D%A5"><span class="nav-number">2.1.</span> <span class="nav-text">由来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#b%E7%AB%99%E7%9F%AD%E5%9F%9F%E5%90%8D%E5%88%B0%E5%BA%95%E6%9C%89%E6%B2%A1%E6%9C%89%E5%8C%85%E5%90%AB%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">b 站短域名到底有没有包含个人信息？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png"><p class="site-author-name" itemprop="name">Jason Ren</p><div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div></div><div class="site-state-wrap animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">60</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">46</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">30</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author animated"><span class="links-of-author-item"><a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a> </span><span class="links-of-author-item"><a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a> </span><span class="links-of-author-item"><a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a> </span><span class="links-of-author-item"><a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a></span></div></div></div><div class="back-to-top animated" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside></div><div class="main-inner post posts-expand"><div class="post-block"><article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/"><span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar-v1.png"><meta itemprop="name" content="Jason Ren"></span><span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization"><meta itemprop="name" content="随心记"><meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔"></span><span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="谈点 b23tv 短链接相关 | 随心记"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">谈点 b23tv 短链接相关</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2023-02-17 11:19:30" itemprop="dateCreated datePublished" datetime="2023-02-17T11:19:30+08:00">2023-02-17</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar-check"></i> </span><span class="post-meta-item-text">更新于</span> <time title="修改时间：2023-05-29 12:01:15" itemprop="dateModified" datetime="2023-05-29T12:01:15+08:00">2023-05-29</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/frontend/" itemprop="url" rel="index"><span itemprop="name">frontend</span></a> </span></span><span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span id="busuanzi_value_page_pv"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Waline：</span> <a title="waline" href="/2023/02/17/works/frontend/what-is-behind-b23tv/#waline" itemprop="discussionUrl"><span class="post-comments-count waline-comment-count" data-path="/2023/02/17/works/frontend/what-is-behind-b23tv/" itemprop="commentCount"></span> </a></span><span class="post-meta-item" title="阅读次数"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="waline-pageview-count" data-path="/2023/02/17/works/frontend/what-is-behind-b23tv/"></span> </span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>2.1k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 ≈</span> <span>8 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><h2 id="前言">前言</h2><p>日常网友聊天时，总是会从视频网站中分享点东西，在分享的众多网站中，又以 <a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.bilibili.com">b 站</a>为主。在这个场景中，我想各位一定也会经常见到不少 b 站的短链接 <code>b23.tv</code> 域名了。这其中背后会有什么故事呢？</p><span id="more"></span><p>顺便，我并没有参与过这方面的开发，只是以用户角度及可能的相关知识做一些分析。</p><h2 id="短域名">短域名</h2><h3 id="由来">由来</h3><p>顾名思义，短域名一般长度很短，且不带 www。这样的域名出现是为了方便记忆，网民输入网址的时候，不必要输入太长的域名。某些网站会申请一些短域名，然后将它们设置跳转到带 www 的顶级域名上。正因为长度足够短，在社交媒体上分享时，会节省很多字数。</p><h3 id="实现">实现</h3><p>我们常用的情景有这两种：</p><ol><li><p>同域跳转，将不带 www 的域名直接转发到带 www 的域名，后台如果使用 nginx，会配置成这样：</p><figure class="highlight nginx"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> {</span><br><span class="line">	<span class="attribute">listen</span>                  <span class="number">443</span> ssl http2;</span><br><span class="line">	<span class="attribute">listen</span>                  [::]:<span class="number">443</span> ssl http2;</span><br><span class="line">	<span class="attribute">server_name</span>             www.jason0743.ren;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> {</span><br><span class="line">	<span class="attribute">listen</span>      <span class="number">80</span>;</span><br><span class="line">	<span class="attribute">listen</span>      [::]:<span class="number">80</span>;</span><br><span class="line">	<span class="attribute">server_name</span> jason0743.ren;</span><br><span class="line"></span><br><span class="line">	<span class="section">location</span> / {</span><br><span class="line">		<span class="attribute">return</span> <span class="number">301</span> https://www.jason0743.ren<span class="variable">$request_uri</span>;</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> {</span><br><span class="line">	<span class="attribute">listen</span>      <span class="number">80</span>;</span><br><span class="line">	<span class="attribute">listen</span>      [::]:<span class="number">80</span>;</span><br><span class="line">	<span class="attribute">server_name</span> www.jason0743.ren;</span><br><span class="line"></span><br><span class="line">	<span class="section">location</span> / {</span><br><span class="line">		<span class="attribute">return</span> <span class="number">301</span> https://www.jason0743.ren<span class="variable">$request_uri</span>;</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure><p>这个配置中，主要依靠 <code>location /</code> 块下指定的 301 状态码及跳转地址。这样，用户访问 <code>jason0743.ren</code> 时，会被重定向到 <code>www.jason0743.ren</code>，这样就可以统一使用带 www 的域名了。</p><p>根据相关标准，代表永久重定向的 301 状态码会被浏览器缓存，搜索引擎也会将资源的索引转移到新地址上，所以说权重会聚集在带 www 的主域名上。</p></li><li><p>非同域跳转。本文要介绍的 <code>b23.tv</code> 跳转到 <code>bilibili.com</code> 的属于这种情况。一般来说，二字母、二数字、二杂合的域名都是效果非常好的短链接的来源。这样的域名往往依靠注册得到。</p><p>马上我们就会看到，它的实现方法也是类似于第一种情况，使用 301、302 状态码和跳转地址来实现。</p></li></ol><p>短网址 - 长网址的对应关系，很容易想到一个数据结构 ——Map。这里我们可以使用一个 Map 来存储短网址和长网址的对应关系，然后根据短网址来查找长网址，再根据长网址来重定向。在实际应用中，这种对应关系往往使用数据库存储。每次生成短链接时，就将它插入数据库中，每插一次，就会关联一个 id，下次可以通过 id 定位到原始链接，然后作后续跳转。</p><p>用数字作为 id 是很容易想到的，但是，短网址数据通常是上亿的，如果用户输入过长数字，体验想必也不会太好。所以，我们可以使用一些编码算法，将数字转换成更短的字符串。这里我们可以使用 62 进制，即 0-9、a-z、A-Z，这样就可以用 6 位字符来表示 62 的 6 次方个数字，也就是 568 亿个数字。这样，我们就可以使用 6 位字符来表示一个 id 了。</p><p>短链接服务往往是高并发的，业务数据量非常大，不得不分库分表，分库分表的情况下，仍然需要唯一标识数据的 ID，自增 ID 就不太好用了。这时，就需要一些分布式 ID 生成算法的帮助了，比如 Redis 的 incr 命令，Twitter 的雪花算法等。这些东西要展开的话，可能需要额外一篇文章了。</p><h2 id="b站短域名到底有没有包含个人信息？">b 站短域名到底有没有包含个人信息？</h2><p>现在已经是 2023 年了，在 bing 等各大搜索引擎上也能找到 b 站添加短域名标识符的报告信息了。大家在看到这些信息时，肯定会说” 又有应用收集我信息了，我隐私无了 “吧！但是，你知道这些是什么信息吗？为了让大家明白，我们把访问 b23 短域名的过程来进行一个简单的测试。</p><p>从我们手机 B 站 APP 上，随便打开一个视频，然后点击右上角的三个点，选择 “复制链接”。这时你会发现，剪贴板上的内容类似如下：</p><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">【视频标题】 https://b23.tv/{xxxxxx}</span><br></pre></td></tr></tbody></table></figure><p>其中视频标题的右方括号与短链接之间有一个空格。我们将这个短链接拿去测试一下：</p><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="comment"># 别忘了把short-id换成另外一个合法链接自己测试</span></span><br><span class="line">res = requests.get(<span class="string">"https://b23.tv/&lt;short-id&gt;"</span>)</span><br><span class="line"><span class="built_in">print</span>(res.url)</span><br><span class="line"><span class="comment"># 'https://www.bilibili.com/video/BV{xxxxxxxxx}/?buvid={buvid}&amp;is_story_h5=false&amp;mid={mid}&amp;p=1&amp;plat_id={plat_id}&amp;share_from=ugc&amp;share_medium={medium}&amp;share_plat={platform}&amp;share_session_id={sid}&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp={ts}&amp;unique_k={}&amp;up_id={}'</span></span><br></pre></td></tr></tbody></table></figure><p>最后的 <code>url</code> 地址与初始请求地址不同，显然经过了 30x 的重定向，强制忽略重定向再来一遍：</p><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="comment"># 别忘了把short-id换成另外一个合法链接自己测试</span></span><br><span class="line">res = requests.get(<span class="string">"https://b23.tv/&lt;short-id&gt;"</span>, allow_redirects=<span class="literal">False</span>)</span><br><span class="line"><span class="comment"># &lt;Response [302]&gt;</span></span><br><span class="line"><span class="built_in">print</span>(res.headers)</span><br><span class="line"><span class="comment"># {'Date': 'Fri, 17 Feb 2023 03:55:30 GMT', 'Content-Type': 'text/html; charset=utf-8', 'Content-Length': '420', 'Connection': 'keep-alive', 'Bili-Trace-Id': '{trace-id}', 'Location': 'https://www.bilibili.com/video/BV{xxxxxxxxx}?{search-params}', 'X-Bili-Trace-Id': '{trace-id}', 'Expires': 'Fri, 17 Feb 2023 03:55:29 GMT', 'Cache-Control': 'no-cache', 'X-Cache-Webcdn': 'BYPASS from blzone06'}</span></span><br></pre></td></tr></tbody></table></figure><p><code>Location</code> 响应头的地址与不忽略重定向时的地址相同，这时候我们大致可以描绘出整个请求的过程了。</p><pre class="mermaid">graph LR
-  A["访问短链接b23.tv/xxx"] --&gt; B["取Location进行302跳转"] --&gt; C["带一堆URL参数的bilibili.com/BVxxxxxx视频页链接"]</pre><div class="note warning"><p>看见没，已经有一堆追踪参数了，为了这里演示方便以及不泄露隐私，这里用占位符 <code>{}</code> 替换掉了所有可能引起追踪的地方。</p></div><p>可以看到在进行 302 跳转时，服务器给出的 <code>Location</code> 响应头已经携带了参数。这些参数中，有一些是与用户相关的，比如</p><ul><li><code>mid</code> 用户 ID，在 2023 年 4 月 2 日测试时，mid 已经变成了一堆字母和数字，不知道有没有作加密</li><li><code>buvid</code> 用户设备 ID</li><li><code>plat_id</code> 用户平台 ID</li><li><code>share_session_id</code> 分享会话 ID，其格式为 UUID</li><li><code>share_tag</code>，没猜到含义</li><li><code>share_from</code> 分享来源内容，ugc 为用户生成内容（User Generated Content）</li><li><code>share_medium</code> 分享媒介，如安卓手机端的分享值为 android</li><li><code>share_source</code> 分享来源，如安卓手机端的分享值为 COPY</li><li><code>share_plat</code> 分享平台，如安卓手机端的分享值为 android</li><li><code>up_id</code> UP 主 ID，也就是 UP 主空间主页 <code>space.bilibili.com</code> 后面那一串数字</li><li><code>timestamp</code> 时间戳，位数为 10 位</li></ul><p>这些当然利于刻画分享视频用户的行为，便于后期综合到 UP 主的分析中。如<a target="_blank" rel="noopener external nofollow noreferrer" href="https://member.bilibili.com/platform/data-up/video/dataCenter/play">数据中心 —— 播放</a>中，就使用到了用户的设备信息。</p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-play-1.png" title="数据中心播放统计"></div><div class="group-picture-column"><img data-src="/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-play-2.png" title="数据中心播放统计"></div></div></div><p>而在<a target="_blank" rel="noopener external nofollow noreferrer" href="https://member.bilibili.com/platform/data-up/video/dataCenter/audience">数据中心 —— 观众</a>中，互动活跃度统计会使用到分享的数据。</p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-1.png" title="数据中心观众统计"></div><div class="group-picture-column"><img data-src="/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-2.png" title="数据中心观众统计"></div></div></div><p>既然分享也算一种互动，如果分享的人是粉丝，则它也会参与到粉丝粘性的计算中。</p><img data-src="/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-3.png" title="粉丝粘性"><p>在电脑端上获取视频分享链接，就直接是 <code>https://www.bilibili.com/video/BV{xxxxxxx}/?share_source=copy_web&amp;vd_source={}</code> 这种长链接格式了。</p><h2 id="总结">总结</h2><ul><li>一些门户分享网站为了方便统计分析，在 URL 查询字段中会携带各种信息。无论有关无关，总会引起部分用户的不满，手动删除标识符总是一个好习惯。今后我也可能会开发一个工具来解除 “标识符之苦”。</li><li>平衡用户体验和隐私保护，也是现在很多国内网站需要优化的地方。希望这些网站多多注意。</li><li>写这篇文章的意义，也是基于 “不要人云亦云” 的原则，对这件事有个自己的看法，并以文章的形式记录下来。希望这篇文章能够帮助到大家做进一步的判断，也希望 B 站短链接部门能够做好用户隐私和数据分析的平衡，有所改进吧。</li></ul></div><footer class="post-footer"><div class="reward-container"><div>请我一杯咖啡吧！</div><button>赞赏</button><div class="post-reward"><div><img src="/images/wechatpay.png" alt="Jason Ren 微信"> <span>微信</span></div><div><img src="/images/alipay.jpg" alt="Jason Ren 支付宝"> <span>支付宝</span></div></div></div><div class="post-copyright"><ul><li class="post-copyright-author"><strong>本文作者： </strong>Jason Ren</li><li class="post-copyright-link"><strong>本文链接：</strong> <a href="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/" title="谈点 b23tv 短链接相关">https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/</a></li><li class="post-copyright-license"><strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><div class="followme"><span>欢迎关注我的其它发布渠道</span><div class="social-list"><div class="social-item"><a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-twitter"></i> </span><span class="label">Twitter</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-telegram"></i> </span><span class="label">Telegram</span></a></div><div class="social-item"><span class="social-link"><span class="icon"><i class="fab fa-weixin"></i> </span><span class="label">WeChat</span> </span><img class="social-item-img" src="/images/gongzhonghao.jpg"></div><div class="social-item"><a target="_blank" class="social-link" href="/atom.xml"><span class="icon"><i class="fa fa-rss"></i> </span><span class="label">RSS</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-zhihu"></i> </span><span class="label">知乎</span></a></div></div></div><div class="post-tags"><a href="/tags/frontend/" rel="tag"><i class="fa fa-tag"></i> frontend</a></div><div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style"><a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a> <a class="a2a_button_facebook"></a> <a class="a2a_button_twitter"></a> <a class="a2a_button_telegram"></a> <a class="a2a_button_douban"></a> <a class="a2a_button_mastodon"></a> <a class="a2a_button_sina_weibo"></a> <a class="a2a_button_wechat"></a></div><div class="post-nav"><div class="post-nav-item"><a href="/2021/09/30/hello-world/" rel="prev" title="Hexo 用法备忘录"><i class="fa fa-chevron-left"></i> Hexo 用法备忘录</a></div><div class="post-nav-item"><a href="/2023/04/03/works/how-i-built-the-blog/" rel="next" title="我是如何一步步把这个博客搭建起来的">我是如何一步步把这个博客搭建起来的 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="waline"></div></div></main><footer class="footer"><div class="footer-inner"><div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3</a></div><div class="copyright">© 2020 – <span itemprop="copyrightYear">2023</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">Jason Ren</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">96k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">5:50</span></span></div><div class="busuanzi-count"><span class="post-meta-item" id="busuanzi_container_site_uv"><span class="post-meta-item-icon"><i class="fa fa-user"></i> </span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span> </span></span><span class="post-meta-item" id="busuanzi_container_site_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div><div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动</div></div></footer><div class="toggle sidebar-toggle" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><div class="sidebar-dimmer"></div><div class="reading-progress-bar"></div><a role="button" class="book-mark-link book-mark-link-fixed"></a> <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin:130px 106px" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script><script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script><script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2023/02/17/works/frontend/what-is-behind-b23tv/"}</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css"><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.waline.el).then(()=>NexT.utils.getScript(CONFIG.waline.libUrl,{condition:window.Waline})).then(()=>Waline.init(Object.assign({},CONFIG.waline,{el:document.querySelector(CONFIG.waline.el)})))})</script><script type="text/javascript" src="/js/bundle.js"></script></body></html>
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+<link rel="preconnect" href="https://fonts.geekzu.org" crossorigin="">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script>
+
+    <meta name="description" content="前言 日常网友聊天时，总是会从视频网站中分享点东西，在分享的众多网站中，又以 b 站为主。在这个场景中，我想各位一定也会经常见到不少 b 站的短链接 b23.tv 域名了。这其中背后会有什么故事呢？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="谈点 b23tv 短链接相关">
+<meta property="og:url" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/">
+<meta property="og:site_name" content="随心记">
+<meta property="og:description" content="前言 日常网友聊天时，总是会从视频网站中分享点东西，在分享的众多网站中，又以 b 站为主。在这个场景中，我想各位一定也会经常见到不少 b 站的短链接 b23.tv 域名了。这其中背后会有什么故事呢？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-play-1.png">
+<meta property="og:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-play-2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-1.png">
+<meta property="og:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-3.png">
+<meta property="article:published_time" content="2023-02-17T03:19:30.000Z">
+<meta property="article:modified_time" content="2023-06-04T08:34:47.215Z">
+<meta property="article:author" content="Jason Ren">
+<meta property="article:tag" content="frontend">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-play-1.png">
+
+
+<link rel="canonical" href="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/","path":"2023/02/17/works/frontend/what-is-behind-b23tv/","title":"谈点 b23tv 短链接相关"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>谈点 b23tv 短链接相关 | 随心记</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="https://blog-manage.jason0743.space/">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">随心记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">展现安全态度</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%AD%E5%9F%9F%E5%90%8D"><span class="nav-number">2.</span> <span class="nav-text">短域名</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B1%E6%9D%A5"><span class="nav-number">2.1.</span> <span class="nav-text">由来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#b%E7%AB%99%E7%9F%AD%E5%9F%9F%E5%90%8D%E5%88%B0%E5%BA%95%E6%9C%89%E6%B2%A1%E6%9C%89%E5%8C%85%E5%90%AB%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">b 站短域名到底有没有包含个人信息？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png">
+  <p class="site-author-name" itemprop="name">Jason Ren</p>
+  <div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-v1.png">
+      <meta itemprop="name" content="Jason Ren">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随心记">
+      <meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔">
+    </span>
+
+    <span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="谈点 b23tv 短链接相关 | 随心记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          谈点 b23tv 短链接相关
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-02-17 11:19:30" itemprop="dateCreated datePublished" datetime="2023-02-17T11:19:30+08:00">2023-02-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-06-04 16:34:47" itemprop="dateModified" datetime="2023-06-04T16:34:47+08:00">2023-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/frontend/" itemprop="url" rel="index"><span itemprop="name">frontend</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2023/02/17/works/frontend/what-is-behind-b23tv/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2023/02/17/works/frontend/what-is-behind-b23tv/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/2023/02/17/works/frontend/what-is-behind-b23tv/"></span>
+    </span>
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="前言">前言</h2>
+<p>日常网友聊天时，总是会从视频网站中分享点东西，在分享的众多网站中，又以 <a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.bilibili.com">b 站</a>为主。在这个场景中，我想各位一定也会经常见到不少 b 站的短链接 <code>b23.tv</code> 域名了。这其中背后会有什么故事呢？</p>
+<span id="more"></span>
+<p>顺便，我并没有参与过这方面的开发，只是以用户角度及可能的相关知识做一些分析。</p>
+<h2 id="短域名">短域名</h2>
+<h3 id="由来">由来</h3>
+<p>顾名思义，短域名一般长度很短，且不带 www。这样的域名出现是为了方便记忆，网民输入网址的时候，不必要输入太长的域名。某些网站会申请一些短域名，然后将它们设置跳转到带 www 的顶级域名上。正因为长度足够短，在社交媒体上分享时，会节省很多字数。</p>
+<h3 id="实现">实现</h3>
+<p>我们常用的情景有这两种：</p>
+<ol>
+<li>
+<p>同域跳转，将不带 www 的域名直接转发到带 www 的域名，后台如果使用 nginx，会配置成这样：</p>
+ <figure class="highlight nginx"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> {</span><br><span class="line">	<span class="attribute">listen</span>                  <span class="number">443</span> ssl http2;</span><br><span class="line">	<span class="attribute">listen</span>                  [::]:<span class="number">443</span> ssl http2;</span><br><span class="line">	<span class="attribute">server_name</span>             www.jason0743.ren;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> {</span><br><span class="line">	<span class="attribute">listen</span>      <span class="number">80</span>;</span><br><span class="line">	<span class="attribute">listen</span>      [::]:<span class="number">80</span>;</span><br><span class="line">	<span class="attribute">server_name</span> jason0743.ren;</span><br><span class="line"></span><br><span class="line">	<span class="section">location</span> / {</span><br><span class="line">		<span class="attribute">return</span> <span class="number">301</span> https://www.jason0743.ren<span class="variable">$request_uri</span>;</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> {</span><br><span class="line">	<span class="attribute">listen</span>      <span class="number">80</span>;</span><br><span class="line">	<span class="attribute">listen</span>      [::]:<span class="number">80</span>;</span><br><span class="line">	<span class="attribute">server_name</span> www.jason0743.ren;</span><br><span class="line"></span><br><span class="line">	<span class="section">location</span> / {</span><br><span class="line">		<span class="attribute">return</span> <span class="number">301</span> https://www.jason0743.ren<span class="variable">$request_uri</span>;</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>这个配置中，主要依靠 <code>location /</code> 块下指定的 301 状态码及跳转地址。这样，用户访问 <code>jason0743.ren</code> 时，会被重定向到 <code>www.jason0743.ren</code>，这样就可以统一使用带 www 的域名了。</p>
+<p>根据相关标准，代表永久重定向的 301 状态码会被浏览器缓存，搜索引擎也会将资源的索引转移到新地址上，所以说权重会聚集在带 www 的主域名上。</p>
+</li>
+<li>
+<p>非同域跳转。本文要介绍的 <code>b23.tv</code> 跳转到 <code>bilibili.com</code> 的属于这种情况。一般来说，二字母、二数字、二杂合的域名都是效果非常好的短链接的来源。这样的域名往往依靠注册得到。</p>
+<p>马上我们就会看到，它的实现方法也是类似于第一种情况，使用 301、302 状态码和跳转地址来实现。</p>
+</li>
+</ol>
+<p>短网址 - 长网址的对应关系，很容易想到一个数据结构 ——Map。这里我们可以使用一个 Map 来存储短网址和长网址的对应关系，然后根据短网址来查找长网址，再根据长网址来重定向。在实际应用中，这种对应关系往往使用数据库存储。每次生成短链接时，就将它插入数据库中，每插一次，就会关联一个 id，下次可以通过 id 定位到原始链接，然后作后续跳转。</p>
+<p>用数字作为 id 是很容易想到的，但是，短网址数据通常是上亿的，如果用户输入过长数字，体验想必也不会太好。所以，我们可以使用一些编码算法，将数字转换成更短的字符串。这里我们可以使用 62 进制，即 0-9、a-z、A-Z，这样就可以用 6 位字符来表示 62 的 6 次方个数字，也就是 568 亿个数字。这样，我们就可以使用 6 位字符来表示一个 id 了。</p>
+<p>短链接服务往往是高并发的，业务数据量非常大，不得不分库分表，分库分表的情况下，仍然需要唯一标识数据的 ID，自增 ID 就不太好用了。这时，就需要一些分布式 ID 生成算法的帮助了，比如 Redis 的 incr 命令，Twitter 的雪花算法等。这些东西要展开的话，可能需要额外一篇文章了。</p>
+<h2 id="b站短域名到底有没有包含个人信息？">b 站短域名到底有没有包含个人信息？</h2>
+<p>现在已经是 2023 年了，在 bing 等各大搜索引擎上也能找到 b 站添加短域名标识符的报告信息了。大家在看到这些信息时，肯定会说” 又有应用收集我信息了，我隐私无了 “吧！但是，你知道这些是什么信息吗？为了让大家明白，我们把访问 b23 短域名的过程来进行一个简单的测试。</p>
+<p>从我们手机 B 站 APP 上，随便打开一个视频，然后点击右上角的三个点，选择 “复制链接”。这时你会发现，剪贴板上的内容类似如下：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">【视频标题】 https://b23.tv/{xxxxxx}</span><br></pre></td></tr></tbody></table></figure>
+<p>其中视频标题的右方括号与短链接之间有一个空格。我们将这个短链接拿去测试一下：</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="comment"># 别忘了把short-id换成另外一个合法链接自己测试</span></span><br><span class="line">res = requests.get(<span class="string">"https://b23.tv/&lt;short-id&gt;"</span>)</span><br><span class="line"><span class="built_in">print</span>(res.url)</span><br><span class="line"><span class="comment"># 'https://www.bilibili.com/video/BV{xxxxxxxxx}/?buvid={buvid}&amp;is_story_h5=false&amp;mid={mid}&amp;p=1&amp;plat_id={plat_id}&amp;share_from=ugc&amp;share_medium={medium}&amp;share_plat={platform}&amp;share_session_id={sid}&amp;share_source=COPY&amp;share_tag=s_i&amp;timestamp={ts}&amp;unique_k={}&amp;up_id={}'</span></span><br></pre></td></tr></tbody></table></figure>
+<p>最后的 <code>url</code> 地址与初始请求地址不同，显然经过了 30x 的重定向，强制忽略重定向再来一遍：</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="comment"># 别忘了把short-id换成另外一个合法链接自己测试</span></span><br><span class="line">res = requests.get(<span class="string">"https://b23.tv/&lt;short-id&gt;"</span>, allow_redirects=<span class="literal">False</span>)</span><br><span class="line"><span class="comment"># &lt;Response [302]&gt;</span></span><br><span class="line"><span class="built_in">print</span>(res.headers)</span><br><span class="line"><span class="comment"># {'Date': 'Fri, 17 Feb 2023 03:55:30 GMT', 'Content-Type': 'text/html; charset=utf-8', 'Content-Length': '420', 'Connection': 'keep-alive', 'Bili-Trace-Id': '{trace-id}', 'Location': 'https://www.bilibili.com/video/BV{xxxxxxxxx}?{search-params}', 'X-Bili-Trace-Id': '{trace-id}', 'Expires': 'Fri, 17 Feb 2023 03:55:29 GMT', 'Cache-Control': 'no-cache', 'X-Cache-Webcdn': 'BYPASS from blzone06'}</span></span><br></pre></td></tr></tbody></table></figure>
+<p><code>Location</code> 响应头的地址与不忽略重定向时的地址相同，这时候我们大致可以描绘出整个请求的过程了。</p>
+<pre class="mermaid">graph LR
+  A["访问短链接b23.tv/xxx"] --&gt; B["取Location进行302跳转"] --&gt; C["带一堆URL参数的bilibili.com/BVxxxxxx视频页链接"]</pre>
+<div class="note warning"><p>看见没，已经有一堆追踪参数了，为了这里演示方便以及不泄露隐私，这里用占位符 <code>{}</code> 替换掉了所有可能引起追踪的地方。</p>
+</div>
+<p>可以看到在进行 302 跳转时，服务器给出的 <code>Location</code> 响应头已经携带了参数。这些参数中，有一些是与用户相关的，比如</p>
+<ul>
+<li><code>mid</code> 用户 ID，在 2023 年 4 月 2 日测试时，mid 已经变成了一堆字母和数字，不知道有没有作加密</li>
+<li><code>buvid</code> 用户设备 ID</li>
+<li><code>plat_id</code> 用户平台 ID</li>
+<li><code>share_session_id</code> 分享会话 ID，其格式为 UUID</li>
+<li><code>share_tag</code>，没猜到含义</li>
+<li><code>share_from</code> 分享来源内容，ugc 为用户生成内容（User Generated Content）</li>
+<li><code>share_medium</code> 分享媒介，如安卓手机端的分享值为 android</li>
+<li><code>share_source</code> 分享来源，如安卓手机端的分享值为 COPY</li>
+<li><code>share_plat</code> 分享平台，如安卓手机端的分享值为 android</li>
+<li><code>up_id</code> UP 主 ID，也就是 UP 主空间主页 <code>space.bilibili.com</code> 后面那一串数字</li>
+<li><code>timestamp</code> 时间戳，位数为 10 位</li>
+</ul>
+<p>这些当然利于刻画分享视频用户的行为，便于后期综合到 UP 主的分析中。如<a target="_blank" rel="noopener external nofollow noreferrer" href="https://member.bilibili.com/platform/data-up/video/dataCenter/play">数据中心 —— 播放</a>中，就使用到了用户的设备信息。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-play-1.png" class="" title="数据中心播放统计"></div><div class="group-picture-column"><img data-src="/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-play-2.png" class="" title="数据中心播放统计"></div></div></div>
+<p>而在<a target="_blank" rel="noopener external nofollow noreferrer" href="https://member.bilibili.com/platform/data-up/video/dataCenter/audience">数据中心 —— 观众</a>中，互动活跃度统计会使用到分享的数据。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-1.png" class="" title="数据中心观众统计"></div><div class="group-picture-column"><img data-src="/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-2.png" class="" title="数据中心观众统计"></div></div></div>
+<p>既然分享也算一种互动，如果分享的人是粉丝，则它也会参与到粉丝粘性的计算中。</p>
+<img data-src="/2023/02/17/works/frontend/what-is-behind-b23tv/datacenter-audience-3.png" class="" title="粉丝粘性">
+<p>在电脑端上获取视频分享链接，就直接是 <code>https://www.bilibili.com/video/BV{xxxxxxx}/?share_source=copy_web&amp;vd_source={}</code> 这种长链接格式了。</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li>一些门户分享网站为了方便统计分析，在 URL 查询字段中会携带各种信息。无论有关无关，总会引起部分用户的不满，手动删除标识符总是一个好习惯。今后我也可能会开发一个工具来解除 “标识符之苦”。</li>
+<li>平衡用户体验和隐私保护，也是现在很多国内网站需要优化的地方。希望这些网站多多注意。</li>
+<li>写这篇文章的意义，也是基于 “不要人云亦云” 的原则，对这件事有个自己的看法，并以文章的形式记录下来。希望这篇文章能够帮助到大家做进一步的判断，也希望 B 站短链接部门能够做好用户隐私和数据分析的平衡，有所改进吧。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="Jason Ren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Jason Ren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Jason Ren
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/" title="谈点 b23tv 短链接相关">https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-twitter"></i>
+            </span>
+
+            <span class="label">Twitter</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-telegram"></i>
+            </span>
+
+            <span class="label">Telegram</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <span class="social-link">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </span>
+
+          <img class="social-item-img" src="/images/gongzhonghao.jpg">
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-zhihu"></i>
+            </span>
+
+            <span class="label">知乎</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/frontend/" rel="tag"><i class="fa fa-tag"></i> frontend</a>
+          </div>
+
+        
+  <div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a>
+      <a class="a2a_button_facebook"></a>
+      <a class="a2a_button_twitter"></a>
+      <a class="a2a_button_telegram"></a>
+      <a class="a2a_button_douban"></a>
+      <a class="a2a_button_mastodon"></a>
+      <a class="a2a_button_sina_weibo"></a>
+      <a class="a2a_button_wechat"></a>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/09/30/hello-world/" rel="prev" title="Hexo 用法备忘录">
+                  <i class="fa fa-chevron-left"></i> Hexo 用法备忘录
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/03/works/how-i-built-the-blog/" rel="next" title="我是如何一步步把这个博客搭建起来的">
+                  我是如何一步步把这个博客搭建起来的 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3 </a>
+  </div>
+
+<div class="copyright">
+  © 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason Ren</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">96k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:50</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script>
+  
+
+
+  
+
+  
+
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2023/02/17/works/frontend/what-is-behind-b23tv/"}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+
+
+<script type="text/javascript" src="/js/bundle.js"></script></body></html>

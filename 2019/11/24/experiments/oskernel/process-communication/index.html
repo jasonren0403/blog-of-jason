@@ -1,2 +1,683 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0"><link rel="preconnect" href="https://fonts.geekzu.org" crossorigin=""><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin=""><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script><script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><meta name="description" content="实验目的 通过几则进程通信的例子，理解进程的同步机制，理解锁、信号量在同步编程的重要地位。"><meta property="og:type" content="article"><meta property="og:title" content="进程通信实验"><meta property="og:url" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/"><meta property="og:site_name" content="随心记"><meta property="og:description" content="实验目的 通过几则进程通信的例子，理解进程的同步机制，理解锁、信号量在同步编程的重要地位。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/1.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/2.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/3.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/4.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/5.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/6.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/7.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/8.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/9.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/10.png"><meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/11.png"><meta property="article:published_time" content="2019-11-24T12:18:43.000Z"><meta property="article:modified_time" content="2023-05-29T04:01:15.004Z"><meta property="article:author" content="Jason Ren"><meta property="article:tag" content="OS"><meta property="article:tag" content="进程通信"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/1.png"><link rel="canonical" href="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/","path":"2019/11/24/experiments/oskernel/process-communication/","title":"进程通信实验"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>进程通信实验 | 随心记</title><link rel="dns-prefetch" href="https://blog-manage.jason0743.space/"><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript><link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
-</head><body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><div class="column"><header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">随心记</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">展现安全态度</p></div><div class="site-nav-right"><div class="toggle popup-trigger" aria-label="搜索" role="button"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></header><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">实验目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%85%B3%E9%94%AE%E9%87%8C%E7%A8%8B%E7%A2%91%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">实验关键里程碑数据与结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E5%AE%9E%E9%AA%8C-consumer-producer"><span class="nav-number">3.1.</span> <span class="nav-text">文件共享实验 (consumer &amp; producer)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%85%B1%E4%BA%AB%E5%AE%9E%E9%AA%8C-memwriter-memreader"><span class="nav-number">3.2.</span> <span class="nav-text">内存共享实验 (memwriter &amp; memreader)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E9%81%93%E9%80%9A%E4%BF%A1%E5%AE%9E%E9%AA%8C-fifoWriter-fifoReader"><span class="nav-number">3.3.</span> <span class="nav-text">管道通信实验 (fifoWriter &amp; fifoReader)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E4%BA%92%E6%96%A5%E5%AE%9E%E9%AA%8C-shutdown"><span class="nav-number">3.4.</span> <span class="nav-text">信号量互斥实验 (shutdown)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%99%E6%98%AF%E5%95%A5%E6%84%8F%E6%80%9D%E5%91%A2%EF%BC%9F"><span class="nav-number">3.4.1.</span> <span class="nav-text">这是啥意思呢？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%9F%E5%88%97%E9%80%9A%E4%BF%A1%E5%AE%9E%E9%AA%8C-sender-receiver"><span class="nav-number">3.5.</span> <span class="nav-text">队列通信实验 (sender &amp; receiver)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%86%85%E6%A0%B8%E5%92%8C%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F%E4%B9%8B%E9%97%B4%E7%9A%84%E6%96%87%E4%BB%B6%E9%80%9A%E4%BF%A1"><span class="nav-number">3.6.</span> <span class="nav-text">实现内核和用户程序之间的文件通信</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E9%9A%BE%E7%82%B9%E4%B8%8E%E6%94%B6%E8%8E%B7"><span class="nav-number">4.</span> <span class="nav-text">实验难点与收获</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E6%80%9D%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">实验思考</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png"><p class="site-author-name" itemprop="name">Jason Ren</p><div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div></div><div class="site-state-wrap animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">60</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">46</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">30</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author animated"><span class="links-of-author-item"><a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a> </span><span class="links-of-author-item"><a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a> </span><span class="links-of-author-item"><a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a> </span><span class="links-of-author-item"><a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a></span></div></div></div><div class="back-to-top animated" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside></div><div class="main-inner post posts-expand"><div class="post-block"><article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/"><span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar-v1.png"><meta itemprop="name" content="Jason Ren"></span><span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization"><meta itemprop="name" content="随心记"><meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔"></span><span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="进程通信实验 | 随心记"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">进程通信实验</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-11-24 20:18:43" itemprop="dateCreated datePublished" datetime="2019-11-24T20:18:43+08:00">2019-11-24</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar-check"></i> </span><span class="post-meta-item-text">更新于</span> <time title="修改时间：2023-05-29 12:01:15" itemprop="dateModified" datetime="2023-05-29T12:01:15+08:00">2023-05-29</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E5%AE%9E%E9%AA%8C/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">操作系统内核</span></a> </span></span><span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span id="busuanzi_value_page_pv"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Waline：</span> <a title="waline" href="/2019/11/24/experiments/oskernel/process-communication/#waline" itemprop="discussionUrl"><span class="post-comments-count waline-comment-count" data-path="/2019/11/24/experiments/oskernel/process-communication/" itemprop="commentCount"></span> </a></span><span class="post-meta-item" title="阅读次数"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="waline-pageview-count" data-path="/2019/11/24/experiments/oskernel/process-communication/"></span> </span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>2.4k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 ≈</span> <span>9 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><h2 id="实验目的">实验目的</h2><p>通过几则进程通信的例子，理解进程的同步机制，理解锁、信号量在同步编程的重要地位。</p><span id="more"></span><h2 id="步骤">步骤</h2><ol><li>解压给定程序包得到代码文件 <img data-src="/2019/11/24/experiments/oskernel/process-communication/1.png"></li><li>运行 Makefile 编译所有代码文件 <img data-src="/2019/11/24/experiments/oskernel/process-communication/2.png"></li><li>依次运行每个目标文件，观察它的执行现象</li></ol><h2 id="实验关键里程碑数据与结果">实验关键里程碑数据与结果</h2><h3 id="文件共享实验-consumer-producer">文件共享实验 (consumer &amp; producer)</h3><p>通过阅读源码得知，consumer 和 producer 共用了一个 <code>data.dat</code> 文件，其中 producer 向其写入内容</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">write(fd, DataString, <span class="built_in">strlen</span>(DataString)); <span class="comment">/* populate data file */</span></span><br></pre></td></tr></tbody></table></figure><p>其中 DataString 是我们写入的文字内容。 consumer 从中读出内容并写入到标准输出 <code>stdout</code> 中</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Read the bytes (they happen to be ASCII codes) one at a time. */</span></span><br><span class="line"><span class="type">int</span> c; <span class="comment">/* buffer for read bytes */</span></span><br><span class="line"><span class="keyword">while</span> (read(fd, &amp;c, <span class="number">1</span>) &gt; <span class="number">0</span>)    <span class="comment">/* 0 signals EOF */</span></span><br><span class="line">write(STDOUT_FILENO, &amp;c, <span class="number">1</span>); <span class="comment">/* write one byte to the standard output */</span></span><br></pre></td></tr></tbody></table></figure><p>为了增强理解，我将 DataString 修改为了 “2017****** xxx (名字和学号已打码)”，<code>data.dat</code> 中的原来内容做如下修改</p><img data-src="/2019/11/24/experiments/oskernel/process-communication/3.png"><p>然后重新编译程序。</p><p>接下来，先运行 consumer，以验证 <code>data.dat</code> 中的内容未修改。运行一次 producer，我们的 datastring 被写入到 <code>data.dat</code> 中，由于 producer 指定了开始指针为 0（文件中的第一个字节），所以我们的字符串从第一个字节开始，修改了原来 data.dat 中的内容，再调用 consumer，就会显示此时文件的内容已被我们修改。</p><img data-src="/2019/11/24/experiments/oskernel/process-communication/4.png"><div class="note info"><p>看上去是简单的文件写入和读取操作，实际上还有一些额外的工作</p><div class="tabs" id="extra"><ul class="nav-tabs"><li class="tab active"><a href="#extra-1"><code>producer.c</code></a></li><li class="tab"><a href="#extra-2"><code>consumer.c</code></a></li></ul><div class="tab-content"><div class="tab-pane active" id="extra-1"><p>首先设定读 / 写锁。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">flock</span> <span class="title">lock</span>;</span></span><br><span class="line">lock.l_type = F_WRLCK;    <span class="comment">/* read/write (exclusive versus shared) lock */</span></span><br></pre></td></tr></tbody></table></figure><p>然后试图打开文件。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((fd = open(FileName, O_RDWR | O_CREAT, <span class="number">0666</span>)) &lt; <span class="number">0</span>)  <span class="comment">/* -1 signals an error */</span></span><br><span class="line">report_and_exit(<span class="string">"open failed..."</span>);</span><br></pre></td></tr></tbody></table></figure><p>并为它加锁（不阻塞）。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (fcntl(fd, F_SETLK, &amp;lock) &lt; <span class="number">0</span>) <span class="comment">/** F_SETLK doesn't block, F_SETLKW does **/</span></span><br><span class="line">report_and_exit(<span class="string">"fcntl failed to get lock..."</span>);</span><br></pre></td></tr></tbody></table></figure><p>在文件写入结束后，释放锁。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lock.l_type = F_UNLCK;</span><br><span class="line"><span class="keyword">if</span> (fcntl(fd, F_SETLK, &amp;lock) &lt; <span class="number">0</span>)</span><br><span class="line">report_and_exit(<span class="string">"explicit unlocking failed..."</span>);</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="extra-2"><p>在 <code>consumer.c</code> 中，锁的类型仍然是读 / 写锁。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">flock</span> <span class="title">lock</span>;</span></span><br><span class="line">lock.l_type = F_WRLCK;    <span class="comment">/* read/write (exclusive) lock */</span></span><br></pre></td></tr></tbody></table></figure><p>然后试图打开文件。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((fd = open(FileName, O_RDONLY)) &lt; <span class="number">0</span>)  <span class="comment">/* -1 signals an error */</span></span><br><span class="line">report_and_exit(<span class="string">"open to read failed..."</span>);</span><br></pre></td></tr></tbody></table></figure><p>文件被加写锁时，不能从中读出内容。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* If the file is write-locked, we can't continue. */</span></span><br><span class="line">fcntl(fd, F_GETLK, &amp;lock); <span class="comment">/* sets lock.l_type to F_UNLCK if no write lock */</span></span><br><span class="line"><span class="keyword">if</span> (lock.l_type != F_UNLCK)</span><br><span class="line">report_and_exit(<span class="string">"file is still write locked..."</span>);</span><br></pre></td></tr></tbody></table></figure><p>读出内容时，要加读锁。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lock.l_type = F_RDLCK; <span class="comment">/* prevents any writing during the reading */</span></span><br><span class="line"><span class="keyword">if</span> (fcntl(fd, F_SETLK, &amp;lock) &lt; <span class="number">0</span>)</span><br><span class="line">report_and_exit(<span class="string">"can't get a read-only lock..."</span>);</span><br></pre></td></tr></tbody></table></figure><p>读出结束后，释放锁。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Release the lock explicitly. */</span></span><br><span class="line">lock.l_type = F_UNLCK;</span><br><span class="line"><span class="keyword">if</span> (fcntl(fd, F_SETLK, &amp;lock) &lt; <span class="number">0</span>)</span><br><span class="line">report_and_exit(<span class="string">"explicit unlocking failed..."</span>);</span><br></pre></td></tr></tbody></table></figure><p>手动释放锁即使失败，<code>close(fd)</code> 和 <code>return 0</code> 也可以释放掉进程。</p></div></div></div></div><h3 id="内存共享实验-memwriter-memreader">内存共享实验 (memwriter &amp; memreader)</h3><p>通过源码得知，memwriter 和 memreader 共用了 <code>/dev/shm</code> 内的一块空间，由 writer 向其中写入内容，reader 向外读出并写入 <code>stdout</code> 中。 <img data-src="/2019/11/24/experiments/oskernel/process-communication/5.png"></p><p>在 memwriter 启动的一瞬间，<code>/dev/shm/</code> 下会多出一个叫 <code>shMemEx</code> 的文件，写入的内容就暂存在那个文件里。读出时也从那个文件中读出内容。Memwriter 和 memreader 的正确工作要依靠计数信号量（semaphore），具体来说：</p><ol><li><p>memwriter 中，<code>semptr</code> 的初始值为 0，如果 <code>semptr</code> 的值为 - 1，那么程序退出。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* semphore code to lock the shared mem */</span></span><br><span class="line"><span class="type">sem_t</span>* semptr = sem_open(SemaphoreName, <span class="comment">/* name */</span></span><br><span class="line">		   O_CREAT,       <span class="comment">/* create the semaphore */</span></span><br><span class="line">		   AccessPerms,   <span class="comment">/* protection perms */</span></span><br><span class="line">		   <span class="number">0</span>);            <span class="comment">/* initial value */</span></span><br><span class="line"><span class="keyword">if</span> (semptr == (<span class="type">void</span>*) <span class="number">-1</span>) report_and_exit(<span class="string">"sem_open"</span>);</span><br></pre></td></tr></tbody></table></figure><p>在 <code>strcpy</code> 将 <code>contents</code> 拷贝到内存后，<code>sem_post</code> 增加信号量的值（+1），如果 <code>semptr</code> 的值还是 - 1，那么程序退出。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* increment the semaphore so that memreader can read */</span></span><br><span class="line"><span class="keyword">if</span> (sem_post(semptr) &lt; <span class="number">0</span>) report_and_exit(<span class="string">"sem_post"</span>);</span><br></pre></td></tr></tbody></table></figure></li><li><p>memreader 中，<code>semptr</code> 的初始值还是 0。当 <code>semptr</code> 不为 0 时，将 <code>memcontents</code> 的内容全部逐字读出。每次 <code>sem_wait</code> 都将使信号量的值 - 1。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* use semaphore as a mutex (lock) by waiting for writer to increment it */</span></span><br><span class="line"><span class="keyword">if</span> (!sem_wait(semptr)) { <span class="comment">/* wait until semaphore != 0 */</span></span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="built_in">strlen</span>(MemContents); i++)</span><br><span class="line">	  write(STDOUT_FILENO, memptr + i, <span class="number">1</span>); <span class="comment">/* one byte at a time */</span></span><br><span class="line">	sem_post(semptr);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li></ol><h3 id="管道通信实验-fifoWriter-fifoReader">管道通信实验 (fifoWriter &amp; fifoReader)</h3><p>fifoWriter 和 fifoReader 共享了一个管道文件 <code>fifoChannel</code>，fifoWriter 向其中写入若干随机数，fifoReader 读文件并判断其中质数的多少。</p><img data-src="/2019/11/24/experiments/oskernel/process-communication/6.png"><p>与实验 3.2 不同的是，当同时运行此实验的 writer 和 reader 时，一定是 writer 先结束后，Reader 才会有结果显示。当事先没有 writer 的写入时，reader 会直接退出（因为没有管道文件）。运行一瞬间产生的管道文件会在写入完成后消失（源代码中写完就 <code>close</code> 了）。</p><p>写进程以只写模式打开管道文件。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fd = open(pipeName, O_CREAT | O_WRONLY); <span class="comment">/* open as write-only */</span></span><br></pre></td></tr></tbody></table></figure><p>读进程以只读模式打开管道文件。</p><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fd = open(file, O_RDONLY);</span><br></pre></td></tr></tbody></table></figure><p>从而分时占用了文件。</p><h3 id="信号量互斥实验-shutdown">信号量互斥实验 (shutdown)</h3><p>运行结果如下</p><img data-src="/2019/11/24/experiments/oskernel/process-communication/7.png"><div class="note info"><h4 id="这是啥意思呢？">这是啥意思呢？</h4><p>结合源码得知，主进程运行到 <code>fork</code> 后分开为两个进程，父进程调用 <code>parent_code</code> 并阻塞，调用 <code>sleep(5)</code> 睡眠 5 秒，等待子进程退出。(这可以解释为什么 main 打印了一遍，而 main…2 和 main…3 被打印了两遍的原因 ——main…2 和 main…3 都在 fork 调用之后) 然后，子进程从 <code>fork</code> 开始继续运行，进入了 <code>child_code</code>，<code>child_code</code> 中，注册了 <code>SIGTERM</code>（id=15）为其处理信号。然后，尝试先调用 <code>sleep(1)</code>，睡眠 1 秒，然后输出 "Child just woke up, but going back to sleep"。5 秒过后主进程醒了，继续运行 <code>parent_code</code>，其调用了 <code>kill</code> 来杀死子进程，（所以上述信息输出了 4 次）子进程接收到信号后，打印出信号 id 并执行相应的处理函数。待子进程调用<code>_exit(0)</code> 返回内核后，父进程也退出，整个程序运行结束。</p></div><h3 id="队列通信实验-sender-receiver">队列通信实验 (sender &amp; receiver)</h3><p>通过观察源码得知，此部分实验运用了消息队列函数 <code>msgget</code>、<code>msgsnd</code>、<code>msgrcv</code>、<code>msgctl</code>，它们所需要的头文件为 <code>&lt;sys/types.h&gt;</code>、<code>&lt;sys/ipc.h&gt;</code> 和 <code>&lt;sys/msg.h&gt;</code>。sender 以队列形式发出了六条信息 "msg1"、 “msg2”、 “msg3”、 “msg4”、 “msg5”、 “msg6”，msg1 和 2 是类型 1 的，3 和 4 是类型 2 的，5 和 6 是类型 3 的。Receiver 以与发送方不同的类型顺序接收，具体来说，按照 3→1→2→1→3→2 的顺序，实际运行结果如下</p><img data-src="/2019/11/24/experiments/oskernel/process-communication/8.png"><p>仍然可以正确地接收信息，而且队列内部的顺序是 “先来先接收” 的。比如 msg1 在 type1 中先于 msg2 发送，那么接收时也是 msg1 比 msg2 先接送。</p><p>当 msg 接收完成后，它就从队列中被移除，这也是为什么再次运行 receiver 后接受失败的原因。</p><img data-src="/2019/11/24/experiments/oskernel/process-communication/9.png"><h3 id="实现内核和用户程序之间的文件通信">实现内核和用户程序之间的文件通信</h3><div class="tabs" id="code"><ul class="nav-tabs"><li class="tab active"><a href="#code-1"><i class="fa fa-code"></i>server 源码</a></li><li class="tab"><a href="#code-2"><i class="fa fa-code"></i>client 源码</a></li></ul><div class="tab-content"><div class="tab-pane active" id="code-1"><figure class="highlight c"><figcaption><span>server.c</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/tcp.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">"sock.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">report</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* msg, <span class="type">int</span> <span class="built_in">terminate</span>)</span> {</span><br><span class="line">  perror(msg);</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">terminate</span>) <span class="built_in">exit</span>(<span class="number">-1</span>); <span class="comment">/* failure */</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> {</span><br><span class="line">  <span class="type">int</span> fd = socket(AF_INET,     <span class="comment">/* network versus AF_LOCAL */</span></span><br><span class="line">		  SOCK_STREAM, <span class="comment">/* reliable, bidirectional: TCP */</span></span><br><span class="line">		  <span class="number">0</span>);          <span class="comment">/* system picks underlying protocol */</span></span><br><span class="line">  <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) report(<span class="string">"socket"</span>, <span class="number">1</span>); <span class="comment">/* terminate */</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* bind the server's local address in memory */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">saddr</span>;</span></span><br><span class="line">  <span class="built_in">memset</span>(&amp;saddr, <span class="number">0</span>, <span class="keyword">sizeof</span>(saddr));          <span class="comment">/* clear the bytes */</span></span><br><span class="line">  saddr.sin_family = AF_INET;                <span class="comment">/* versus AF_LOCAL */</span></span><br><span class="line">  saddr.sin_addr.s_addr = htonl(INADDR_ANY); <span class="comment">/* host-to-network endian */</span></span><br><span class="line">  saddr.sin_port = htons(PortNumber);        <span class="comment">/* for listening */</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (bind(fd, (<span class="keyword">struct</span> sockaddr *) &amp;saddr, <span class="keyword">sizeof</span>(saddr)) &lt; <span class="number">0</span>)</span><br><span class="line">    report(<span class="string">"bind"</span>, <span class="number">1</span>); <span class="comment">/* terminate */</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* listen to the socket */</span></span><br><span class="line">  <span class="keyword">if</span> (listen(fd, MaxConnects) &lt; <span class="number">0</span>) <span class="comment">/* listen for clients, up to MaxConnects */</span></span><br><span class="line">    report(<span class="string">"listen"</span>, <span class="number">1</span>); <span class="comment">/* terminate */</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Listening on port %i for clients...\n"</span>, PortNumber);</span><br><span class="line">  <span class="comment">/* a server traditionally listens indefinitely */</span></span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) {</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">caddr</span>;</span> <span class="comment">/* client address */</span></span><br><span class="line">    <span class="type">int</span> len = <span class="keyword">sizeof</span>(caddr);  <span class="comment">/* address length could change */</span></span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> client_fd = accept(fd, (<span class="keyword">struct</span> sockaddr*) &amp;caddr, &amp;len);  <span class="comment">/* accept blocks */</span></span><br><span class="line">    <span class="keyword">if</span> (client_fd &lt; <span class="number">0</span>) {</span><br><span class="line">      report(<span class="string">"accept"</span>, <span class="number">0</span>); <span class="comment">/* don't terminated, though there's a problem */</span></span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* read from client */</span></span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; ConversationLen; i++) {</span><br><span class="line">      <span class="type">char</span> buffer[BuffSize + <span class="number">1</span>];</span><br><span class="line">      <span class="built_in">memset</span>(buffer, <span class="string">'\0'</span>, <span class="keyword">sizeof</span>(buffer));</span><br><span class="line">      <span class="type">int</span> count = read(client_fd, buffer, <span class="keyword">sizeof</span>(buffer));</span><br><span class="line">      <span class="keyword">if</span> (count &gt; <span class="number">0</span>) {</span><br><span class="line">	<span class="built_in">puts</span>(buffer);</span><br><span class="line">	write(client_fd, buffer, <span class="keyword">sizeof</span>(buffer)); <span class="comment">/* echo as confirmation */</span></span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">    close(client_fd); <span class="comment">/* break connection */</span></span><br><span class="line">  }  <span class="comment">/* while(1) */</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="code-2"><figure class="highlight c"><figcaption><span>client.c</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/tcp.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netdb.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">"sock.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">char</span>* books[] = {<span class="string">"War and Peace"</span>,</span><br><span class="line">		       <span class="string">"Pride and Prejudice"</span>,</span><br><span class="line">		       <span class="string">"The Sound and the Fury"</span>};</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">report</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* msg, <span class="type">int</span> <span class="built_in">terminate</span>)</span> {</span><br><span class="line">  perror(msg);</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">terminate</span>) <span class="built_in">exit</span>(<span class="number">-1</span>); <span class="comment">/* failure */</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> {</span><br><span class="line">  <span class="comment">/* fd for the socket */</span></span><br><span class="line">  <span class="type">int</span> sockfd = socket(AF_INET,      <span class="comment">/* versus AF_LOCAL */</span></span><br><span class="line">		      SOCK_STREAM,  <span class="comment">/* reliable, bidirectional */</span></span><br><span class="line">		      <span class="number">0</span>);           <span class="comment">/* system picks protocol (TCP) */</span></span><br><span class="line">  <span class="keyword">if</span> (sockfd &lt; <span class="number">0</span>) report(<span class="string">"socket"</span>, <span class="number">1</span>); <span class="comment">/* terminate */</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* get the address of the host */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">hostent</span>* <span class="title">hptr</span> =</span> gethostbyname(Host); <span class="comment">/* localhost: 127.0.0.1 */</span></span><br><span class="line">  <span class="keyword">if</span> (!hptr) report(<span class="string">"gethostbyname"</span>, <span class="number">1</span>); <span class="comment">/* is hptr NULL? */</span></span><br><span class="line">  <span class="keyword">if</span> (hptr-&gt;h_addrtype != AF_INET)       <span class="comment">/* versus AF_LOCAL */</span></span><br><span class="line">    report(<span class="string">"bad address family"</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* connect to the server: configure server's address 1st */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">saddr</span>;</span></span><br><span class="line">  <span class="built_in">memset</span>(&amp;saddr, <span class="number">0</span>, <span class="keyword">sizeof</span>(saddr));</span><br><span class="line">  saddr.sin_family = AF_INET;</span><br><span class="line">  saddr.sin_addr.s_addr =</span><br><span class="line">     ((<span class="keyword">struct</span> in_addr*) hptr-&gt;h_addr_list[<span class="number">0</span>])-&gt;s_addr;</span><br><span class="line">  saddr.sin_port = htons(PortNumber); <span class="comment">/* port number in big-endian */</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (connect(sockfd, (<span class="keyword">struct</span> sockaddr*) &amp;saddr, <span class="keyword">sizeof</span>(saddr)) &lt; <span class="number">0</span>)</span><br><span class="line">    report(<span class="string">"connect"</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Write some stuff and read the echoes. */</span></span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Connect to server, about to write some stuff..."</span>);</span><br><span class="line">  <span class="type">int</span> i;</span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; ConversationLen; i++) {</span><br><span class="line">    <span class="keyword">if</span> (write(sockfd, books[i], <span class="built_in">strlen</span>(books[i])) &gt; <span class="number">0</span>) {</span><br><span class="line">      <span class="comment">/* get confirmation echoed from server and print */</span></span><br><span class="line">      <span class="type">char</span> buffer[BuffSize + <span class="number">1</span>];</span><br><span class="line">      <span class="built_in">memset</span>(buffer, <span class="string">'\0'</span>, <span class="keyword">sizeof</span>(buffer));</span><br><span class="line">      <span class="keyword">if</span> (read(sockfd, buffer, <span class="keyword">sizeof</span>(buffer)) &gt; <span class="number">0</span>) <span class="built_in">puts</span>(buffer);</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Client done, about to exit..."</span>);</span><br><span class="line">  close(sockfd); <span class="comment">/* close the connection */</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div></div></div>主要利用了C的`socket`通信函数来实现文件通信。先运行server，再运行client，结果如下。 <img data-src="/2019/11/24/experiments/oskernel/process-communication/10.png"><p>Server 开启了 9876 号端口的监听，接收 client 端向服务器写入信息，server 端会向 client 端回应所写入的内容，client 端写入完成，就会退出。</p><p>此时查看 <code>netstat</code> 状态，会发现 server 端的 9876 号端口在监听任意地址。</p><img data-src="/2019/11/24/experiments/oskernel/process-communication/11.png"><h2 id="实验难点与收获">实验难点与收获</h2><p>本次实验主要为给定文件，运行可执行程序并对执行结果进行解释。通过运行给定的示例程序，我对于进程的同步有了更深层的认识，明白了信号量和锁机制的使用对于同步编程的正确性来说是个很重要的保证。同时，也学习到了一些 Linux 系统头文件中自带的一些同步函数。</p><h2 id="实验思考">实验思考</h2><p>Server 和 client 的 socket 通信过程是否也是文件通信的一种形式？文件描述符是由 socket 函数获得的，我们能不能在 linux 系统中找到相应的文件呢？</p></div><footer class="post-footer"><div class="reward-container"><div>请我一杯咖啡吧！</div><button>赞赏</button><div class="post-reward"><div><img src="/images/wechatpay.png" alt="Jason Ren 微信"> <span>微信</span></div><div><img src="/images/alipay.jpg" alt="Jason Ren 支付宝"> <span>支付宝</span></div></div></div><div class="post-copyright"><ul><li class="post-copyright-author"><strong>本文作者： </strong>Jason Ren</li><li class="post-copyright-link"><strong>本文链接：</strong> <a href="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/" title="进程通信实验">https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/</a></li><li class="post-copyright-license"><strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><div class="followme"><span>欢迎关注我的其它发布渠道</span><div class="social-list"><div class="social-item"><a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-twitter"></i> </span><span class="label">Twitter</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-telegram"></i> </span><span class="label">Telegram</span></a></div><div class="social-item"><span class="social-link"><span class="icon"><i class="fab fa-weixin"></i> </span><span class="label">WeChat</span> </span><img class="social-item-img" src="/images/gongzhonghao.jpg"></div><div class="social-item"><a target="_blank" class="social-link" href="/atom.xml"><span class="icon"><i class="fa fa-rss"></i> </span><span class="label">RSS</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-zhihu"></i> </span><span class="label">知乎</span></a></div></div></div><div class="post-tags"><a href="/tags/OS/" rel="tag"><i class="fa fa-tag"></i> OS</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1/" rel="tag"><i class="fa fa-tag"></i> 进程通信</a></div><div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style"><a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a> <a class="a2a_button_facebook"></a> <a class="a2a_button_twitter"></a> <a class="a2a_button_telegram"></a> <a class="a2a_button_douban"></a> <a class="a2a_button_mastodon"></a> <a class="a2a_button_sina_weibo"></a> <a class="a2a_button_wechat"></a></div><div class="post-nav"><div class="post-nav-item"><a href="/2019/11/14/experiments/security/vulnerability_analysis/string-format/" rel="prev" title="格式化字符串漏洞"><i class="fa fa-chevron-left"></i> 格式化字符串漏洞</a></div><div class="post-nav-item"><a href="/2019/11/25/experiments/security/web/ids/" rel="next" title="入侵检测">入侵检测 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="waline"></div></div></main><footer class="footer"><div class="footer-inner"><div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3</a></div><div class="copyright">© 2020 – <span itemprop="copyrightYear">2023</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">Jason Ren</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">96k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">5:50</span></span></div><div class="busuanzi-count"><span class="post-meta-item" id="busuanzi_container_site_uv"><span class="post-meta-item-icon"><i class="fa fa-user"></i> </span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span> </span></span><span class="post-meta-item" id="busuanzi_container_site_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div><div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动</div></div></footer><div class="toggle sidebar-toggle" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><div class="sidebar-dimmer"></div><div class="reading-progress-bar"></div><a role="button" class="book-mark-link book-mark-link-fixed"></a> <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin:130px 106px" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script><script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script><script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2019/11/24/experiments/oskernel/process-communication/"}</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css"><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.waline.el).then(()=>NexT.utils.getScript(CONFIG.waline.libUrl,{condition:window.Waline})).then(()=>Waline.init(Object.assign({},CONFIG.waline,{el:document.querySelector(CONFIG.waline.el)})))})</script><script type="text/javascript" src="/js/bundle.js"></script></body></html>
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+<link rel="preconnect" href="https://fonts.geekzu.org" crossorigin="">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script>
+
+    <meta name="description" content="实验目的 通过几则进程通信的例子，理解进程的同步机制，理解锁、信号量在同步编程的重要地位。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程通信实验">
+<meta property="og:url" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/">
+<meta property="og:site_name" content="随心记">
+<meta property="og:description" content="实验目的 通过几则进程通信的例子，理解进程的同步机制，理解锁、信号量在同步编程的重要地位。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/1.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/3.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/4.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/5.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/6.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/7.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/8.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/9.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/10.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/11.png">
+<meta property="article:published_time" content="2019-11-24T12:18:43.000Z">
+<meta property="article:modified_time" content="2023-06-04T08:34:46.991Z">
+<meta property="article:author" content="Jason Ren">
+<meta property="article:tag" content="OS">
+<meta property="article:tag" content="进程通信">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/1.png">
+
+
+<link rel="canonical" href="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/","path":"2019/11/24/experiments/oskernel/process-communication/","title":"进程通信实验"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>进程通信实验 | 随心记</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="https://blog-manage.jason0743.space/">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">随心记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">展现安全态度</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">实验目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%85%B3%E9%94%AE%E9%87%8C%E7%A8%8B%E7%A2%91%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">实验关键里程碑数据与结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E5%AE%9E%E9%AA%8C-consumer-producer"><span class="nav-number">3.1.</span> <span class="nav-text">文件共享实验 (consumer &amp; producer)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%85%B1%E4%BA%AB%E5%AE%9E%E9%AA%8C-memwriter-memreader"><span class="nav-number">3.2.</span> <span class="nav-text">内存共享实验 (memwriter &amp; memreader)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E9%81%93%E9%80%9A%E4%BF%A1%E5%AE%9E%E9%AA%8C-fifoWriter-fifoReader"><span class="nav-number">3.3.</span> <span class="nav-text">管道通信实验 (fifoWriter &amp; fifoReader)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E4%BA%92%E6%96%A5%E5%AE%9E%E9%AA%8C-shutdown"><span class="nav-number">3.4.</span> <span class="nav-text">信号量互斥实验 (shutdown)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%99%E6%98%AF%E5%95%A5%E6%84%8F%E6%80%9D%E5%91%A2%EF%BC%9F"><span class="nav-number">3.4.1.</span> <span class="nav-text">这是啥意思呢？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%9F%E5%88%97%E9%80%9A%E4%BF%A1%E5%AE%9E%E9%AA%8C-sender-receiver"><span class="nav-number">3.5.</span> <span class="nav-text">队列通信实验 (sender &amp; receiver)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%86%85%E6%A0%B8%E5%92%8C%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F%E4%B9%8B%E9%97%B4%E7%9A%84%E6%96%87%E4%BB%B6%E9%80%9A%E4%BF%A1"><span class="nav-number">3.6.</span> <span class="nav-text">实现内核和用户程序之间的文件通信</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E9%9A%BE%E7%82%B9%E4%B8%8E%E6%94%B6%E8%8E%B7"><span class="nav-number">4.</span> <span class="nav-text">实验难点与收获</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E6%80%9D%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">实验思考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png">
+  <p class="site-author-name" itemprop="name">Jason Ren</p>
+  <div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-v1.png">
+      <meta itemprop="name" content="Jason Ren">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随心记">
+      <meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔">
+    </span>
+
+    <span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="进程通信实验 | 随心记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          进程通信实验
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-11-24 20:18:43" itemprop="dateCreated datePublished" datetime="2019-11-24T20:18:43+08:00">2019-11-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-06-04 16:34:46" itemprop="dateModified" datetime="2023-06-04T16:34:46+08:00">2023-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">操作系统内核</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/11/24/experiments/oskernel/process-communication/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/11/24/experiments/oskernel/process-communication/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/2019/11/24/experiments/oskernel/process-communication/"></span>
+    </span>
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="实验目的">实验目的</h2>
+<p>通过几则进程通信的例子，理解进程的同步机制，理解锁、信号量在同步编程的重要地位。</p>
+<span id="more"></span>
+<h2 id="步骤">步骤</h2>
+<ol>
+<li>解压给定程序包得到代码文件 <img data-src="/2019/11/24/experiments/oskernel/process-communication/1.png" class=""></li>
+<li>运行 Makefile 编译所有代码文件 <img data-src="/2019/11/24/experiments/oskernel/process-communication/2.png" class=""></li>
+<li>依次运行每个目标文件，观察它的执行现象</li>
+</ol>
+<h2 id="实验关键里程碑数据与结果">实验关键里程碑数据与结果</h2>
+<h3 id="文件共享实验-consumer-producer">文件共享实验 (consumer &amp; producer)</h3>
+<p>通过阅读源码得知，consumer 和 producer 共用了一个 <code>data.dat</code> 文件，其中 producer 向其写入内容</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">write(fd, DataString, <span class="built_in">strlen</span>(DataString)); <span class="comment">/* populate data file */</span></span><br></pre></td></tr></tbody></table></figure>
+<p>其中 DataString 是我们写入的文字内容。 consumer 从中读出内容并写入到标准输出 <code>stdout</code> 中</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Read the bytes (they happen to be ASCII codes) one at a time. */</span></span><br><span class="line"><span class="type">int</span> c; <span class="comment">/* buffer for read bytes */</span></span><br><span class="line"><span class="keyword">while</span> (read(fd, &amp;c, <span class="number">1</span>) &gt; <span class="number">0</span>)    <span class="comment">/* 0 signals EOF */</span></span><br><span class="line">write(STDOUT_FILENO, &amp;c, <span class="number">1</span>); <span class="comment">/* write one byte to the standard output */</span></span><br></pre></td></tr></tbody></table></figure>
+<p>为了增强理解，我将 DataString 修改为了 “2017****** xxx (名字和学号已打码)”，<code>data.dat</code> 中的原来内容做如下修改</p>
+<img data-src="/2019/11/24/experiments/oskernel/process-communication/3.png" class="">
+<p>然后重新编译程序。</p>
+<p>接下来，先运行 consumer，以验证 <code>data.dat</code> 中的内容未修改。运行一次 producer，我们的 datastring 被写入到 <code>data.dat</code> 中，由于 producer 指定了开始指针为 0（文件中的第一个字节），所以我们的字符串从第一个字节开始，修改了原来 data.dat 中的内容，再调用 consumer，就会显示此时文件的内容已被我们修改。</p>
+<img data-src="/2019/11/24/experiments/oskernel/process-communication/4.png" class="">
+<div class="note info"><p>看上去是简单的文件写入和读取操作，实际上还有一些额外的工作</p>
+<div class="tabs" id="extra"><ul class="nav-tabs"><li class="tab active"><a href="#extra-1"><code>producer.c</code></a></li><li class="tab"><a href="#extra-2"><code>consumer.c</code></a></li></ul><div class="tab-content"><div class="tab-pane active" id="extra-1"><p>首先设定读 / 写锁。</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">flock</span> <span class="title">lock</span>;</span></span><br><span class="line">lock.l_type = F_WRLCK;    <span class="comment">/* read/write (exclusive versus shared) lock */</span></span><br></pre></td></tr></tbody></table></figure>
+<p>然后试图打开文件。</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((fd = open(FileName, O_RDWR | O_CREAT, <span class="number">0666</span>)) &lt; <span class="number">0</span>)  <span class="comment">/* -1 signals an error */</span></span><br><span class="line">report_and_exit(<span class="string">"open failed..."</span>);</span><br></pre></td></tr></tbody></table></figure>
+<p>并为它加锁（不阻塞）。</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (fcntl(fd, F_SETLK, &amp;lock) &lt; <span class="number">0</span>) <span class="comment">/** F_SETLK doesn't block, F_SETLKW does **/</span></span><br><span class="line">report_and_exit(<span class="string">"fcntl failed to get lock..."</span>);</span><br></pre></td></tr></tbody></table></figure>
+<p>在文件写入结束后，释放锁。</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lock.l_type = F_UNLCK;</span><br><span class="line"><span class="keyword">if</span> (fcntl(fd, F_SETLK, &amp;lock) &lt; <span class="number">0</span>)</span><br><span class="line">report_and_exit(<span class="string">"explicit unlocking failed..."</span>);</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="extra-2"><p>在 <code>consumer.c</code> 中，锁的类型仍然是读 / 写锁。</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">flock</span> <span class="title">lock</span>;</span></span><br><span class="line">lock.l_type = F_WRLCK;    <span class="comment">/* read/write (exclusive) lock */</span></span><br></pre></td></tr></tbody></table></figure>
+<p>然后试图打开文件。</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((fd = open(FileName, O_RDONLY)) &lt; <span class="number">0</span>)  <span class="comment">/* -1 signals an error */</span></span><br><span class="line">report_and_exit(<span class="string">"open to read failed..."</span>);</span><br></pre></td></tr></tbody></table></figure>
+<p>文件被加写锁时，不能从中读出内容。</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* If the file is write-locked, we can't continue. */</span></span><br><span class="line">fcntl(fd, F_GETLK, &amp;lock); <span class="comment">/* sets lock.l_type to F_UNLCK if no write lock */</span></span><br><span class="line"><span class="keyword">if</span> (lock.l_type != F_UNLCK)</span><br><span class="line">report_and_exit(<span class="string">"file is still write locked..."</span>);</span><br></pre></td></tr></tbody></table></figure>
+<p>读出内容时，要加读锁。</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lock.l_type = F_RDLCK; <span class="comment">/* prevents any writing during the reading */</span></span><br><span class="line"><span class="keyword">if</span> (fcntl(fd, F_SETLK, &amp;lock) &lt; <span class="number">0</span>)</span><br><span class="line">report_and_exit(<span class="string">"can't get a read-only lock..."</span>);</span><br></pre></td></tr></tbody></table></figure>
+<p>读出结束后，释放锁。</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Release the lock explicitly. */</span></span><br><span class="line">lock.l_type = F_UNLCK;</span><br><span class="line"><span class="keyword">if</span> (fcntl(fd, F_SETLK, &amp;lock) &lt; <span class="number">0</span>)</span><br><span class="line">report_and_exit(<span class="string">"explicit unlocking failed..."</span>);</span><br></pre></td></tr></tbody></table></figure>
+<p>手动释放锁即使失败，<code>close(fd)</code> 和 <code>return 0</code> 也可以释放掉进程。</p></div></div></div></div>
+<h3 id="内存共享实验-memwriter-memreader">内存共享实验 (memwriter &amp; memreader)</h3>
+<p>通过源码得知，memwriter 和 memreader 共用了 <code>/dev/shm</code> 内的一块空间，由 writer 向其中写入内容，reader 向外读出并写入 <code>stdout</code> 中。 <img data-src="/2019/11/24/experiments/oskernel/process-communication/5.png" class=""></p>
+<p>在 memwriter 启动的一瞬间，<code>/dev/shm/</code> 下会多出一个叫 <code>shMemEx</code> 的文件，写入的内容就暂存在那个文件里。读出时也从那个文件中读出内容。Memwriter 和 memreader 的正确工作要依靠计数信号量（semaphore），具体来说：</p>
+<ol>
+<li>
+<p>memwriter 中，<code>semptr</code> 的初始值为 0，如果 <code>semptr</code> 的值为 - 1，那么程序退出。</p>
+ <figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* semphore code to lock the shared mem */</span></span><br><span class="line"><span class="type">sem_t</span>* semptr = sem_open(SemaphoreName, <span class="comment">/* name */</span></span><br><span class="line">		   O_CREAT,       <span class="comment">/* create the semaphore */</span></span><br><span class="line">		   AccessPerms,   <span class="comment">/* protection perms */</span></span><br><span class="line">		   <span class="number">0</span>);            <span class="comment">/* initial value */</span></span><br><span class="line"><span class="keyword">if</span> (semptr == (<span class="type">void</span>*) <span class="number">-1</span>) report_and_exit(<span class="string">"sem_open"</span>);</span><br></pre></td></tr></tbody></table></figure>
+<p>在 <code>strcpy</code> 将 <code>contents</code> 拷贝到内存后，<code>sem_post</code> 增加信号量的值（+1），如果 <code>semptr</code> 的值还是 - 1，那么程序退出。</p>
+ <figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* increment the semaphore so that memreader can read */</span></span><br><span class="line"><span class="keyword">if</span> (sem_post(semptr) &lt; <span class="number">0</span>) report_and_exit(<span class="string">"sem_post"</span>);</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>memreader 中，<code>semptr</code> 的初始值还是 0。当 <code>semptr</code> 不为 0 时，将 <code>memcontents</code> 的内容全部逐字读出。每次 <code>sem_wait</code> 都将使信号量的值 - 1。</p>
+ <figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* use semaphore as a mutex (lock) by waiting for writer to increment it */</span></span><br><span class="line"><span class="keyword">if</span> (!sem_wait(semptr)) { <span class="comment">/* wait until semaphore != 0 */</span></span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="built_in">strlen</span>(MemContents); i++)</span><br><span class="line">	  write(STDOUT_FILENO, memptr + i, <span class="number">1</span>); <span class="comment">/* one byte at a time */</span></span><br><span class="line">	sem_post(semptr);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ol>
+<h3 id="管道通信实验-fifoWriter-fifoReader">管道通信实验 (fifoWriter &amp; fifoReader)</h3>
+<p>fifoWriter 和 fifoReader 共享了一个管道文件 <code>fifoChannel</code>，fifoWriter 向其中写入若干随机数，fifoReader 读文件并判断其中质数的多少。</p>
+<img data-src="/2019/11/24/experiments/oskernel/process-communication/6.png" class="">
+<p>与实验 3.2 不同的是，当同时运行此实验的 writer 和 reader 时，一定是 writer 先结束后，Reader 才会有结果显示。当事先没有 writer 的写入时，reader 会直接退出（因为没有管道文件）。运行一瞬间产生的管道文件会在写入完成后消失（源代码中写完就 <code>close</code> 了）。</p>
+<p>写进程以只写模式打开管道文件。</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fd = open(pipeName, O_CREAT | O_WRONLY); <span class="comment">/* open as write-only */</span></span><br></pre></td></tr></tbody></table></figure>
+<p>读进程以只读模式打开管道文件。</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fd = open(file, O_RDONLY);</span><br></pre></td></tr></tbody></table></figure>
+<p>从而分时占用了文件。</p>
+<h3 id="信号量互斥实验-shutdown">信号量互斥实验 (shutdown)</h3>
+<p>运行结果如下</p>
+<img data-src="/2019/11/24/experiments/oskernel/process-communication/7.png" class="">
+<div class="note info"><h4 id="这是啥意思呢？">这是啥意思呢？</h4>
+<p>结合源码得知，主进程运行到 <code>fork</code> 后分开为两个进程，父进程调用 <code>parent_code</code> 并阻塞，调用 <code>sleep(5)</code> 睡眠 5 秒，等待子进程退出。(这可以解释为什么 main 打印了一遍，而 main…2 和 main…3 被打印了两遍的原因 ——main…2 和 main…3 都在 fork 调用之后) 然后，子进程从 <code>fork</code> 开始继续运行，进入了 <code>child_code</code>，<code>child_code</code> 中，注册了 <code>SIGTERM</code>（id=15）为其处理信号。然后，尝试先调用 <code>sleep(1)</code>，睡眠 1 秒，然后输出 "Child just woke up, but going back to sleep"。5 秒过后主进程醒了，继续运行 <code>parent_code</code>，其调用了 <code>kill</code> 来杀死子进程，（所以上述信息输出了 4 次）子进程接收到信号后，打印出信号 id 并执行相应的处理函数。待子进程调用<code>_exit(0)</code> 返回内核后，父进程也退出，整个程序运行结束。</p>
+</div>
+<h3 id="队列通信实验-sender-receiver">队列通信实验 (sender &amp; receiver)</h3>
+<p>通过观察源码得知，此部分实验运用了消息队列函数 <code>msgget</code>、<code>msgsnd</code>、<code>msgrcv</code>、<code>msgctl</code>，它们所需要的头文件为 <code>&lt;sys/types.h&gt;</code>、<code>&lt;sys/ipc.h&gt;</code> 和 <code>&lt;sys/msg.h&gt;</code>。sender 以队列形式发出了六条信息 "msg1"、 “msg2”、 “msg3”、 “msg4”、 “msg5”、 “msg6”，msg1 和 2 是类型 1 的，3 和 4 是类型 2 的，5 和 6 是类型 3 的。Receiver 以与发送方不同的类型顺序接收，具体来说，按照 3→1→2→1→3→2 的顺序，实际运行结果如下</p>
+<img data-src="/2019/11/24/experiments/oskernel/process-communication/8.png" class="">
+<p>仍然可以正确地接收信息，而且队列内部的顺序是 “先来先接收” 的。比如 msg1 在 type1 中先于 msg2 发送，那么接收时也是 msg1 比 msg2 先接送。</p>
+<p>当 msg 接收完成后，它就从队列中被移除，这也是为什么再次运行 receiver 后接受失败的原因。</p>
+<img data-src="/2019/11/24/experiments/oskernel/process-communication/9.png" class="">
+<h3 id="实现内核和用户程序之间的文件通信">实现内核和用户程序之间的文件通信</h3>
+<div class="tabs" id="code"><ul class="nav-tabs"><li class="tab active"><a href="#code-1"><i class="fa fa-code"></i>server 源码</a></li><li class="tab"><a href="#code-2"><i class="fa fa-code"></i>client 源码</a></li></ul><div class="tab-content"><div class="tab-pane active" id="code-1"><figure class="highlight c"><figcaption><span>server.c</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/tcp.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">"sock.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">report</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* msg, <span class="type">int</span> <span class="built_in">terminate</span>)</span> {</span><br><span class="line">  perror(msg);</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">terminate</span>) <span class="built_in">exit</span>(<span class="number">-1</span>); <span class="comment">/* failure */</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> {</span><br><span class="line">  <span class="type">int</span> fd = socket(AF_INET,     <span class="comment">/* network versus AF_LOCAL */</span></span><br><span class="line">		  SOCK_STREAM, <span class="comment">/* reliable, bidirectional: TCP */</span></span><br><span class="line">		  <span class="number">0</span>);          <span class="comment">/* system picks underlying protocol */</span></span><br><span class="line">  <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) report(<span class="string">"socket"</span>, <span class="number">1</span>); <span class="comment">/* terminate */</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* bind the server's local address in memory */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">saddr</span>;</span></span><br><span class="line">  <span class="built_in">memset</span>(&amp;saddr, <span class="number">0</span>, <span class="keyword">sizeof</span>(saddr));          <span class="comment">/* clear the bytes */</span></span><br><span class="line">  saddr.sin_family = AF_INET;                <span class="comment">/* versus AF_LOCAL */</span></span><br><span class="line">  saddr.sin_addr.s_addr = htonl(INADDR_ANY); <span class="comment">/* host-to-network endian */</span></span><br><span class="line">  saddr.sin_port = htons(PortNumber);        <span class="comment">/* for listening */</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (bind(fd, (<span class="keyword">struct</span> sockaddr *) &amp;saddr, <span class="keyword">sizeof</span>(saddr)) &lt; <span class="number">0</span>)</span><br><span class="line">    report(<span class="string">"bind"</span>, <span class="number">1</span>); <span class="comment">/* terminate */</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* listen to the socket */</span></span><br><span class="line">  <span class="keyword">if</span> (listen(fd, MaxConnects) &lt; <span class="number">0</span>) <span class="comment">/* listen for clients, up to MaxConnects */</span></span><br><span class="line">    report(<span class="string">"listen"</span>, <span class="number">1</span>); <span class="comment">/* terminate */</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Listening on port %i for clients...\n"</span>, PortNumber);</span><br><span class="line">  <span class="comment">/* a server traditionally listens indefinitely */</span></span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) {</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">caddr</span>;</span> <span class="comment">/* client address */</span></span><br><span class="line">    <span class="type">int</span> len = <span class="keyword">sizeof</span>(caddr);  <span class="comment">/* address length could change */</span></span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> client_fd = accept(fd, (<span class="keyword">struct</span> sockaddr*) &amp;caddr, &amp;len);  <span class="comment">/* accept blocks */</span></span><br><span class="line">    <span class="keyword">if</span> (client_fd &lt; <span class="number">0</span>) {</span><br><span class="line">      report(<span class="string">"accept"</span>, <span class="number">0</span>); <span class="comment">/* don't terminated, though there's a problem */</span></span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* read from client */</span></span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; ConversationLen; i++) {</span><br><span class="line">      <span class="type">char</span> buffer[BuffSize + <span class="number">1</span>];</span><br><span class="line">      <span class="built_in">memset</span>(buffer, <span class="string">'\0'</span>, <span class="keyword">sizeof</span>(buffer));</span><br><span class="line">      <span class="type">int</span> count = read(client_fd, buffer, <span class="keyword">sizeof</span>(buffer));</span><br><span class="line">      <span class="keyword">if</span> (count &gt; <span class="number">0</span>) {</span><br><span class="line">	<span class="built_in">puts</span>(buffer);</span><br><span class="line">	write(client_fd, buffer, <span class="keyword">sizeof</span>(buffer)); <span class="comment">/* echo as confirmation */</span></span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">    close(client_fd); <span class="comment">/* break connection */</span></span><br><span class="line">  }  <span class="comment">/* while(1) */</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="code-2"><figure class="highlight c"><figcaption><span>client.c</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/tcp.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netdb.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">"sock.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">char</span>* books[] = {<span class="string">"War and Peace"</span>,</span><br><span class="line">		       <span class="string">"Pride and Prejudice"</span>,</span><br><span class="line">		       <span class="string">"The Sound and the Fury"</span>};</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">report</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* msg, <span class="type">int</span> <span class="built_in">terminate</span>)</span> {</span><br><span class="line">  perror(msg);</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">terminate</span>) <span class="built_in">exit</span>(<span class="number">-1</span>); <span class="comment">/* failure */</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> {</span><br><span class="line">  <span class="comment">/* fd for the socket */</span></span><br><span class="line">  <span class="type">int</span> sockfd = socket(AF_INET,      <span class="comment">/* versus AF_LOCAL */</span></span><br><span class="line">		      SOCK_STREAM,  <span class="comment">/* reliable, bidirectional */</span></span><br><span class="line">		      <span class="number">0</span>);           <span class="comment">/* system picks protocol (TCP) */</span></span><br><span class="line">  <span class="keyword">if</span> (sockfd &lt; <span class="number">0</span>) report(<span class="string">"socket"</span>, <span class="number">1</span>); <span class="comment">/* terminate */</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* get the address of the host */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">hostent</span>* <span class="title">hptr</span> =</span> gethostbyname(Host); <span class="comment">/* localhost: 127.0.0.1 */</span></span><br><span class="line">  <span class="keyword">if</span> (!hptr) report(<span class="string">"gethostbyname"</span>, <span class="number">1</span>); <span class="comment">/* is hptr NULL? */</span></span><br><span class="line">  <span class="keyword">if</span> (hptr-&gt;h_addrtype != AF_INET)       <span class="comment">/* versus AF_LOCAL */</span></span><br><span class="line">    report(<span class="string">"bad address family"</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* connect to the server: configure server's address 1st */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">saddr</span>;</span></span><br><span class="line">  <span class="built_in">memset</span>(&amp;saddr, <span class="number">0</span>, <span class="keyword">sizeof</span>(saddr));</span><br><span class="line">  saddr.sin_family = AF_INET;</span><br><span class="line">  saddr.sin_addr.s_addr =</span><br><span class="line">     ((<span class="keyword">struct</span> in_addr*) hptr-&gt;h_addr_list[<span class="number">0</span>])-&gt;s_addr;</span><br><span class="line">  saddr.sin_port = htons(PortNumber); <span class="comment">/* port number in big-endian */</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (connect(sockfd, (<span class="keyword">struct</span> sockaddr*) &amp;saddr, <span class="keyword">sizeof</span>(saddr)) &lt; <span class="number">0</span>)</span><br><span class="line">    report(<span class="string">"connect"</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Write some stuff and read the echoes. */</span></span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Connect to server, about to write some stuff..."</span>);</span><br><span class="line">  <span class="type">int</span> i;</span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; ConversationLen; i++) {</span><br><span class="line">    <span class="keyword">if</span> (write(sockfd, books[i], <span class="built_in">strlen</span>(books[i])) &gt; <span class="number">0</span>) {</span><br><span class="line">      <span class="comment">/* get confirmation echoed from server and print */</span></span><br><span class="line">      <span class="type">char</span> buffer[BuffSize + <span class="number">1</span>];</span><br><span class="line">      <span class="built_in">memset</span>(buffer, <span class="string">'\0'</span>, <span class="keyword">sizeof</span>(buffer));</span><br><span class="line">      <span class="keyword">if</span> (read(sockfd, buffer, <span class="keyword">sizeof</span>(buffer)) &gt; <span class="number">0</span>) <span class="built_in">puts</span>(buffer);</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Client done, about to exit..."</span>);</span><br><span class="line">  close(sockfd); <span class="comment">/* close the connection */</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div></div></div> 主要利用了C的`socket`通信函数来实现文件通信。先运行server，再运行client，结果如下。
+<img data-src="/2019/11/24/experiments/oskernel/process-communication/10.png" class="">
+<p>Server 开启了 9876 号端口的监听，接收 client 端向服务器写入信息，server 端会向 client 端回应所写入的内容，client 端写入完成，就会退出。</p>
+<p>此时查看 <code>netstat</code> 状态，会发现 server 端的 9876 号端口在监听任意地址。</p>
+<img data-src="/2019/11/24/experiments/oskernel/process-communication/11.png" class="">
+<h2 id="实验难点与收获">实验难点与收获</h2>
+<p>本次实验主要为给定文件，运行可执行程序并对执行结果进行解释。通过运行给定的示例程序，我对于进程的同步有了更深层的认识，明白了信号量和锁机制的使用对于同步编程的正确性来说是个很重要的保证。同时，也学习到了一些 Linux 系统头文件中自带的一些同步函数。</p>
+<h2 id="实验思考">实验思考</h2>
+<p>Server 和 client 的 socket 通信过程是否也是文件通信的一种形式？文件描述符是由 socket 函数获得的，我们能不能在 linux 系统中找到相应的文件呢？</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="Jason Ren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Jason Ren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Jason Ren
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/" title="进程通信实验">https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-twitter"></i>
+            </span>
+
+            <span class="label">Twitter</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-telegram"></i>
+            </span>
+
+            <span class="label">Telegram</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <span class="social-link">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </span>
+
+          <img class="social-item-img" src="/images/gongzhonghao.jpg">
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-zhihu"></i>
+            </span>
+
+            <span class="label">知乎</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/OS/" rel="tag"><i class="fa fa-tag"></i> OS</a>
+              <a href="/tags/%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1/" rel="tag"><i class="fa fa-tag"></i> 进程通信</a>
+          </div>
+
+        
+  <div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a>
+      <a class="a2a_button_facebook"></a>
+      <a class="a2a_button_twitter"></a>
+      <a class="a2a_button_telegram"></a>
+      <a class="a2a_button_douban"></a>
+      <a class="a2a_button_mastodon"></a>
+      <a class="a2a_button_sina_weibo"></a>
+      <a class="a2a_button_wechat"></a>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/11/14/experiments/security/vulnerability_analysis/string-format/" rel="prev" title="格式化字符串漏洞">
+                  <i class="fa fa-chevron-left"></i> 格式化字符串漏洞
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/11/25/experiments/security/web/ids/" rel="next" title="入侵检测">
+                  入侵检测 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3 </a>
+  </div>
+
+<div class="copyright">
+  © 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason Ren</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">96k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:50</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script>
+  
+
+
+  
+
+  
+
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2019/11/24/experiments/oskernel/process-communication/"}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+
+
+<script type="text/javascript" src="/js/bundle.js"></script></body></html>

@@ -1,5 +1,354 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0"><link rel="preconnect" href="https://fonts.geekzu.org" crossorigin=""><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin=""><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script><script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><meta name="description" content="实验目的 理解操作系统中的几种页面调度算法，尝试用 C++ 语言实现它们。"><meta property="og:type" content="article"><meta property="og:title" content="页面调度算法实现"><meta property="og:url" content="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/"><meta property="og:site_name" content="随心记"><meta property="og:description" content="实验目的 理解操作系统中的几种页面调度算法，尝试用 C++ 语言实现它们。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/run.png"><meta property="article:published_time" content="2019-10-27T14:43:11.000Z"><meta property="article:modified_time" content="2023-05-29T04:01:15.004Z"><meta property="article:author" content="Jason Ren"><meta property="article:tag" content="OS"><meta property="article:tag" content="页面调度"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/run.png"><link rel="canonical" href="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/","path":"2019/10/27/experiments/oskernel/page-management/","title":"页面调度算法实现"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>页面调度算法实现 | 随心记</title><link rel="dns-prefetch" href="https://blog-manage.jason0743.space/"><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript><link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
-</head><body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><div class="column"><header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">随心记</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">展现安全态度</p></div><div class="site-nav-right"><div class="toggle popup-trigger" aria-label="搜索" role="button"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></header><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">实验目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E8%A6%81%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">重要的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E7%A4%BA%E6%84%8F"><span class="nav-number">2.2.</span> <span class="nav-text">算法示意</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%85%B3%E9%94%AE%E9%87%8C%E7%A8%8B%E7%A2%91%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">实验关键里程碑数据与结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E9%9A%BE%E7%82%B9%E4%B8%8E%E6%94%B6%E8%8E%B7"><span class="nav-number">4.</span> <span class="nav-text">实验难点与收获</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E6%80%9D%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">实验思考</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png"><p class="site-author-name" itemprop="name">Jason Ren</p><div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div></div><div class="site-state-wrap animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">60</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">46</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">30</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author animated"><span class="links-of-author-item"><a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a> </span><span class="links-of-author-item"><a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a> </span><span class="links-of-author-item"><a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a> </span><span class="links-of-author-item"><a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a></span></div></div></div><div class="back-to-top animated" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside></div><div class="main-inner post posts-expand"><div class="post-block"><article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/"><span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar-v1.png"><meta itemprop="name" content="Jason Ren"></span><span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization"><meta itemprop="name" content="随心记"><meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔"></span><span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="页面调度算法实现 | 随心记"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">页面调度算法实现</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-10-27 22:43:11" itemprop="dateCreated datePublished" datetime="2019-10-27T22:43:11+08:00">2019-10-27</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar-check"></i> </span><span class="post-meta-item-text">更新于</span> <time title="修改时间：2023-05-29 12:01:15" itemprop="dateModified" datetime="2023-05-29T12:01:15+08:00">2023-05-29</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/OS/" itemprop="url" rel="index"><span itemprop="name">OS</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/%E5%AE%9E%E9%AA%8C/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">操作系统内核</span></a> </span>， <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/OS/%E9%A1%B5%E9%9D%A2%E8%B0%83%E5%BA%A6/" itemprop="url" rel="index"><span itemprop="name">页面调度</span></a> </span></span><span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span id="busuanzi_value_page_pv"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Waline：</span> <a title="waline" href="/2019/10/27/experiments/oskernel/page-management/#waline" itemprop="discussionUrl"><span class="post-comments-count waline-comment-count" data-path="/2019/10/27/experiments/oskernel/page-management/" itemprop="commentCount"></span> </a></span><span class="post-meta-item" title="阅读次数"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="waline-pageview-count" data-path="/2019/10/27/experiments/oskernel/page-management/"></span> </span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>3k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 ≈</span> <span>11 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><h2 id="实验目的">实验目的</h2><p>理解操作系统中的几种页面调度算法，尝试用 C++ 语言实现它们。</p><span id="more"></span><h2 id="步骤">步骤</h2><h3 id="重要的数据结构">重要的数据结构</h3><div class="tabs" id="data_structure"><ul class="nav-tabs"><li class="tab active"><a href="#data_structure-1"><code>Page.h</code></a></li><li class="tab"><a href="#data_structure-2"><code>PageControl.h</code></a></li></ul><div class="tab-content"><div class="tab-pane active" id="data_structure-1"><figure class="highlight c++"><figcaption><span>Page.h</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _PAGE_H</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGE_H</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CPage</span>  {</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="type">int</span> m_nPageNumber, <span class="comment">//硬盘页编号(≤AP)</span></span><br><span class="line">		m_nPageFaceNumber, <span class="comment">//内存页编号(≤PP)，INVALID表示不在内存</span></span><br><span class="line">		m_nCounter, <span class="comment">//页面被使用次数</span></span><br><span class="line">		m_nTime; <span class="comment">//页面已存在内存中的时间</span></span><br><span class="line">};</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="data_structure-2"><figure class="highlight c++"><figcaption><span>PageControl.h</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _PAGECONTROL_H</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGECONTROL_H</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CPageControl</span>  {</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="type">int</span> m_nPageNumber,m_nPageFaceNumber;  <span class="comment">//硬盘页编号，内存页编号</span></span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">CPageControl</span> * m_pNext; <span class="comment">//指向下一个被控制页面</span></span><br><span class="line">};</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></tbody></table></figure></div></div></div><h3 id="算法示意">算法示意</h3><div class="tabs" id="algs"><ul class="nav-tabs"><li class="tab active"><a href="#algs-1">先进先出算法 FIFO</a></li><li class="tab"><a href="#algs-2">最近最少使用的算法 LRU</a></li><li class="tab"><a href="#algs-3">最近未使用算法 NRU</a></li><li class="tab"><a href="#algs-4">最佳置换算法 OPT</a></li></ul><div class="tab-content"><div class="tab-pane active" id="algs-1"><ol><li>初始化。设置两个数组 <code>page[ap]</code> 和 <code>pagecontrol[pp]</code> 分别表示进程页面数和内存分配的页面数，并产生一个的随机数序列 <code>main[total_instruction]</code>（当然这个序列由 <code>page[]</code> 的下标随机构成），表示待处理的进程页面顺序，<code>diseffect</code> 置 0。</li><li>看 <code>main[]</code> 中是否有下一个元素，有就由 <code>main[]</code> 中获取该页面下标，并转到 3；没有，就转到 7。</li><li>如果该 <code>page</code> 页已在内存中，就转到 2；否则就到 4，同时未命中的 <code>diseffect</code> 加 1。</li><li>观察 <code>pagecontrol</code> 是否占满，如果占满需将使用队列（6 中建立的）中最先进入的（就是队列第一个单元）<code>pagecontrol</code> 单元 “清干净”，同时将对应的 <code>page[]</code> 单元置为 “不在内存中”。</li><li>将该 <code>page[]</code> 与 <code>pagecontrol[]</code> 建立关系（可以改变 <code>pagecontrol[]</code> 的标示位，也可以采用指针连接。总之，至少要使对应的 <code>pagecontrol</code> 单元包含两个信息：一是它被使用了，二是哪个 <code>page[]</code> 单元使用的；<code>page[]</code> 单元包含两个信息：对应的 <code>pagecontrol</code> 单元号、本 <code>page[]</code> 单元已在内存中）；</li><li>将用到的 <code>pagecontrol</code> 置入使用队列（这里的队列当然是一种先进先出的数据结构），返回 2；</li><li>显示命中率，算法完成。</li></ol><pre class="mermaid">graph TD
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+<link rel="preconnect" href="https://fonts.geekzu.org" crossorigin="">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="BDOes_2c0TiF0BOSphLeKhmHOej-Hk1dTMD5LcJq1I4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script>
+
+    <meta name="description" content="实验目的 理解操作系统中的几种页面调度算法，尝试用 C++ 语言实现它们。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="页面调度算法实现">
+<meta property="og:url" content="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/">
+<meta property="og:site_name" content="随心记">
+<meta property="og:description" content="实验目的 理解操作系统中的几种页面调度算法，尝试用 C++ 语言实现它们。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/run.png">
+<meta property="article:published_time" content="2019-10-27T14:43:11.000Z">
+<meta property="article:modified_time" content="2023-06-04T08:34:46.991Z">
+<meta property="article:author" content="Jason Ren">
+<meta property="article:tag" content="OS">
+<meta property="article:tag" content="页面调度">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/run.png">
+
+
+<link rel="canonical" href="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/","path":"2019/10/27/experiments/oskernel/page-management/","title":"页面调度算法实现"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>页面调度算法实现 | 随心记</title>
+  
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="https://blog-manage.jason0743.space/">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">随心记</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">展现安全态度</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">实验目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E8%A6%81%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">重要的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E7%A4%BA%E6%84%8F"><span class="nav-number">2.2.</span> <span class="nav-text">算法示意</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%85%B3%E9%94%AE%E9%87%8C%E7%A8%8B%E7%A2%91%E6%95%B0%E6%8D%AE%E4%B8%8E%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">实验关键里程碑数据与结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E9%9A%BE%E7%82%B9%E4%B8%8E%E6%94%B6%E8%8E%B7"><span class="nav-number">4.</span> <span class="nav-text">实验难点与收获</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E6%80%9D%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">实验思考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jason Ren" src="/images/avatar-v1.png">
+  <p class="site-author-name" itemprop="name">Jason Ren</p>
+  <div class="site-description" itemprop="description">技术博客，偶尔放一些心情相关随笔</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/theRealRev270" title="Twitter → https://twitter.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-v1.png">
+      <meta itemprop="name" content="Jason Ren">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随心记">
+      <meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔">
+    </span>
+
+    <span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="页面调度算法实现 | 随心记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          页面调度算法实现
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-27 22:43:11" itemprop="dateCreated datePublished" datetime="2019-10-27T22:43:11+08:00">2019-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-06-04 16:34:46" itemprop="dateModified" datetime="2023-06-04T16:34:46+08:00">2023-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/OS/" itemprop="url" rel="index"><span itemprop="name">OS</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">操作系统内核</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/OS/%E9%A1%B5%E9%9D%A2%E8%B0%83%E5%BA%A6/" itemprop="url" rel="index"><span itemprop="name">页面调度</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/10/27/experiments/oskernel/page-management/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/10/27/experiments/oskernel/page-management/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-item" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="waline-pageview-count" data-path="/2019/10/27/experiments/oskernel/page-management/"></span>
+    </span>
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="实验目的">实验目的</h2>
+<p>理解操作系统中的几种页面调度算法，尝试用 C++ 语言实现它们。</p>
+<span id="more"></span>
+<h2 id="步骤">步骤</h2>
+<h3 id="重要的数据结构">重要的数据结构</h3>
+<div class="tabs" id="data_structure"><ul class="nav-tabs"><li class="tab active"><a href="#data_structure-1"><code>Page.h</code></a></li><li class="tab"><a href="#data_structure-2"><code>PageControl.h</code></a></li></ul><div class="tab-content"><div class="tab-pane active" id="data_structure-1"><figure class="highlight c++"><figcaption><span>Page.h</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _PAGE_H</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGE_H</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CPage</span>  {</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="type">int</span> m_nPageNumber, <span class="comment">//硬盘页编号(≤AP)</span></span><br><span class="line">		m_nPageFaceNumber, <span class="comment">//内存页编号(≤PP)，INVALID表示不在内存</span></span><br><span class="line">		m_nCounter, <span class="comment">//页面被使用次数</span></span><br><span class="line">		m_nTime; <span class="comment">//页面已存在内存中的时间</span></span><br><span class="line">};</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="data_structure-2"><figure class="highlight c++"><figcaption><span>PageControl.h</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _PAGECONTROL_H</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _PAGECONTROL_H</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CPageControl</span>  {</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="type">int</span> m_nPageNumber,m_nPageFaceNumber;  <span class="comment">//硬盘页编号，内存页编号</span></span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">CPageControl</span> * m_pNext; <span class="comment">//指向下一个被控制页面</span></span><br><span class="line">};</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></tbody></table></figure></div></div></div>
+<h3 id="算法示意">算法示意</h3>
+<div class="tabs" id="algs"><ul class="nav-tabs"><li class="tab active"><a href="#algs-1">先进先出算法 FIFO</a></li><li class="tab"><a href="#algs-2">最近最少使用的算法 LRU</a></li><li class="tab"><a href="#algs-3">最近未使用算法 NRU</a></li><li class="tab"><a href="#algs-4">最佳置换算法 OPT</a></li></ul><div class="tab-content"><div class="tab-pane active" id="algs-1"><ol>
+<li> 初始化。设置两个数组 <code>page[ap]</code> 和 <code>pagecontrol[pp]</code> 分别表示进程页面数和内存分配的页面数，并产生一个的随机数序列 <code>main[total_instruction]</code>（当然这个序列由 <code>page[]</code> 的下标随机构成），表示待处理的进程页面顺序，<code>diseffect</code> 置 0。</li>
+<li>看 <code>main[]</code> 中是否有下一个元素，有就由 <code>main[]</code> 中获取该页面下标，并转到 3；没有，就转到 7。</li>
+<li>如果该 <code>page</code> 页已在内存中，就转到 2；否则就到 4，同时未命中的 <code>diseffect</code> 加 1。</li>
+<li>观察 <code>pagecontrol</code> 是否占满，如果占满需将使用队列（6 中建立的）中最先进入的（就是队列第一个单元）<code>pagecontrol</code> 单元 “清干净”，同时将对应的 <code>page[]</code> 单元置为 “不在内存中”。</li>
+<li>将该 <code>page[]</code> 与 <code>pagecontrol[]</code> 建立关系（可以改变 <code>pagecontrol[]</code> 的标示位，也可以采用指针连接。总之，至少要使对应的 <code>pagecontrol</code> 单元包含两个信息：一是它被使用了，二是哪个 <code>page[]</code> 单元使用的；<code>page[]</code> 单元包含两个信息：对应的 <code>pagecontrol</code> 单元号、本 <code>page[]</code> 单元已在内存中）；</li>
+<li>将用到的 <code>pagecontrol</code> 置入使用队列（这里的队列当然是一种先进先出的数据结构），返回 2；</li>
+<li>显示命中率，算法完成。</li>
+</ol>
+<pre class="mermaid">graph TD
 A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; |Y|B E --&gt; |N|F["diseffect++"]
@@ -7,7 +356,20 @@ F --&gt; G{Pagecontrol是否占满} G --&gt; |Y|H["将最先进入的单元清�
 G --&gt; |N|I["建立page和pagecontrol的关系"]
 H --&gt; I I --&gt; J["用到的Pagecontrol置入使用队列"]
 J --&gt; B
-</pre><figure class="highlight c++"><figcaption><span>FIFO 算法</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::FIFO</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span>{</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	CPageControl *p;</span><br><span class="line">	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">	_pBusypf_head=_pBusypf_tail=<span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++) {</span><br><span class="line">	<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">		_nDiseffect+=<span class="number">1</span>;</span><br><span class="line">    	<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>){  <span class="comment">// 无空闲页面</span></span><br><span class="line">	  		p=_pBusypf_head-&gt;m_pNext;</span><br><span class="line">	  		_vDiscPages[_pBusypf_head-&gt;m_nPageNumber].m_nPageFaceNumber=INVALID;</span><br><span class="line">	  		_pFreepf_head=_pBusypf_head;</span><br><span class="line">	  		_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">	  		_pBusypf_head=p;</span><br><span class="line">		}</span><br><span class="line">		p=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">		_pFreepf_head-&gt;m_nPageNumber=_vPage[i];</span><br><span class="line">		_vDiscPages[_vPage[i]].m_nPageFaceNumber =_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">		<span class="keyword">if</span>(_pBusypf_tail==<span class="literal">NULL</span>)</span><br><span class="line">			_pBusypf_head=_pBusypf_tail=_pFreepf_head;</span><br><span class="line">		<span class="keyword">else</span>{</span><br><span class="line">	  		_pBusypf_tail-&gt;m_pNext=_pFreepf_head;</span><br><span class="line">	  		_pBusypf_tail=_pFreepf_head;</span><br><span class="line">		}</span><br><span class="line"> 		_pFreepf_head=p;</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"FIFO: "</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure><div class="note success"><p>易于实现</p></div><div class="note danger"><p>容易淘汰常用页面</p></div></div><div class="tab-pane" id="algs-2"><ol><li>初始化。主要是进程页面 <code>page[]</code> 和分配的内存页面 <code>pagecontrol[]</code>，同时产生随机序列 <code>main[]</code>，<code>diseffect</code> 置 0。</li><li>看序列 <code>main[]</code> 是否有下一个元素，有就由 <code>main[]</code> 中获取该页面下标，并转到 3；没有，就转到 6。</li><li>如果该 <code>page</code> 页已在内存中，便改变页面属性，使它保留 “最近使用” 的信息，转到 2；否则就到 4，同时未命中的 <code>diseffect</code> 加 1。</li><li>判断是否有空闲的内存页面，如果有，就返回页指针，转到 5；否则在内存页面中找出最长时间没有使用到的页面，将其 “清干净”，并返回该页面指针。</li><li>在需要处理的 <code>page[]</code> 与 4 中得到的 <code>pagecontrol[]</code> 建立关系，同时让对应的 <code>page[]</code> 单元保存 “最新使用” 的信息，返回 2；</li><li>如果序列处理完成，就输出命中率，算法结束。</li></ol><pre class="mermaid">graph TD
+</pre>
+<figure class="highlight c++"><figcaption><span>FIFO 算法 </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::FIFO</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span>{</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	CPageControl *p;</span><br><span class="line">	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">	_pBusypf_head=_pBusypf_tail=<span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++) {</span><br><span class="line">	<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">		_nDiseffect+=<span class="number">1</span>;</span><br><span class="line">    	<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>){  <span class="comment">// 无空闲页面</span></span><br><span class="line">	  		p=_pBusypf_head-&gt;m_pNext;</span><br><span class="line">	  		_vDiscPages[_pBusypf_head-&gt;m_nPageNumber].m_nPageFaceNumber=INVALID;</span><br><span class="line">	  		_pFreepf_head=_pBusypf_head;</span><br><span class="line">	  		_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">	  		_pBusypf_head=p;</span><br><span class="line">		}</span><br><span class="line">		p=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">		_pFreepf_head-&gt;m_nPageNumber=_vPage[i];</span><br><span class="line">		_vDiscPages[_vPage[i]].m_nPageFaceNumber =_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">		<span class="keyword">if</span>(_pBusypf_tail==<span class="literal">NULL</span>)</span><br><span class="line">			_pBusypf_head=_pBusypf_tail=_pFreepf_head;</span><br><span class="line">		<span class="keyword">else</span>{</span><br><span class="line">	  		_pBusypf_tail-&gt;m_pNext=_pFreepf_head;</span><br><span class="line">	  		_pBusypf_tail=_pFreepf_head;</span><br><span class="line">		}</span><br><span class="line"> 		_pFreepf_head=p;</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"FIFO: "</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<div class="note success"><p>易于实现</p>
+</div>
+<div class="note danger"><p>容易淘汰常用页面</p>
+</div></div><div class="tab-pane" id="algs-2"><ol>
+<li>初始化。主要是进程页面 <code>page[]</code> 和分配的内存页面 <code>pagecontrol[]</code>，同时产生随机序列 <code>main[]</code>，<code>diseffect</code> 置 0。</li>
+<li>看序列 <code>main[]</code> 是否有下一个元素，有就由 <code>main[]</code> 中获取该页面下标，并转到 3；没有，就转到 6。</li>
+<li>如果该 <code>page</code> 页已在内存中，便改变页面属性，使它保留 “最近使用” 的信息，转到 2；否则就到 4，同时未命中的 <code>diseffect</code> 加 1。</li>
+<li>判断是否有空闲的内存页面，如果有，就返回页指针，转到 5；否则在内存页面中找出最长时间没有使用到的页面，将其 “清干净”，并返回该页面指针。</li>
+<li>在需要处理的 <code>page[]</code> 与 4 中得到的 <code>pagecontrol[]</code> 建立关系，同时让对应的 <code>page[]</code> 单元保存 “最新使用” 的信息，返回 2；</li>
+<li>如果序列处理完成，就输出命中率，算法结束。</li>
+</ol>
+<pre class="mermaid">graph TD
  A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; |Y|E_1["修改页面属性，使它保留“最近使用”的信息"]
@@ -16,7 +378,22 @@ F --&gt; G{是否有空闲页面} G --&gt; |Y|H["返回该页面指针"]
 G --&gt; |N|I["在内存页面中找出最长时间没有使用到的页面,将其清理"]
 I --&gt; H H --&gt; J[内存页面和待处理的进程页面建立关系,对应单元保存最新使用信息]
 J --&gt; B 
-</pre><figure class="highlight c++"><figcaption><span>LRU 算法</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::LRU</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span>{</span><br><span class="line">	<span class="type">int</span> i,j,nMin,minj,<span class="built_in">nPresentTime</span>(<span class="number">0</span>);</span><br><span class="line"> 	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++){</span><br><span class="line">  		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">  			_nDiseffect++;</span><br><span class="line">  			<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>){</span><br><span class="line">      			nMin=<span class="number">32767</span>;</span><br><span class="line">      			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">                <span class="comment">// 得到最近最少使用的页面的页号</span></span><br><span class="line">                <span class="comment">// 循环结束后,iMin表示最近最少使用页面的访问次数;minj表示需要换出的页号</span></span><br><span class="line">					<span class="keyword">if</span>(nMin&gt;_vDiscPages[j].m_nTime&amp;&amp;_vDiscPages[j].m_nPageFaceNumber!=INVALID){</span><br><span class="line">						nMin=_vDiscPages[j].m_nTime;</span><br><span class="line">	    				minj=j;</span><br><span class="line">					}</span><br><span class="line"></span><br><span class="line">				_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[minj].m_nPageFaceNumber];</span><br><span class="line">				_vDiscPages[minj].m_nPageFaceNumber=INVALID;</span><br><span class="line">				_vDiscPages[minj].m_nTime=<span class="number">-1</span>;</span><br><span class="line">				_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">   			}</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nTime=nPresentTime;</span><br><span class="line">			_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			_vDiscPages[_vPage[i]].m_nTime=nPresentTime;</span><br><span class="line">		nPresentTime++;</span><br><span class="line">	}</span><br><span class="line">  	cout&lt;&lt;<span class="string">"LRU: "</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure><div class="note success"><p>页面利用率有显著提升</p></div><div class="note danger"><p>代价很大</p></div></div><div class="tab-pane" id="algs-3"><ol><li>初始化。设置两个数组 <code>page[ap]</code> 和 <code>pagecontrol[pp]</code> 分别表示进程页面数和内存分配的页面数，并产生一个的随机数序列 <code>main[total_instruction]</code>（当然这个序列由 <code>page[]</code> 的下标随机构成），表示待处理的进程页面顺序，<code>diseffect</code> 置 0，设定循环周期 <code>CLEAR_PERIOD</code>。</li><li>看 <code>main[]</code> 中是否有下一个元素，有就从 <code>main[]</code> 中获得一个 CPU 将处理页面的序号；没有，就转到 8。</li><li>如果待处理的页面已在内存中，就转到 2；否则 <code>diseffect</code> 加 1，并转到 4。</li><li>看是否有空闲的内存页面，如果有，返回空闲页面指针，转到 5；否则，在所有没有被访问且位于内存中的页面中按任意规则（或者取最近的一个页面；或者取下标最小的页面，等等）取出一个，返回清空后的内存页面指针。</li><li>在待处理进程页面与内存页面之间建立联系，并标注该页面被访问。</li><li>如果 CPU 已处理了 <code>CLEAR_PERIOD</code> 个页面，就将所有页面均设为 “未访问”。</li><li>返回 2。</li><li>如果 CPU 所有处理工作完成，就返回命中率的结果，算法结束。</li></ol><pre class="mermaid">graph TD
+</pre>
+<figure class="highlight c++"><figcaption><span>LRU 算法 </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::LRU</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span>{</span><br><span class="line">	<span class="type">int</span> i,j,nMin,minj,<span class="built_in">nPresentTime</span>(<span class="number">0</span>);</span><br><span class="line"> 	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++){</span><br><span class="line">  		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">  			_nDiseffect++;</span><br><span class="line">  			<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>){</span><br><span class="line">      			nMin=<span class="number">32767</span>;</span><br><span class="line">      			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">                <span class="comment">// 得到最近最少使用的页面的页号</span></span><br><span class="line">                <span class="comment">// 循环结束后,iMin表示最近最少使用页面的访问次数;minj表示需要换出的页号</span></span><br><span class="line">					<span class="keyword">if</span>(nMin&gt;_vDiscPages[j].m_nTime&amp;&amp;_vDiscPages[j].m_nPageFaceNumber!=INVALID){</span><br><span class="line">						nMin=_vDiscPages[j].m_nTime;</span><br><span class="line">	    				minj=j;</span><br><span class="line">					}</span><br><span class="line"></span><br><span class="line">				_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[minj].m_nPageFaceNumber];</span><br><span class="line">				_vDiscPages[minj].m_nPageFaceNumber=INVALID;</span><br><span class="line">				_vDiscPages[minj].m_nTime=<span class="number">-1</span>;</span><br><span class="line">				_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">   			}</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nTime=nPresentTime;</span><br><span class="line">			_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			_vDiscPages[_vPage[i]].m_nTime=nPresentTime;</span><br><span class="line">		nPresentTime++;</span><br><span class="line">	}</span><br><span class="line">  	cout&lt;&lt;<span class="string">"LRU: "</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<div class="note success"><p>页面利用率有显著提升</p>
+</div>
+<div class="note danger"><p>代价很大</p>
+</div></div><div class="tab-pane" id="algs-3"><ol>
+<li>初始化。设置两个数组 <code>page[ap]</code> 和 <code>pagecontrol[pp]</code> 分别表示进程页面数和内存分配的页面数，并产生一个的随机数序列 <code>main[total_instruction]</code>（当然这个序列由 <code>page[]</code> 的下标随机构成），表示待处理的进程页面顺序，<code>diseffect</code> 置 0，设定循环周期 <code>CLEAR_PERIOD</code>。</li>
+<li>看 <code>main[]</code> 中是否有下一个元素，有就从 <code>main[]</code> 中获得一个 CPU 将处理页面的序号；没有，就转到 8。</li>
+<li>如果待处理的页面已在内存中，就转到 2；否则 <code>diseffect</code> 加 1，并转到 4。</li>
+<li>看是否有空闲的内存页面，如果有，返回空闲页面指针，转到 5；否则，在所有没有被访问且位于内存中的页面中按任意规则（或者取最近的一个页面；或者取下标最小的页面，等等）取出一个，返回清空后的内存页面指针。</li>
+<li>在待处理进程页面与内存页面之间建立联系，并标注该页面被访问。</li>
+<li>如果 CPU 已处理了 <code>CLEAR_PERIOD</code> 个页面，就将所有页面均设为 “未访问”。</li>
+<li>返回 2。</li>
+<li>如果 CPU 所有处理工作完成，就返回命中率的结果，算法结束。</li>
+</ol>
+<pre class="mermaid">graph TD
  A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; B E --&gt; |N|F["diseffect++"]
@@ -25,7 +402,21 @@ G --&gt; |N|I["在所有没有被访问且位于内存中的页面中按任意�
 I --&gt; H H --&gt; J[内存页面和待处理的进程页面建立关系,标注页面被访问]
 J --&gt; K{"CPU已经处理了CLEAR_PERIOD个页面"} K --&gt; |N|B K --&gt; |Y|B'["将所有页面设置为'未访问'"]
 B'--&gt; B 
-</pre><figure class="highlight c++"><figcaption><span>NRU 算法</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::NRU</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span>   </span>{</span><br><span class="line">	<span class="type">int</span> i,j,nDiscPage,nOld_DiscPage;</span><br><span class="line"> 	<span class="type">bool</span> bCont_flag;</span><br><span class="line">  	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">  	nDiscPage=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++)     {</span><br><span class="line">		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID)  	{</span><br><span class="line">  			_nDiseffect++;</span><br><span class="line">  			<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>)	    {</span><br><span class="line">      			bCont_flag=<span class="literal">true</span>;</span><br><span class="line">      			nOld_DiscPage=nDiscPage;</span><br><span class="line">      			<span class="keyword">while</span>(bCont_flag)		{</span><br><span class="line">					<span class="keyword">if</span>(_vDiscPages[nDiscPage].m_nCounter==<span class="number">0</span>&amp;&amp;_vDiscPages[nDiscPage].m_nPageFaceNumber!=INVALID)</span><br><span class="line">	    					bCont_flag=<span class="literal">false</span>;</span><br><span class="line">					<span class="keyword">else</span> {</span><br><span class="line">  						nDiscPage++;</span><br><span class="line">  						<span class="keyword">if</span>(nDiscPage==TOTAL_VP) nDiscPage=<span class="number">0</span>;</span><br><span class="line">  						<span class="keyword">if</span>(nDiscPage==nOld_DiscPage)</span><br><span class="line">  						<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">	  						_vDiscPages[j].m_nCounter=<span class="number">0</span>;</span><br><span class="line">	   				}</span><br><span class="line">				}</span><br><span class="line">				_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[nDiscPage].m_nPageFaceNumber];</span><br><span class="line">				_vDiscPages[nDiscPage].m_nPageFaceNumber=INVALID;</span><br><span class="line">      			_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">    			}</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">  			_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">  			_vDiscPages[_vPage[i]].m_nCounter=<span class="number">1</span>;</span><br><span class="line">    		<span class="keyword">if</span>(i%CLEAR_PERIOD==<span class="number">0</span>)</span><br><span class="line">				<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">					_vDiscPages[j].m_nCounter=<span class="number">0</span>;</span><br><span class="line">    }</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"NRU:"</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure><div class="note success"><p>易于理解，容易实现。</p></div></div><div class="tab-pane" id="algs-4"><ol><li>初始化。设置两个数组 <code>page[ap]</code> 和 <code>pagecontrol[pp]</code> 分别表示进程页面数和内存分配的页面数，并产生一个的随机数序列 <code>main[total_instruction]</code>（当然这个序列由 <code>page[]</code><br>的下标随机构成），表示待处理的进程页面顺序，<code>diseffect</code> 置 0。然后扫描整个页面访问序列，对 <code>vDistance[TOTAL_VP]</code> 数组进行赋值，表示该页面将在第几步被处理。</li><li>看 <code>main[]</code> 中是否有下一个元素，有就从 <code>main[]</code> 中获取一个 CPU 待处理的页面号；没有，就转到 6。</li><li>如果该 <code>page</code> 页已在内存中，就转到 2；否则就到 4，同时未命中的 <code>diseffect</code> 加 1。</li><li>看是否有空闲的内存页面。如果有，就直接返回该页面指针。如果没有，遍历所有未处理的进程页面序列，如果有位于内存中的页面，而以后 CPU 不再处理，首先将其换出，返回页面指针；如果没有这样的页面，找出 CPU 最晚处理到的页面，将其换出，返回该内存页面指针。</li><li>在内存页面和待处理的进程页面之间建立联系，返回 2。</li><li>输出命中率，算法结束。（命中率在扫描时完成计算）</li></ol><div class="note info"><p>从以上算法描述中，可以看出，OPT 是一种理想化的算法，因为操作系统中页面处理顺序是不一定的，所以页面将在哪一步被处理是不可预测的。但是，可以以此为标准来评价其他页面置换算法。</p></div><pre class="mermaid">graph TD
+</pre>
+<figure class="highlight c++"><figcaption><span>NRU 算法 </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::NRU</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span>   </span>{</span><br><span class="line">	<span class="type">int</span> i,j,nDiscPage,nOld_DiscPage;</span><br><span class="line"> 	<span class="type">bool</span> bCont_flag;</span><br><span class="line">  	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">  	nDiscPage=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++)     {</span><br><span class="line">		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID)  	{</span><br><span class="line">  			_nDiseffect++;</span><br><span class="line">  			<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>)	    {</span><br><span class="line">      			bCont_flag=<span class="literal">true</span>;</span><br><span class="line">      			nOld_DiscPage=nDiscPage;</span><br><span class="line">      			<span class="keyword">while</span>(bCont_flag)		{</span><br><span class="line">					<span class="keyword">if</span>(_vDiscPages[nDiscPage].m_nCounter==<span class="number">0</span>&amp;&amp;_vDiscPages[nDiscPage].m_nPageFaceNumber!=INVALID)</span><br><span class="line">	    					bCont_flag=<span class="literal">false</span>;</span><br><span class="line">					<span class="keyword">else</span> {</span><br><span class="line">  						nDiscPage++;</span><br><span class="line">  						<span class="keyword">if</span>(nDiscPage==TOTAL_VP) nDiscPage=<span class="number">0</span>;</span><br><span class="line">  						<span class="keyword">if</span>(nDiscPage==nOld_DiscPage)</span><br><span class="line">  						<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">	  						_vDiscPages[j].m_nCounter=<span class="number">0</span>;</span><br><span class="line">	   				}</span><br><span class="line">				}</span><br><span class="line">				_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[nDiscPage].m_nPageFaceNumber];</span><br><span class="line">				_vDiscPages[nDiscPage].m_nPageFaceNumber=INVALID;</span><br><span class="line">      			_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">    			}</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">  			_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">  			_vDiscPages[_vPage[i]].m_nCounter=<span class="number">1</span>;</span><br><span class="line">    		<span class="keyword">if</span>(i%CLEAR_PERIOD==<span class="number">0</span>)</span><br><span class="line">				<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">					_vDiscPages[j].m_nCounter=<span class="number">0</span>;</span><br><span class="line">    }</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"NRU:"</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<div class="note success"><p>易于理解，容易实现。</p>
+</div></div><div class="tab-pane" id="algs-4"><ol>
+<li>初始化。设置两个数组 <code>page[ap]</code> 和 <code>pagecontrol[pp]</code> 分别表示进程页面数和内存分配的页面数，并产生一个的随机数序列 <code>main[total_instruction]</code>（当然这个序列由 <code>page[]</code><br>
+的下标随机构成），表示待处理的进程页面顺序，<code>diseffect</code> 置 0。然后扫描整个页面访问序列，对 <code>vDistance[TOTAL_VP]</code> 数组进行赋值，表示该页面将在第几步被处理。</li>
+<li>看 <code>main[]</code> 中是否有下一个元素，有就从 <code>main[]</code> 中获取一个 CPU 待处理的页面号；没有，就转到 6。</li>
+<li>如果该 <code>page</code> 页已在内存中，就转到 2；否则就到 4，同时未命中的 <code>diseffect</code> 加 1。</li>
+<li>看是否有空闲的内存页面。如果有，就直接返回该页面指针。如果没有，遍历所有未处理的进程页面序列，如果有位于内存中的页面，而以后 CPU 不再处理，首先将其换出，返回页面指针；如果没有这样的页面，找出 CPU 最晚处理到的页面，将其换出，返回该内存页面指针。</li>
+<li>在内存页面和待处理的进程页面之间建立联系，返回 2。</li>
+<li>输出命中率，算法结束。（命中率在扫描时完成计算）</li>
+</ol>
+<div class="note info"><p>从以上算法描述中，可以看出，OPT 是一种理想化的算法，因为操作系统中页面处理顺序是不一定的，所以页面将在哪一步被处理是不可预测的。但是，可以以此为标准来评价其他页面置换算法。</p>
+</div>
+<pre class="mermaid">graph TD
 A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; |Y|B E --&gt; |N|F["diseffect++"]
@@ -35,4 +426,275 @@ I --&gt; J{"存在位于内存中的页面，而以后CPU不再处理"} J --&gt;
 J --&gt; |N|L[找出CPU最晚处理到的页面]
 L --&gt; K K --&gt; H H --&gt; M[内存页面和待处理的进程页面建立关系]
 M --&gt; B
-</pre><figure class="highlight c++"><figcaption><span>OPT 算法</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::OPT</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span></span><br><span class="line"><span class="function"></span>{</span><br><span class="line"> 	<span class="type">int</span> i,j,max,maxpage,nDistance,vDistance[TOTAL_VP];</span><br><span class="line">  	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">  	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++)    {</span><br><span class="line">    		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">			_nDiseffect++;</span><br><span class="line">	  		<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>)	    {</span><br><span class="line">	     			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">           				<span class="keyword">if</span>(_vDiscPages[j].m_nPageFaceNumber!=INVALID)</span><br><span class="line">						vDistance[j]=<span class="number">32767</span>;</span><br><span class="line">					<span class="keyword">else</span></span><br><span class="line">		      			vDistance[j]=<span class="number">0</span>;</span><br><span class="line">				nDistance=<span class="number">1</span>;</span><br><span class="line">  				<span class="keyword">for</span>(j=i+<span class="number">1</span>;j&lt;TOTAL_INSTRUCTION;j++)		{</span><br><span class="line">      				<span class="keyword">if</span>((_vDiscPages[_vPage[j]].m_nPageFaceNumber!=INVALID)&amp;&amp;(vDistance[_vPage[j]]==<span class="number">32767</span>))</span><br><span class="line">        				vDistance[_vPage[j]]=nDistance;</span><br><span class="line">     				nDistance++;</span><br><span class="line">				}</span><br><span class="line">    			max=<span class="number">-1</span>;</span><br><span class="line">    			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">				<span class="keyword">if</span>(max&lt;vDistance[j]){</span><br><span class="line">    					max=vDistance[j];</span><br><span class="line">    					maxpage=j;</span><br><span class="line">				}</span><br><span class="line">			_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[maxpage].m_nPageFaceNumber];</span><br><span class="line">    			_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">    			_vDiscPages[maxpage].m_nPageFaceNumber=INVALID;</span><br><span class="line">  			}</span><br><span class="line">		_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">	  	_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">   	}</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"OPT:"</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div></div></div><h2 id="实验关键里程碑数据与结果">实验关键里程碑数据与结果</h2><p>用 g++ 编译 <code>kernel.cpp</code>，运行截图如下 <img data-src="/2019/10/27/experiments/oskernel/page-management/run.png"></p><p>可以看到，随着页面数的增多，FIFO、LRU、NRU 三种算法的命中率无限趋近于 OPT 算法，且每一种算法的命中率都在单调上升。（第三列输出写错成 NUR 了）</p><h2 id="实验难点与收获">实验难点与收获</h2><p>这次实验仍然是编程，主要是使用了 C++ 语言，借助类和结构体实现了常见的页面置换算法。实现过程中主要的困难是将算法语言表示转化为代码语言，需要考虑的东西有很多。通过对于实验结果的观察，我对于页面置换算法有了更加直观的理解，了解到其随所处理页面数的增加，命中率也在增加，FIFO、LRU、NRU 三种算法各有利弊，总体来说，它们都是操作系统中较为常用的页面置换算法。</p><h2 id="实验思考">实验思考</h2><p>其实这个实验只是模拟了页面比较少的时候，几种页面置换算法的准确率变化，页面置换的顺序也都是随机生成的序列。实际上，我们的操作系统所要操作的页面情况远比模拟情况要复杂，命中率的上升可能也不会是单调的。</p><p>如果在输出中加上每次生成的操作序列和每次换入换出的情况的话，就会更加直观了，准确率从何而来也能看得更加清楚了。</p></div><footer class="post-footer"><div class="reward-container"><div>请我一杯咖啡吧！</div><button>赞赏</button><div class="post-reward"><div><img src="/images/wechatpay.png" alt="Jason Ren 微信"> <span>微信</span></div><div><img src="/images/alipay.jpg" alt="Jason Ren 支付宝"> <span>支付宝</span></div></div></div><div class="post-copyright"><ul><li class="post-copyright-author"><strong>本文作者： </strong>Jason Ren</li><li class="post-copyright-link"><strong>本文链接：</strong> <a href="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/" title="页面调度算法实现">https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/</a></li><li class="post-copyright-license"><strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><div class="followme"><span>欢迎关注我的其它发布渠道</span><div class="social-list"><div class="social-item"><a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-twitter"></i> </span><span class="label">Twitter</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-telegram"></i> </span><span class="label">Telegram</span></a></div><div class="social-item"><span class="social-link"><span class="icon"><i class="fab fa-weixin"></i> </span><span class="label">WeChat</span> </span><img class="social-item-img" src="/images/gongzhonghao.jpg"></div><div class="social-item"><a target="_blank" class="social-link" href="/atom.xml"><span class="icon"><i class="fa fa-rss"></i> </span><span class="label">RSS</span></a></div><div class="social-item"><a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer"><span class="icon"><i class="fab fa-zhihu"></i> </span><span class="label">知乎</span></a></div></div></div><div class="post-tags"><a href="/tags/OS/" rel="tag"><i class="fa fa-tag"></i> OS</a> <a href="/tags/%E9%A1%B5%E9%9D%A2%E8%B0%83%E5%BA%A6/" rel="tag"><i class="fa fa-tag"></i> 页面调度</a></div><div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style"><a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a> <a class="a2a_button_facebook"></a> <a class="a2a_button_twitter"></a> <a class="a2a_button_telegram"></a> <a class="a2a_button_douban"></a> <a class="a2a_button_mastodon"></a> <a class="a2a_button_sina_weibo"></a> <a class="a2a_button_wechat"></a></div><div class="post-nav"><div class="post-nav-item"><a href="/2019/10/27/experiments/security/web/dos/" rel="prev" title="DoS 拒绝服务攻击"><i class="fa fa-chevron-left"></i> DoS 拒绝服务攻击</a></div><div class="post-nav-item"><a href="/2019/11/03/experiments/security/system/slow-ddos/" rel="next" title="慢速 DDoS 攻击实验">慢速 DDoS 攻击实验 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="waline"></div></div></main><footer class="footer"><div class="footer-inner"><div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3</a></div><div class="copyright">© 2020 – <span itemprop="copyrightYear">2023</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">Jason Ren</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">96k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">5:50</span></span></div><div class="busuanzi-count"><span class="post-meta-item" id="busuanzi_container_site_uv"><span class="post-meta-item-icon"><i class="fa fa-user"></i> </span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span> </span></span><span class="post-meta-item" id="busuanzi_container_site_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div><div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动</div></div></footer><div class="toggle sidebar-toggle" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><div class="sidebar-dimmer"></div><div class="reading-progress-bar"></div><a role="button" class="book-mark-link book-mark-link-fixed"></a> <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin:130px 106px" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script><script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script><script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2019/10/27/experiments/oskernel/page-management/"}</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css"><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.waline.el).then(()=>NexT.utils.getScript(CONFIG.waline.libUrl,{condition:window.Waline})).then(()=>Waline.init(Object.assign({},CONFIG.waline,{el:document.querySelector(CONFIG.waline.el)})))})</script><script type="text/javascript" src="/js/bundle.js"></script></body></html>
+</pre>
+<figure class="highlight c++"><figcaption><span>OPT 算法 </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::OPT</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span></span><br><span class="line"><span class="function"></span>{</span><br><span class="line"> 	<span class="type">int</span> i,j,max,maxpage,nDistance,vDistance[TOTAL_VP];</span><br><span class="line">  	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">  	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++)    {</span><br><span class="line">    		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">			_nDiseffect++;</span><br><span class="line">	  		<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>)	    {</span><br><span class="line">	     			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">           				<span class="keyword">if</span>(_vDiscPages[j].m_nPageFaceNumber!=INVALID)</span><br><span class="line">						vDistance[j]=<span class="number">32767</span>;</span><br><span class="line">					<span class="keyword">else</span></span><br><span class="line">		      			vDistance[j]=<span class="number">0</span>;</span><br><span class="line">				nDistance=<span class="number">1</span>;</span><br><span class="line">  				<span class="keyword">for</span>(j=i+<span class="number">1</span>;j&lt;TOTAL_INSTRUCTION;j++)		{</span><br><span class="line">      				<span class="keyword">if</span>((_vDiscPages[_vPage[j]].m_nPageFaceNumber!=INVALID)&amp;&amp;(vDistance[_vPage[j]]==<span class="number">32767</span>))</span><br><span class="line">        				vDistance[_vPage[j]]=nDistance;</span><br><span class="line">     				nDistance++;</span><br><span class="line">				}</span><br><span class="line">    			max=<span class="number">-1</span>;</span><br><span class="line">    			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">				<span class="keyword">if</span>(max&lt;vDistance[j]){</span><br><span class="line">    					max=vDistance[j];</span><br><span class="line">    					maxpage=j;</span><br><span class="line">				}</span><br><span class="line">			_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[maxpage].m_nPageFaceNumber];</span><br><span class="line">    			_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">    			_vDiscPages[maxpage].m_nPageFaceNumber=INVALID;</span><br><span class="line">  			}</span><br><span class="line">		_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">	  	_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">   	}</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"OPT:"</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div></div></div>
+<h2 id="实验关键里程碑数据与结果">实验关键里程碑数据与结果</h2>
+<p>用 g++ 编译 <code>kernel.cpp</code>，运行截图如下 <img data-src="/2019/10/27/experiments/oskernel/page-management/run.png" class=""></p>
+<p>可以看到，随着页面数的增多，FIFO、LRU、NRU 三种算法的命中率无限趋近于 OPT 算法，且每一种算法的命中率都在单调上升。（第三列输出写错成 NUR 了）</p>
+<h2 id="实验难点与收获">实验难点与收获</h2>
+<p>这次实验仍然是编程，主要是使用了 C++ 语言，借助类和结构体实现了常见的页面置换算法。实现过程中主要的困难是将算法语言表示转化为代码语言，需要考虑的东西有很多。通过对于实验结果的观察，我对于页面置换算法有了更加直观的理解，了解到其随所处理页面数的增加，命中率也在增加，FIFO、LRU、NRU 三种算法各有利弊，总体来说，它们都是操作系统中较为常用的页面置换算法。</p>
+<h2 id="实验思考">实验思考</h2>
+<p>其实这个实验只是模拟了页面比较少的时候，几种页面置换算法的准确率变化，页面置换的顺序也都是随机生成的序列。实际上，我们的操作系统所要操作的页面情况远比模拟情况要复杂，命中率的上升可能也不会是单调的。</p>
+<p>如果在输出中加上每次生成的操作序列和每次换入换出的情况的话，就会更加直观了，准确率从何而来也能看得更加清楚了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="Jason Ren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Jason Ren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Jason Ren
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/" title="页面调度算法实现">https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://twitter.com/theRealRev270" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-twitter"></i>
+            </span>
+
+            <span class="label">Twitter</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://t.me/jrchan_blog" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-telegram"></i>
+            </span>
+
+            <span class="label">Telegram</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <span class="social-link">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </span>
+
+          <img class="social-item-img" src="/images/gongzhonghao.jpg">
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51" rel="external nofollow noreferrer">
+            <span class="icon">
+              <i class="fab fa-zhihu"></i>
+            </span>
+
+            <span class="label">知乎</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/OS/" rel="tag"><i class="fa fa-tag"></i> OS</a>
+              <a href="/tags/%E9%A1%B5%E9%9D%A2%E8%B0%83%E5%BA%A6/" rel="tag"><i class="fa fa-tag"></i> 页面调度</a>
+          </div>
+
+        
+  <div class="social-like a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_dd" target="_blank" rel="noopener external nofollow noreferrer" href="https://www.addtoany.com/share"></a>
+      <a class="a2a_button_facebook"></a>
+      <a class="a2a_button_twitter"></a>
+      <a class="a2a_button_telegram"></a>
+      <a class="a2a_button_douban"></a>
+      <a class="a2a_button_mastodon"></a>
+      <a class="a2a_button_sina_weibo"></a>
+      <a class="a2a_button_wechat"></a>
+  </div>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/10/27/experiments/security/web/dos/" rel="prev" title="DoS 拒绝服务攻击">
+                  <i class="fa fa-chevron-left"></i> DoS 拒绝服务攻击
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/11/03/experiments/security/system/slow-ddos/" rel="next" title="慢速 DDoS 攻击实验">
+                  慢速 DDoS 攻击实验 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener external nofollow noreferrer" target="_blank">京ICP备19044050-3 </a>
+  </div>
+
+<div class="copyright">
+  © 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jason Ren</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">96k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:50</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js","integrity":"sha256-e0o3JYsdjqKajf9eOe22FhioYSz9WofRY4dLKo3F6do="}}</script>
+  
+
+
+  
+
+  
+
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://blog-manage.jason0743.space/","cssUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css","commentCount":true,"pageview":true,"libUrl":"https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.js","locale":{"placeholder":"来发表一条友善的评论吧~"},"emoji":["https://unpkg.com/@waline/emojis@1.0.1/weibo","https://unpkg.com/@waline/emojis@1.0.1/alus","https://unpkg.com/@waline/emojis@1.0.1/bilibili","https://unpkg.com/@waline/emojis@1.0.1/qq","https://unpkg.com/@waline/emojis@1.0.1/tieba","https://unpkg.com/@waline/emojis@1.0.1/tw-emoji"],"meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"wordLimit":0,"login":"enable","pageSize":10,"el":"#waline","comment":true,"path":"/2019/10/27/experiments/oskernel/page-management/"}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/waline/2.15.4/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+
+
+<script type="text/javascript" src="/js/bundle.js"></script></body></html>
