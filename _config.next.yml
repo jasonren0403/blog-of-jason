@@ -359,6 +359,10 @@ codeblock:
     enable: true
     # Available values: default | flat | mac
     style: flat
+  # Fold code block
+  fold:
+    enable: true
+    threshold: 500
 
 back2top:
   enable: true
