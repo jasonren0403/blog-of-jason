@@ -601,12 +601,14 @@ addtoany:
   buttons:
     - facebook
     - twitter
+    - x
     - telegram
-    - douban
     - mastodon
+    - douban
     - sina_weibo
     - wechat
-
+    - outlook_com
+    - email
 
 # ---------------------------------------------------------------
 # Statistics and Analytics
