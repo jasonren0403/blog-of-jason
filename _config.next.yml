@@ -563,7 +563,7 @@ waline:
   # If false, comment count will only be displayed in post page, not in home page
   commentCount: true
   # Pageviews count, Note: You should not enable both `waline.pageview` and `leancloud_visitors`.
-  pageview: true
+  pageview: false
   # Custom emoji
   emoji:
     - https://unpkg.com/@waline/emojis@1.0.1/weibo
