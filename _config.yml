@@ -138,47 +138,23 @@ deploy:
   email: 40999116+jasonren0403@users.noreply.github.com
   message: Site updated
 
-mmedia:
-  audio:
-    default:
-  video:
-    default:
-  aplayer:
-    js: https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js
-    css: https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css
-    default:
-      contents:
-  meting:
-    js: https://cdnjs.cloudflare.com/ajax/libs/meting/2.0.1/Meting.min.js
-    api:
-    default:
-  dplayer:
-    js: https://cdnjs.cloudflare.com/ajax/libs/dplayer/1.27.1/DPlayer.min.js
-    hls_js: https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.3/hls.min.js
-    dash_js: https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.0/dash.all.min.js
-    shaka_dash_js: https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.js
-    flv_js: https://cdnjs.cloudflare.com/ajax/libs/flv.js/1.6.2/flv.min.js
-    webtorrent_js: https://cdn.jsdelivr.net/npm/webtorrent/webtorrent.min.js
-    default:
-      contents:
-  bilibili:
-    default:
-      page: 1
-      danmaku: true
-      allowfullscreen: allowfullscreen
-      sandbox: allow-top-navigation allow-same-origin allow-forms allow-scripts allow-popups
-      width: 100%
-      max_width: 850px
-      margin: auto
-  xigua:
-    default:
-      autoplay: false
-      startTime: 0
-      allowfullscreen: allowfullscreen
-      sandbox: allow-top-navigation allow-same-origin allow-forms allow-scripts allow-popups
-      width: 100%
-      max_width: 850px
-      margin: auto
+# https://easyhexo:com/3-Plugins-use-and-config/3-1-hexo-tag-aplayer/
+aplayer:
+  cdn: https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js  # 引用 APlayer.js 外部 CDN 地址 (默认不开启)
+  style_cdn: https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css
+  meting: true       # MetingJS 支持
+#  meting_api: https://api.injahow.cn/meting/
+  meting_cdn: https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js # 引用 Meting.js 外部 CDN 地址 (默认不开启)
+
+# https://easyhexo.com/3-Plugins-use-and-config/3-2-hexo-tag-dplayer/
+hexo-tag-dplayer:
+  cdn:
+    - https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.js
+    - https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.css
+  default:
+    api: https://api.prprpr.me/dplayer/
+    loop: yes
+    screenshot: yes
 
 # RSS
 # https://github.com/hexojs/hexo-generator-feed
@@ -247,7 +223,7 @@ js_minifier:
     - '*.min.js'
 
 image_minifier:
-  enable: true # set it to false for development
+  enable: false # set it to false for development
   interlaced: false
   multipass: false
   optimizationLevel: 2

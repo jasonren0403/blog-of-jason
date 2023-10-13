@@ -1,7 +1,9 @@
 zh-CN:
   menu:
     note: 笔记
+    todo: 待办事项
 
 en:
   menu:
     note: Note
+    todo: My To-dos

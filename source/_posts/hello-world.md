@@ -116,32 +116,3 @@ second
 **This is Tab 3.**
 <!-- endtab -->
 {% endtabs %}
-
-## Video and audio embeds
-
-> Using `hexo-tag-mmedia` plugin, https://easyhexo.com/3-Plugins-use-and-config/3-5-hexo-tag-mmedia
-
-### Bilibili
-
-```text
-{% mmedia "bilibili" "bvid:<bvid>" "quality:high" "danmaku:true" "allowfullscreen" %}
-```
-
-{% mmedia "bilibili" "bvid:BV1yN4y1N7vZ" "quality:high" "danmaku:true" "allowfullscreen" %}
-
-### 西瓜视频
-
-```text
-{% mmedia "xigua" "xid=<xid>" %}
-```
-
-{% mmedia "xigua" "xid=7168109503483740711" %}
-
-### MetingJS
-
-```text
-{% mmedia "meting" <id> <server> <type> ... %}
-```
-
-{% mmedia "meting" "id=7737308430" "server=netease" "type=playlist" %} 
-
