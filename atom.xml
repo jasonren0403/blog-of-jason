@@ -6,7 +6,7 @@
   <link href="https://blog.jason0743.space/atom.xml" rel="self"/>
   
   <link href="https://blog.jason0743.space/"/>
-  <updated>2023-10-01T11:21:36.777Z</updated>
+  <updated>2023-10-13T12:12:15.272Z</updated>
   <id>https://blog.jason0743.space/</id>
   
   <author>
@@ -17,11 +17,34 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>同时推送多个 Git 仓库提交</title>
+    <link href="https://blog.jason0743.space/2023/10/10/publish-multiple-git-origins-at-the-same-time/"/>
+    <id>https://blog.jason0743.space/2023/10/10/publish-multiple-git-origins-at-the-same-time/</id>
+    <published>2023-10-10T03:28:11.000Z</published>
+    <updated>2023-10-13T12:12:15.272Z</updated>
+    
+    
+    <summary type="html">Git 小技巧记录</summary>
+    
+    
+    
+    <category term="版本控制" scheme="https://blog.jason0743.space/categories/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/"/>
+    
+    <category term="Git" scheme="https://blog.jason0743.space/categories/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/Git/"/>
+    
+    
+    <category term="Git" scheme="https://blog.jason0743.space/tags/Git/"/>
+    
+    <category term="VCS" scheme="https://blog.jason0743.space/tags/VCS/"/>
+    
+  </entry>
+  
+  <entry>
     <title>来点朋友吧！互相学习一下！</title>
     <link href="https://blog.jason0743.space/2023/05/05/friendlink-apply/"/>
     <id>https://blog.jason0743.space/2023/05/05/friendlink-apply/</id>
     <published>2023-05-04T16:00:00.000Z</published>
-    <updated>2023-10-01T11:21:36.777Z</updated>
+    <updated>2023-10-13T12:12:15.272Z</updated>
     
     
     <summary type="html">也许看了我的博客后，你也有一些需要交换的内容，或者，想跟我做朋友，那就来加个友链吧。</summary>
@@ -40,7 +63,7 @@
     <link href="https://blog.jason0743.space/2023/04/21/works/working-with-https/"/>
     <id>https://blog.jason0743.space/2023/04/21/works/working-with-https/</id>
     <published>2023-04-21T12:12:00.000Z</published>
-    <updated>2023-10-01T11:21:36.793Z</updated>
+    <updated>2023-10-13T12:12:15.288Z</updated>
     
     
     <summary type="html">本文记录了个人网站配置HTTPS的过程，包括github pages、certbot等工具的配置过程。</summary>
@@ -63,7 +86,7 @@
     <link href="https://blog.jason0743.space/2023/04/03/works/how-i-built-the-blog/"/>
     <id>https://blog.jason0743.space/2023/04/03/works/how-i-built-the-blog/</id>
     <published>2023-04-03T11:45:33.000Z</published>
-    <updated>2023-10-01T11:21:36.785Z</updated>
+    <updated>2023-10-13T12:12:15.280Z</updated>
     
     
     <summary type="html">&lt;p&gt;好久不见！经过许久的折腾以后，终于闲下功夫来复盘一下博客如何部署起来的了！话不多说，这就进入主题！&lt;/p&gt;</summary>
@@ -86,7 +109,7 @@
     <link href="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/"/>
     <id>https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/</id>
     <published>2023-02-17T03:19:30.000Z</published>
-    <updated>2023-10-01T11:21:36.785Z</updated>
+    <updated>2023-10-13T12:12:15.280Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;前言&quot;&gt;前言&lt;/h2&gt;
@@ -100,6 +123,126 @@
     
     
     <category term="frontend" scheme="https://blog.jason0743.space/tags/frontend/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>代码优化</title>
+    <link href="https://blog.jason0743.space/2022/10/24/experiments/jizu/optimize/"/>
+    <id>https://blog.jason0743.space/2022/10/24/experiments/jizu/optimize/</id>
+    <published>2022-10-24T11:49:56.000Z</published>
+    <updated>2023-10-13T12:12:14.988Z</updated>
+    
+    
+    <summary type="html">学习简单编译优化方法，观察采用编译优化方法所带来的性能的提高</summary>
+    
+    
+    
+    <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
+    
+    <category term="计算机组成原理" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/"/>
+    
+    
+    <category term="WinDLX" scheme="https://blog.jason0743.space/tags/WinDLX/"/>
+    
+    <category term="计算机组成原理" scheme="https://blog.jason0743.space/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>DLX 处理器程序设计</title>
+    <link href="https://blog.jason0743.space/2022/10/24/experiments/jizu/programming/"/>
+    <id>https://blog.jason0743.space/2022/10/24/experiments/jizu/programming/</id>
+    <published>2022-10-24T09:16:36.000Z</published>
+    <updated>2023-10-13T12:12:14.992Z</updated>
+    
+    
+    <summary type="html">学习使用DLX汇编语言编程，进一步分析相关现象</summary>
+    
+    
+    
+    <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
+    
+    <category term="计算机组成原理" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/"/>
+    
+    
+    <category term="WinDLX" scheme="https://blog.jason0743.space/tags/WinDLX/"/>
+    
+    <category term="计算机组成原理" scheme="https://blog.jason0743.space/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>WinDLX 模拟器安装与使用</title>
+    <link href="https://blog.jason0743.space/2022/10/15/experiments/jizu/installing-and-using-windlx/"/>
+    <id>https://blog.jason0743.space/2022/10/15/experiments/jizu/installing-and-using-windlx/</id>
+    <published>2022-10-15T09:16:36.000Z</published>
+    <updated>2023-10-13T12:12:14.980Z</updated>
+    
+    
+    <summary type="html">建立实验环境，了解WINDLX模拟器的结构及使用</summary>
+    
+    
+    
+    <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
+    
+    <category term="计算机组成原理" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/"/>
+    
+    
+    <category term="WinDLX" scheme="https://blog.jason0743.space/tags/WinDLX/"/>
+    
+    <category term="计算机组成原理" scheme="https://blog.jason0743.space/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>指令流水线相关性分析</title>
+    <link href="https://blog.jason0743.space/2022/10/15/experiments/jizu/relation-analysis/"/>
+    <id>https://blog.jason0743.space/2022/10/15/experiments/jizu/relation-analysis/</id>
+    <published>2022-10-15T09:16:36.000Z</published>
+    <updated>2023-10-13T12:12:14.996Z</updated>
+    
+    
+    <summary type="html">通过使用WINDLX模拟器，对程序中的三种相关原理进行观察，并对使用专用通路，增加运算部件等技术对性能的影响进行考察，加深对流水线和RISC处理器的特点的理解</summary>
+    
+    
+    
+    <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
+    
+    <category term="计算机组成原理" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/"/>
+    
+    
+    <category term="WinDLX" scheme="https://blog.jason0743.space/tags/WinDLX/"/>
+    
+    <category term="计算机组成原理" scheme="https://blog.jason0743.space/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>快照</title>
+    <link href="https://blog.jason0743.space/2021/12/01/experiments/database/snapshot/"/>
+    <id>https://blog.jason0743.space/2021/12/01/experiments/database/snapshot/</id>
+    <published>2021-12-01T02:08:06.000Z</published>
+    <updated>2023-10-13T12:12:14.976Z</updated>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;快照&quot;&gt;快照&lt;/h2&gt;
+&lt;p&gt;数据库快照是 SQL Server 数据库（源数据库）的只读静态视图。自创建快照那刻起，数据库快照在事务上与源数据库一致。数据库快照始终与其源数据库位于同一服务器实例上。虽然数据库快照提供与创建快照时处于相同状态的数据的只读视图，但快照文件的大小随着对源数据库的更改而增大。给定源数据库中可以存在多个快照。在数据库所有者显式删除每个数据库快照之前，该快照将一直保留。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
+    
+    <category term="数据库" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    
+    <category term="数据库" scheme="https://blog.jason0743.space/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    <category term="SQL Server" scheme="https://blog.jason0743.space/tags/SQL-Server/"/>
+    
+    <category term="网络存储与容灾" scheme="https://blog.jason0743.space/tags/%E7%BD%91%E7%BB%9C%E5%AD%98%E5%82%A8%E4%B8%8E%E5%AE%B9%E7%81%BE/"/>
+    
+    <category term="快照" scheme="https://blog.jason0743.space/tags/%E5%BF%AB%E7%85%A7/"/>
     
   </entry>
   
@@ -123,7 +266,7 @@
     <link href="https://blog.jason0743.space/2020/06/04/experiments/security/sms/"/>
     <id>https://blog.jason0743.space/2020/06/04/experiments/security/sms/</id>
     <published>2020-06-03T16:20:15.000Z</published>
-    <updated>2023-10-01T11:21:36.553Z</updated>
+    <updated>2023-10-13T12:12:15.040Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;漏洞介绍&quot;&gt;漏洞介绍&lt;/h2&gt;
@@ -155,7 +298,7 @@
     <link href="https://blog.jason0743.space/2020/04/02/works/frontend/echarts-drawing/"/>
     <id>https://blog.jason0743.space/2020/04/02/works/frontend/echarts-drawing/</id>
     <published>2020-04-02T02:38:58.000Z</published>
-    <updated>2023-10-01T11:21:36.777Z</updated>
+    <updated>2023-10-13T12:12:15.272Z</updated>
     
     
     <summary type="html">&lt;p&gt;2020 年开始到现在的时间，真是发生了太多的事情，心情复杂，但又没有什么话好说，只能以有限的方式表达着对这些事件的思考。&lt;/p&gt;
@@ -208,7 +351,7 @@
     <link href="https://blog.jason0743.space/2019/12/25/experiments/security/software/string-format/"/>
     <id>https://blog.jason0743.space/2019/12/25/experiments/security/software/string-format/</id>
     <published>2019-12-25T12:32:14.000Z</published>
-    <updated>2023-10-01T11:21:36.613Z</updated>
+    <updated>2023-10-13T12:12:15.104Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;目标&quot;&gt;目标&lt;/h2&gt;
@@ -236,7 +379,7 @@
     <link href="https://blog.jason0743.space/2019/12/21/experiments/oskernel/moosefs/"/>
     <id>https://blog.jason0743.space/2019/12/21/experiments/oskernel/moosefs/</id>
     <published>2019-12-21T05:47:00.000Z</published>
-    <updated>2023-10-01T11:21:36.521Z</updated>
+    <updated>2023-10-13T12:12:15.008Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;实验目的&quot;&gt;实验目的&lt;/h2&gt;
@@ -268,7 +411,7 @@
     <link href="https://blog.jason0743.space/2019/12/17/experiments/security/system/soc/"/>
     <id>https://blog.jason0743.space/2019/12/17/experiments/security/system/soc/</id>
     <published>2019-12-17T05:39:51.000Z</published>
-    <updated>2023-10-01T11:21:36.689Z</updated>
+    <updated>2023-10-13T12:12:15.180Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;实验目的&quot;&gt;实验目的&lt;/h2&gt;
@@ -292,7 +435,7 @@
     <link href="https://blog.jason0743.space/2019/12/12/experiments/security/software/virtual_func_and_seh/"/>
     <id>https://blog.jason0743.space/2019/12/12/experiments/security/software/virtual_func_and_seh/</id>
     <published>2019-12-12T15:12:35.000Z</published>
-    <updated>2023-10-01T11:21:36.637Z</updated>
+    <updated>2023-10-13T12:12:15.128Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;目标&quot;&gt;目标&lt;/h2&gt;
@@ -322,7 +465,7 @@
     <link href="https://blog.jason0743.space/2019/12/10/experiments/security/web/https-ssl/"/>
     <id>https://blog.jason0743.space/2019/12/10/experiments/security/web/https-ssl/</id>
     <published>2019-12-10T11:42:33.000Z</published>
-    <updated>2023-10-01T11:21:36.741Z</updated>
+    <updated>2023-10-13T12:12:15.232Z</updated>
     
     
     <summary type="html">&lt;div class=&quot;note warning&quot;&gt;&lt;p&gt;本篇文章未整理成正式实验记录，故可能出现书写或表述不完整的情况。&lt;/p&gt;
@@ -346,7 +489,7 @@
     <link href="https://blog.jason0743.space/2019/12/06/experiments/security/system/tomcat/"/>
     <id>https://blog.jason0743.space/2019/12/06/experiments/security/system/tomcat/</id>
     <published>2019-12-06T07:32:26.000Z</published>
-    <updated>2023-10-01T11:21:36.693Z</updated>
+    <updated>2023-10-13T12:12:15.184Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;实验目的&quot;&gt;实验目的&lt;/h2&gt;
@@ -366,172 +509,6 @@
     <category term="网络空间安全" scheme="https://blog.jason0743.space/tags/%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E5%AE%89%E5%85%A8/"/>
     
     <category term="信息系统安全" scheme="https://blog.jason0743.space/tags/%E4%BF%A1%E6%81%AF%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>虚拟专用网实验</title>
-    <link href="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/"/>
-    <id>https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/</id>
-    <published>2019-12-05T12:52:04.000Z</published>
-    <updated>2023-10-01T11:21:36.749Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;目标&quot;&gt;目标&lt;/h2&gt;
-&lt;p&gt;了解什么是虚拟专用网（VPN），知道 VPN 的原理和应用。通过实验理解 IPSec 和 VPN 的关系和必要性。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
-    
-    <category term="网络安全" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"/>
-    
-    
-    <category term="网络空间安全" scheme="https://blog.jason0743.space/tags/%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E5%AE%89%E5%85%A8/"/>
-    
-    <category term="网络安全" scheme="https://blog.jason0743.space/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>设备管理实验</title>
-    <link href="https://blog.jason0743.space/2019/12/04/experiments/oskernel/iodevice/"/>
-    <id>https://blog.jason0743.space/2019/12/04/experiments/oskernel/iodevice/</id>
-    <published>2019-12-04T05:20:38.000Z</published>
-    <updated>2023-10-01T11:21:36.521Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;实验目的&quot;&gt;实验目的&lt;/h2&gt;
-&lt;p&gt;尝试加载运行给定的内核程序，以理解内核的结构。尝试修改设备管理相关代码以实现一些简单的功能。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
-    
-    <category term="技术" scheme="https://blog.jason0743.space/categories/%E6%8A%80%E6%9C%AF/"/>
-    
-    <category term="OS" scheme="https://blog.jason0743.space/categories/OS/"/>
-    
-    <category term="操作系统内核" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8/"/>
-    
-    <category term="Linux 内核" scheme="https://blog.jason0743.space/categories/OS/Linux-%E5%86%85%E6%A0%B8/"/>
-    
-    <category term="IO设备" scheme="https://blog.jason0743.space/categories/OS/IO%E8%AE%BE%E5%A4%87/"/>
-    
-    
-    <category term="OS" scheme="https://blog.jason0743.space/tags/OS/"/>
-    
-    <category term="Linux" scheme="https://blog.jason0743.space/tags/Linux/"/>
-    
-    <category term="IO(输入输出设备)" scheme="https://blog.jason0743.space/tags/IO-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E8%AE%BE%E5%A4%87/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>堆溢出漏洞</title>
-    <link href="https://blog.jason0743.space/2019/11/30/experiments/security/vulnerability_analysis/heap/"/>
-    <id>https://blog.jason0743.space/2019/11/30/experiments/security/vulnerability_analysis/heap/</id>
-    <published>2019-11-30T04:18:58.000Z</published>
-    <updated>2023-10-01T11:21:36.713Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;实验目的&quot;&gt;实验目的&lt;/h2&gt;
-&lt;p&gt;根据一个重复释放漏洞利用例子，调试利用程序（&lt;code&gt;exp.py&lt;/code&gt;），理解堆溢出的原理和利用过程中堆的变化。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
-    
-    <category term="漏洞分析" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/"/>
-    
-    <category term="漏洞" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/"/>
-    
-    <category term="双重释放" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/%E5%8F%8C%E9%87%8D%E9%87%8A%E6%94%BE/"/>
-    
-    <category term="堆溢出" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/%E5%A0%86%E6%BA%A2%E5%87%BA/"/>
-    
-    
-    <category term="网络空间安全" scheme="https://blog.jason0743.space/tags/%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E5%AE%89%E5%85%A8/"/>
-    
-    <category term="软件安全" scheme="https://blog.jason0743.space/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>漏洞挖掘与模糊测试</title>
-    <link href="https://blog.jason0743.space/2019/11/29/experiments/security/software/fuzzing/"/>
-    <id>https://blog.jason0743.space/2019/11/29/experiments/security/software/fuzzing/</id>
-    <published>2019-11-28T16:06:38.000Z</published>
-    <updated>2023-10-01T11:21:36.557Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;目标&quot;&gt;目标&lt;/h2&gt;
-&lt;p&gt;了解 fuzz 原理，使用此方法模糊测试两种 ftp 服务器软件的漏洞，使其停止工作。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
-    
-    <category term="软件安全" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/"/>
-    
-    <category term="漏洞" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/"/>
-    
-    <category term="拒绝服务" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1/"/>
-    
-    
-    <category term="网络空间安全" scheme="https://blog.jason0743.space/tags/%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E5%AE%89%E5%85%A8/"/>
-    
-    <category term="软件安全" scheme="https://blog.jason0743.space/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>入侵检测</title>
-    <link href="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/"/>
-    <id>https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/</id>
-    <published>2019-11-25T12:12:01.000Z</published>
-    <updated>2023-10-01T11:21:36.745Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;目的&quot;&gt;目的&lt;/h2&gt;
-&lt;p&gt;了解入侵检测的基本原理，尝试在 Windows XP 下配置 Snort IDS 并完成基于 Snort 的攻击检测。尝试利用 Snort 规则语法自己编写简单的 Snort 规则。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
-    
-    <category term="网络安全" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"/>
-    
-    
-    <category term="网络空间安全" scheme="https://blog.jason0743.space/tags/%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E5%AE%89%E5%85%A8/"/>
-    
-    <category term="网络安全" scheme="https://blog.jason0743.space/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>进程通信实验</title>
-    <link href="https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/"/>
-    <id>https://blog.jason0743.space/2019/11/24/experiments/oskernel/process-communication/</id>
-    <published>2019-11-24T12:18:43.000Z</published>
-    <updated>2023-10-01T11:21:36.529Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;实验目的&quot;&gt;实验目的&lt;/h2&gt;
-&lt;p&gt;通过几则进程通信的例子，理解进程的同步机制，理解锁、信号量在同步编程的重要地位。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
-    
-    <category term="技术" scheme="https://blog.jason0743.space/categories/%E6%8A%80%E6%9C%AF/"/>
-    
-    <category term="操作系统内核" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E6%A0%B8/"/>
-    
-    
-    <category term="OS" scheme="https://blog.jason0743.space/tags/OS/"/>
-    
-    <category term="进程通信" scheme="https://blog.jason0743.space/tags/%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1/"/>
     
   </entry>
   
