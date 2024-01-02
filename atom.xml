@@ -6,7 +6,7 @@
   <link href="https://blog.jason0743.space/atom.xml" rel="self"/>
   
   <link href="https://blog.jason0743.space/"/>
-  <updated>2023-10-13T12:12:15.272Z</updated>
+  <updated>2024-01-02T04:33:11.775Z</updated>
   <id>https://blog.jason0743.space/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://blog.jason0743.space/2023/10/10/publish-multiple-git-origins-at-the-same-time/"/>
     <id>https://blog.jason0743.space/2023/10/10/publish-multiple-git-origins-at-the-same-time/</id>
     <published>2023-10-10T03:28:11.000Z</published>
-    <updated>2023-10-13T12:12:15.272Z</updated>
+    <updated>2024-01-02T04:33:11.775Z</updated>
     
     
     <summary type="html">Git 小技巧记录</summary>
@@ -44,7 +44,7 @@
     <link href="https://blog.jason0743.space/2023/05/05/friendlink-apply/"/>
     <id>https://blog.jason0743.space/2023/05/05/friendlink-apply/</id>
     <published>2023-05-04T16:00:00.000Z</published>
-    <updated>2023-10-13T12:12:15.272Z</updated>
+    <updated>2024-01-02T04:33:11.775Z</updated>
     
     
     <summary type="html">也许看了我的博客后，你也有一些需要交换的内容，或者，想跟我做朋友，那就来加个友链吧。</summary>
@@ -63,7 +63,7 @@
     <link href="https://blog.jason0743.space/2023/04/21/works/working-with-https/"/>
     <id>https://blog.jason0743.space/2023/04/21/works/working-with-https/</id>
     <published>2023-04-21T12:12:00.000Z</published>
-    <updated>2023-10-13T12:12:15.288Z</updated>
+    <updated>2024-01-02T04:33:11.787Z</updated>
     
     
     <summary type="html">本文记录了个人网站配置HTTPS的过程，包括github pages、certbot等工具的配置过程。</summary>
@@ -86,7 +86,7 @@
     <link href="https://blog.jason0743.space/2023/04/03/works/how-i-built-the-blog/"/>
     <id>https://blog.jason0743.space/2023/04/03/works/how-i-built-the-blog/</id>
     <published>2023-04-03T11:45:33.000Z</published>
-    <updated>2023-10-13T12:12:15.280Z</updated>
+    <updated>2024-01-02T04:33:11.783Z</updated>
     
     
     <summary type="html">&lt;p&gt;好久不见！经过许久的折腾以后，终于闲下功夫来复盘一下博客如何部署起来的了！话不多说，这就进入主题！&lt;/p&gt;</summary>
@@ -109,7 +109,7 @@
     <link href="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/"/>
     <id>https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/</id>
     <published>2023-02-17T03:19:30.000Z</published>
-    <updated>2023-10-13T12:12:15.280Z</updated>
+    <updated>2024-01-02T04:33:11.779Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;前言&quot;&gt;前言&lt;/h2&gt;
@@ -131,7 +131,7 @@
     <link href="https://blog.jason0743.space/2022/10/24/experiments/jizu/optimize/"/>
     <id>https://blog.jason0743.space/2022/10/24/experiments/jizu/optimize/</id>
     <published>2022-10-24T11:49:56.000Z</published>
-    <updated>2023-10-13T12:12:14.988Z</updated>
+    <updated>2024-01-02T04:33:11.551Z</updated>
     
     
     <summary type="html">学习简单编译优化方法，观察采用编译优化方法所带来的性能的提高</summary>
@@ -154,7 +154,7 @@
     <link href="https://blog.jason0743.space/2022/10/24/experiments/jizu/programming/"/>
     <id>https://blog.jason0743.space/2022/10/24/experiments/jizu/programming/</id>
     <published>2022-10-24T09:16:36.000Z</published>
-    <updated>2023-10-13T12:12:14.992Z</updated>
+    <updated>2024-01-02T04:33:11.555Z</updated>
     
     
     <summary type="html">学习使用DLX汇编语言编程，进一步分析相关现象</summary>
@@ -177,7 +177,7 @@
     <link href="https://blog.jason0743.space/2022/10/15/experiments/jizu/installing-and-using-windlx/"/>
     <id>https://blog.jason0743.space/2022/10/15/experiments/jizu/installing-and-using-windlx/</id>
     <published>2022-10-15T09:16:36.000Z</published>
-    <updated>2023-10-13T12:12:14.980Z</updated>
+    <updated>2024-01-02T04:33:11.543Z</updated>
     
     
     <summary type="html">建立实验环境，了解WINDLX模拟器的结构及使用</summary>
@@ -200,7 +200,7 @@
     <link href="https://blog.jason0743.space/2022/10/15/experiments/jizu/relation-analysis/"/>
     <id>https://blog.jason0743.space/2022/10/15/experiments/jizu/relation-analysis/</id>
     <published>2022-10-15T09:16:36.000Z</published>
-    <updated>2023-10-13T12:12:14.996Z</updated>
+    <updated>2024-01-02T04:33:11.559Z</updated>
     
     
     <summary type="html">通过使用WINDLX模拟器，对程序中的三种相关原理进行观察，并对使用专用通路，增加运算部件等技术对性能的影响进行考察，加深对流水线和RISC处理器的特点的理解</summary>
@@ -223,7 +223,7 @@
     <link href="https://blog.jason0743.space/2021/12/01/experiments/database/snapshot/"/>
     <id>https://blog.jason0743.space/2021/12/01/experiments/database/snapshot/</id>
     <published>2021-12-01T02:08:06.000Z</published>
-    <updated>2023-10-13T12:12:14.976Z</updated>
+    <updated>2024-01-02T04:33:11.543Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;快照&quot;&gt;快照&lt;/h2&gt;
@@ -266,7 +266,7 @@
     <link href="https://blog.jason0743.space/2020/06/04/experiments/security/sms/"/>
     <id>https://blog.jason0743.space/2020/06/04/experiments/security/sms/</id>
     <published>2020-06-03T16:20:15.000Z</published>
-    <updated>2023-10-13T12:12:15.040Z</updated>
+    <updated>2024-01-02T04:33:11.595Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;漏洞介绍&quot;&gt;漏洞介绍&lt;/h2&gt;
@@ -298,7 +298,7 @@
     <link href="https://blog.jason0743.space/2020/04/02/works/frontend/echarts-drawing/"/>
     <id>https://blog.jason0743.space/2020/04/02/works/frontend/echarts-drawing/</id>
     <published>2020-04-02T02:38:58.000Z</published>
-    <updated>2023-10-13T12:12:15.272Z</updated>
+    <updated>2024-01-02T04:33:11.775Z</updated>
     
     
     <summary type="html">&lt;p&gt;2020 年开始到现在的时间，真是发生了太多的事情，心情复杂，但又没有什么话好说，只能以有限的方式表达着对这些事件的思考。&lt;/p&gt;
@@ -351,7 +351,7 @@
     <link href="https://blog.jason0743.space/2019/12/25/experiments/security/software/string-format/"/>
     <id>https://blog.jason0743.space/2019/12/25/experiments/security/software/string-format/</id>
     <published>2019-12-25T12:32:14.000Z</published>
-    <updated>2023-10-13T12:12:15.104Z</updated>
+    <updated>2024-01-02T04:33:11.643Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;目标&quot;&gt;目标&lt;/h2&gt;
@@ -379,7 +379,7 @@
     <link href="https://blog.jason0743.space/2019/12/21/experiments/oskernel/moosefs/"/>
     <id>https://blog.jason0743.space/2019/12/21/experiments/oskernel/moosefs/</id>
     <published>2019-12-21T05:47:00.000Z</published>
-    <updated>2023-10-13T12:12:15.008Z</updated>
+    <updated>2024-01-02T04:33:11.567Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;实验目的&quot;&gt;实验目的&lt;/h2&gt;
@@ -411,7 +411,7 @@
     <link href="https://blog.jason0743.space/2019/12/17/experiments/security/system/soc/"/>
     <id>https://blog.jason0743.space/2019/12/17/experiments/security/system/soc/</id>
     <published>2019-12-17T05:39:51.000Z</published>
-    <updated>2023-10-13T12:12:15.180Z</updated>
+    <updated>2024-01-02T04:33:11.699Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;实验目的&quot;&gt;实验目的&lt;/h2&gt;
@@ -435,7 +435,7 @@
     <link href="https://blog.jason0743.space/2019/12/12/experiments/security/software/virtual_func_and_seh/"/>
     <id>https://blog.jason0743.space/2019/12/12/experiments/security/software/virtual_func_and_seh/</id>
     <published>2019-12-12T15:12:35.000Z</published>
-    <updated>2023-10-13T12:12:15.128Z</updated>
+    <updated>2024-01-02T04:33:11.659Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;目标&quot;&gt;目标&lt;/h2&gt;
@@ -465,7 +465,7 @@
     <link href="https://blog.jason0743.space/2019/12/10/experiments/security/web/https-ssl/"/>
     <id>https://blog.jason0743.space/2019/12/10/experiments/security/web/https-ssl/</id>
     <published>2019-12-10T11:42:33.000Z</published>
-    <updated>2023-10-13T12:12:15.232Z</updated>
+    <updated>2024-01-02T04:33:11.743Z</updated>
     
     
     <summary type="html">&lt;div class=&quot;note warning&quot;&gt;&lt;p&gt;本篇文章未整理成正式实验记录，故可能出现书写或表述不完整的情况。&lt;/p&gt;
@@ -489,7 +489,7 @@
     <link href="https://blog.jason0743.space/2019/12/06/experiments/security/system/tomcat/"/>
     <id>https://blog.jason0743.space/2019/12/06/experiments/security/system/tomcat/</id>
     <published>2019-12-06T07:32:26.000Z</published>
-    <updated>2023-10-13T12:12:15.184Z</updated>
+    <updated>2024-01-02T04:33:11.703Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;实验目的&quot;&gt;实验目的&lt;/h2&gt;
