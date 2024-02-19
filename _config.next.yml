@@ -178,7 +178,7 @@ social:
   #E-Mail: mailto:yourname@gmail.com || fa fa-envelope
   #Weibo: https://weibo.com/yourname || fab fa-weibo
   #Google: https://plus.google.com/yourname || fab fa-google
-  Twitter: https://twitter.com/theRealRev270 || fab fa-twitter
+  X(前 Twitter): https://twitter.com/theRealRev270 || fab fa-x
   Facebook: https://www.facebook.com/renjason1999/ || fab fa-facebook
   #StackOverflow: https://stackoverflow.com/yourname || fab fa-stack-overflow
   #YouTube: https://youtube.com/yourname || fab fa-youtube
@@ -198,7 +198,7 @@ links_settings:
   layout: block
 
 links:
-#Title: http://yoursite.com
+  Yujie Han’s blog: https://hanyujie2002.fly.dev/
 
 # Table of Contents in the Sidebar
 # Front-matter variable (unsupport wrap expand_all).
@@ -263,7 +263,7 @@ reward:
 # Subscribe through Telegram Channel, Twitter, etc.
 # Usage: `Key: permalink || icon` (Font Awesome)
 follow_me:
-  Twitter: https://twitter.com/theRealRev270 || fab fa-twitter
+  X(前 Twitter): https://twitter.com/theRealRev270 || fab fa-x
   Telegram: https://t.me/jrchan_blog || fab fa-telegram
   WeChat: /images/gongzhonghao.jpg || fab fa-weixin
   RSS: /atom.xml || fa fa-rss
@@ -271,6 +271,7 @@ follow_me:
 
 # Related popular posts
 # Dependencies: https://github.com/sergeyzwezdin/hexo-related-posts
+# todo: wait for support https://github.com/sergeyzwezdin/hexo-related-posts/pull/20
 related_posts:
   enabled: false
   enable_env_name: prod
