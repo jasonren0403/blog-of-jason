@@ -271,10 +271,9 @@ follow_me:
 
 # Related popular posts
 # Dependencies: https://github.com/sergeyzwezdin/hexo-related-posts
-# todo: wait for support https://github.com/sergeyzwezdin/hexo-related-posts/pull/20
 related_posts:
-  enabled: false
-  enable_env_name: prod
+  enabled: true
+#  enable_env_name: prod
   filter_threshold: 0.3
   related_count: 3
   weight:
