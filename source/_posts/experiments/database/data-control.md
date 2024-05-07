@@ -217,15 +217,17 @@ categories:
     {% asset_img backup_4.png %}
 3. 先执行`show master status`，然后执行`flush logs`，将`master status`显示的文件复制到其他地方。执行`flush logs`意义在于切换为新的日志文件，将问题段集中在一个日志文件中。
     {% asset_img backup_5.png %}
-	{% asset_img backup_6.png %}
 
     binlog.000011文件内容如下，可以看到，从pos=4到pos=795经历了两次commit操作，分别为两条数据的新建操作，经分析，若要恢复数据新建的状态，只需恢复这个log即可。
-	{% asset_img backup_7.png %}
+    {% asset_img backup_6.png %}
 
 4. 执行`source E:/computer_products.sql`。经过一段操作后，登录数据库，查看表格。
-	{% asset_img backup_8.png %}
+    {% asset_img backup_7.png %}
+	
     下图表明数据库成功恢复到了数据插入前的状态。
+    {% asset_img backup_8.png %}
     {% asset_img backup_9(4.5).png %}
+
 5. 接下来使用`mysqlbinlog`命令恢复插入两条数据后的状态，此命令需要在Windows cmd命令行下进行。
 	```sql
 	mysqlbinlog E:/back_binlog.000011 | mysql -u <我的用户名> -p <我的密码> --database=computer_products
@@ -258,7 +260,7 @@ categories:
 
 3. MySQL开启binlog的方法。
 	* 打开MySQL配置文件`my.cnf`，在[mysqld]下面增加`log-bin=mysql-bin`（UNIX）
-	* 修改MySQL配置文件`my.ini` ，添加配置：`log-bin=log-bin=<日志存储实际路径>`（WIndows）
+	* 修改MySQL配置文件`my.ini` ，添加配置：`log-bin=log-bin=<日志存储实际路径>`（Windows）
 	* 把前面的`#`去掉。
 4. MySQL中备份与恢复命令语法
    * `mysqldump`：用于做数据库的全量备份。
