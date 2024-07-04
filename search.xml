@@ -469,32 +469,6 @@
       </tags>
   </entry>
   <entry>
-    <title>北邮小日记 —— 第十七期</title>
-    <url>/2019/04/02/diarys/bupt-17/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="久违的生日篇（1999-2019）">久违的生日篇（1999-2019）</h2>
-<p>各位看到这篇文章的时候，大概就是我 “奔二” 的开端了。时间飞逝，在这个世界上已经是第二十个年头了，北邮小日记也已经累计写 (shui) 了十七篇了。同时，我感觉差不多也应该找一个女朋友了……</p>
-<span id="more"></span>
-<p>这是本学期的第一篇小日记，前一个月的时间各种忙的事情，一直也没想起来要写点东西，生日这天总该写一写的。</p>
-<p>最近用过我微信公众号的一些人可能感受到了一些微小的变化，没错，输入一些特定的内容会有一点小彩蛋出现ヾ (ﾟ∀ﾟゞ)。其实是接入了一个叫做 “图灵机器人” 的东西，目前我开启了一些自带的功能，包括聊天对话和语料库等内容，大家可以玩玩<sub>不过轻点玩</sub>目前一天只有 100 次调用量……（然而并不打算加量）。</p>
-<p>（等下，我好像把功能关掉了，现在只会复读，这里我还没写过文档，忘了咋用了……</p>
-<p>打算往公众号上再加一些小东西，至于加些什么，哼哼，暂时保密。</p>
-<p>在 QQ 端我也打算搞一些技术性的东西，最近我发现我所在的一些 QQ 群中有人用酷 q 写机器人，功能还非常丰富，感觉很厉害。恰好我有一些 java 基础，于是我就开工了。目前基础功能已经差不多搭好了，等一些娱乐和实用功能写完之后，我就布置到服务器上，开启服务～写的过程，基本上是用到什么，就学什么东西。包括连接池，网页解析，文件解析等，都是当时 java 基础课上没有学到的东西。目前这个项目已经累计有一千多行代码了。</p>
-<p>不过看看别人写的，我依然觉得我写的功能太菜了，毕竟，我还实现不了模块化，更不会实现用数据生成图片 -_-</p>
-<p>要建的网站也在筹备过程当中，目前正在狂补基础中（顺便，腾讯云的学生优惠好便宜.jpg）。希望能尽快上线吧～上线那天我会给网址的～</p>
-]]></content>
-      <categories>
-        <category>北邮小日记</category>
-        <category>Life</category>
-        <category>life-in-bupt</category>
-        <category>生日特别篇</category>
-      </categories>
-      <tags>
-        <tag>北邮小日记</tag>
-        <tag>life-in-bupt</tag>
-        <tag>special</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>北邮小日记 —— 第十六期</title>
     <url>/2018/12/31/diarys/bupt-16/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="18-19跨年大总结">18-19 跨年大总结</h2>
@@ -524,6 +498,32 @@
         <category>北邮小日记</category>
         <category>Life</category>
         <category>life-in-bupt</category>
+      </categories>
+      <tags>
+        <tag>北邮小日记</tag>
+        <tag>life-in-bupt</tag>
+        <tag>special</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>北邮小日记 —— 第十七期</title>
+    <url>/2019/04/02/diarys/bupt-17/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="久违的生日篇（1999-2019）">久违的生日篇（1999-2019）</h2>
+<p>各位看到这篇文章的时候，大概就是我 “奔二” 的开端了。时间飞逝，在这个世界上已经是第二十个年头了，北邮小日记也已经累计写 (shui) 了十七篇了。同时，我感觉差不多也应该找一个女朋友了……</p>
+<span id="more"></span>
+<p>这是本学期的第一篇小日记，前一个月的时间各种忙的事情，一直也没想起来要写点东西，生日这天总该写一写的。</p>
+<p>最近用过我微信公众号的一些人可能感受到了一些微小的变化，没错，输入一些特定的内容会有一点小彩蛋出现ヾ (ﾟ∀ﾟゞ)。其实是接入了一个叫做 “图灵机器人” 的东西，目前我开启了一些自带的功能，包括聊天对话和语料库等内容，大家可以玩玩<sub>不过轻点玩</sub>目前一天只有 100 次调用量……（然而并不打算加量）。</p>
+<p>（等下，我好像把功能关掉了，现在只会复读，这里我还没写过文档，忘了咋用了……</p>
+<p>打算往公众号上再加一些小东西，至于加些什么，哼哼，暂时保密。</p>
+<p>在 QQ 端我也打算搞一些技术性的东西，最近我发现我所在的一些 QQ 群中有人用酷 q 写机器人，功能还非常丰富，感觉很厉害。恰好我有一些 java 基础，于是我就开工了。目前基础功能已经差不多搭好了，等一些娱乐和实用功能写完之后，我就布置到服务器上，开启服务～写的过程，基本上是用到什么，就学什么东西。包括连接池，网页解析，文件解析等，都是当时 java 基础课上没有学到的东西。目前这个项目已经累计有一千多行代码了。</p>
+<p>不过看看别人写的，我依然觉得我写的功能太菜了，毕竟，我还实现不了模块化，更不会实现用数据生成图片 -_-</p>
+<p>要建的网站也在筹备过程当中，目前正在狂补基础中（顺便，腾讯云的学生优惠好便宜.jpg）。希望能尽快上线吧～上线那天我会给网址的～</p>
+]]></content>
+      <categories>
+        <category>北邮小日记</category>
+        <category>Life</category>
+        <category>life-in-bupt</category>
+        <category>生日特别篇</category>
       </categories>
       <tags>
         <tag>北邮小日记</tag>
@@ -681,7 +681,7 @@
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>期中考试终于都结束了！！有时间写东西啦～</p>
 <span id="more"></span>
 
-    <div id="aplayer-vEvpqsEC" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
+    <div id="aplayer-PNktgHSt" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
 <p>分数都还可以，至少都及格了，当然还可以做到更好，这得靠接下来的努力了～</p>
 <p>不过，我这些同学，还得往上带一带…… 毕竟作为学委的我还是见识到了不少让人抓狂的情况的…… 跟这里我吐槽一下，作业交得晚、借作业去抄… 都是常事。当然，也有很努力在学习的同学，他们会找我问题，我也会很乐意给出解答，这给我一次运用知识的机会，也增强了我和同学们的交流。对了，借这个当学委的机会我也几乎把全班同学认全了，哦耶！</p>
 <p>上周五听说要搬宿舍了，据说原因是另一个校区一整个院的同学都搬了过来，需要腾出一个楼来给其中的女生住，调整方案是说我现在所在楼 - 5 楼的同学要搬到 3 楼去，而 3 楼的女生要搬过来和要住进来的女生并一个楼。如果不出意外的话，这就是我的坐标处于 S5-535 的最后几天了，没想到我之前曾经说过要去 S3 看一看的愿望竟然这么快就实现了 hhh，但是我这么多东西该怎么搬啊……</p>
@@ -2279,6 +2279,41 @@
       </tags>
   </entry>
   <entry>
+    <title>代码优化</title>
+    <url>/2022/10/24/experiments/jizu/optimize/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>学习简单编译优化方法，观察采用编译优化方法所带来的性能的提高。</p>
+<h2 id="实验原理">实验原理</h2>
+<p>采用静态调度方法重排指令序列，减少相关，优化程序。</p>
+<h2 id="实验步骤">实验步骤</h2>
+<h3 id="用静态调度算法手工优化代码">用静态调度算法手工优化代码</h3>
+<p>选择上一个实验的两双精度浮点一维向量的加法运算代码作为优化对象，优化后的代码如下所示：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">VecLen: .word 16</span><br><span class="line">Vector1: .double 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16</span><br><span class="line">; vec1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]</span><br><span class="line">Vector2: .double 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32</span><br><span class="line">; vec2=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]</span><br><span class="line">; 声明向量长度以及两个向量1、2</span><br><span class="line">Printf1: .asciiz "The result is\n"</span><br><span class="line">Printf2: .asciiz "%f\t"</span><br><span class="line"></span><br><span class="line">.align 2</span><br><span class="line"></span><br><span class="line">PrintfHead: .word Printf1</span><br><span class="line">PrintfValue: .word Printf2</span><br><span class="line">result: .space 8</span><br><span class="line">; 打印数据空间的申请</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">addi r14,r0,PrintfHead</span><br><span class="line">trap 5</span><br><span class="line">addi r2,r0,0</span><br><span class="line">lw r20,VecLen</span><br><span class="line">;addi r2,r0,0</span><br><span class="line"></span><br><span class="line">loop: ; 循环读入向量</span><br><span class="line">ld f0,Vector1(r2)</span><br><span class="line">ld f2,Vector2(r2)</span><br><span class="line">; 插入指令，避免f2的RAW</span><br><span class="line">addi r2,r2,8</span><br><span class="line">subi r20,r20,1</span><br><span class="line"></span><br><span class="line">addd f4,f0,f2</span><br><span class="line">; 主要的加法运算</span><br><span class="line">sd result,f4</span><br><span class="line">addi r14,r0,PrintfValue</span><br><span class="line">trap 5</span><br><span class="line">;addi r2,r2,8</span><br><span class="line">;subi r20,r20,1 提前到了前面</span><br><span class="line">bnez r20,loop</span><br><span class="line"></span><br><span class="line">trap 0</span><br><span class="line">; 系统中断，输出结果 "The result is 3.000000, 6.000000, ...."</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="分析已优化程序中出现的数据-控制-结构相关">分析已优化程序中出现的数据 / 控制 / 结构相关</h3>
+<div class="tabs" id="res1"><ul class="nav-tabs"><li class="tab active"><a href="#res1-1">优化前</a></li><li class="tab"><a href="#res1-2">优化后</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res1-1"><p><img data-src="image_czojEXSniG.png" alt="优化前程序" title="优化前程序"></p></div><div class="tab-pane" id="res1-2"><p><img data-src="image__c0vohBdpb.png" alt="优化后程序" title="优化后程序"></p></div></div></div>
+<p>优化后的程序的时钟周期从 267 个减少到了 235 个，RAW 相关也从 48 个大大减少到了 16 个，控制相关和结构相关的数量没有改变，由此可见本次所作代码优化对数据相关的改善最大。</p>
+<h3 id="考虑增加浮点运算部件对于性能的影响">考虑增加浮点运算部件对于性能的影响</h3>
+<div class="tabs" id="res2"><ul class="nav-tabs"><li class="tab active"><a href="#res2-1">1 个浮点部件</a></li><li class="tab"><a href="#res2-2">4 个浮点部件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res2-1"><p><img data-src="image_Da5MgPENTq.png" alt="1个浮点部件" title="1个浮点部件"></p>
+<p><img data-src="image_B7x4cW0ajI.png" alt="1个浮点部件（图2）" title="1个浮点部件（图2）"></p></div><div class="tab-pane" id="res2-2"><p><img data-src="image_G26kibZeDp.png" alt="4个浮点部件" title="4个浮点部件"></p>
+<p><img data-src="image_HpO1C90ynd.png" alt="4个浮点部件（图2）" title="4个浮点部件（图2）"></p></div></div></div>
+<p>同一段代码执行相同步，但是经过对比发现浮点运算部件的增减对于程序执行效率没有影响，可能是因为程序中不存在结构相关，所以并行度没有增加，系统性能没有提升。</p>
+<h3 id="考虑增加forward部件对性能的影响">考虑增加 forward 部件对性能的影响</h3>
+<div class="tabs" id="res3"><ul class="nav-tabs"><li class="tab active"><a href="#res3-1">使用 Forward 组件</a></li><li class="tab"><a href="#res3-2">不使用 Forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res3-1"><p><img data-src="image_ksxwWa7qjZ.png" alt="使用Forward组件" title="使用Forward组件"></p></div><div class="tab-pane" id="res3-2"><p><img data-src="image_9ROBHMR9xL.png" alt="禁用Forward组件" title="禁用Forward组件"></p></div></div></div>
+<p>使用 forward 组件后，执行的 cycles 比不适用 forward 组件要少，且产生的 RAW stalls 有明显减少，程序执行的效率提高了很多。在代码优化前，RAW 相关占 48 个 stalls，在优化后，RAW 现象大量减少，数据相关明显改善，提高了代码执行效率。</p>
+<h3 id="观察转移指令在转移成功和转移不成功时的流水线开销">观察转移指令在转移成功和转移不成功时的流水线开销</h3>
+<p><img data-src="image_55nB__dTOL.png" alt="Conditional Branches 输出" title="Conditional Branches 输出"></p>
+<p>本次实验中，转移成功的几率比较大。由于系统按照预测成功来执行指令，当判断转移不成功时，系统对 trap 指令进行的操作全部作废，转而去执行别的指令。这里代码优化对于转移指令没有影响。</p>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>计算机组成原理</category>
+      </categories>
+      <tags>
+        <tag>WinDLX</tag>
+        <tag>计算机组成原理</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>DLX 处理器程序设计</title>
     <url>/2022/10/24/experiments/jizu/programming/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
@@ -2330,41 +2365,6 @@
 <p>成功时，已经进入取指阶段的指令会被放弃（aborted），转入转移的目标指令的取指操作，造成流水线断流；若转移失败，已经进入取指阶段的指令继续进入译码阶段，流水线不断流。</p>
 </li>
 </ol>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>计算机组成原理</category>
-      </categories>
-      <tags>
-        <tag>WinDLX</tag>
-        <tag>计算机组成原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>代码优化</title>
-    <url>/2022/10/24/experiments/jizu/optimize/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>学习简单编译优化方法，观察采用编译优化方法所带来的性能的提高。</p>
-<h2 id="实验原理">实验原理</h2>
-<p>采用静态调度方法重排指令序列，减少相关，优化程序。</p>
-<h2 id="实验步骤">实验步骤</h2>
-<h3 id="用静态调度算法手工优化代码">用静态调度算法手工优化代码</h3>
-<p>选择上一个实验的两双精度浮点一维向量的加法运算代码作为优化对象，优化后的代码如下所示：</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">VecLen: .word 16</span><br><span class="line">Vector1: .double 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16</span><br><span class="line">; vec1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]</span><br><span class="line">Vector2: .double 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32</span><br><span class="line">; vec2=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]</span><br><span class="line">; 声明向量长度以及两个向量1、2</span><br><span class="line">Printf1: .asciiz "The result is\n"</span><br><span class="line">Printf2: .asciiz "%f\t"</span><br><span class="line"></span><br><span class="line">.align 2</span><br><span class="line"></span><br><span class="line">PrintfHead: .word Printf1</span><br><span class="line">PrintfValue: .word Printf2</span><br><span class="line">result: .space 8</span><br><span class="line">; 打印数据空间的申请</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">addi r14,r0,PrintfHead</span><br><span class="line">trap 5</span><br><span class="line">addi r2,r0,0</span><br><span class="line">lw r20,VecLen</span><br><span class="line">;addi r2,r0,0</span><br><span class="line"></span><br><span class="line">loop: ; 循环读入向量</span><br><span class="line">ld f0,Vector1(r2)</span><br><span class="line">ld f2,Vector2(r2)</span><br><span class="line">; 插入指令，避免f2的RAW</span><br><span class="line">addi r2,r2,8</span><br><span class="line">subi r20,r20,1</span><br><span class="line"></span><br><span class="line">addd f4,f0,f2</span><br><span class="line">; 主要的加法运算</span><br><span class="line">sd result,f4</span><br><span class="line">addi r14,r0,PrintfValue</span><br><span class="line">trap 5</span><br><span class="line">;addi r2,r2,8</span><br><span class="line">;subi r20,r20,1 提前到了前面</span><br><span class="line">bnez r20,loop</span><br><span class="line"></span><br><span class="line">trap 0</span><br><span class="line">; 系统中断，输出结果 "The result is 3.000000, 6.000000, ...."</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="分析已优化程序中出现的数据-控制-结构相关">分析已优化程序中出现的数据 / 控制 / 结构相关</h3>
-<div class="tabs" id="res1"><ul class="nav-tabs"><li class="tab active"><a href="#res1-1">优化前</a></li><li class="tab"><a href="#res1-2">优化后</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res1-1"><p><img data-src="image_czojEXSniG.png" alt="优化前程序" title="优化前程序"></p></div><div class="tab-pane" id="res1-2"><p><img data-src="image__c0vohBdpb.png" alt="优化后程序" title="优化后程序"></p></div></div></div>
-<p>优化后的程序的时钟周期从 267 个减少到了 235 个，RAW 相关也从 48 个大大减少到了 16 个，控制相关和结构相关的数量没有改变，由此可见本次所作代码优化对数据相关的改善最大。</p>
-<h3 id="考虑增加浮点运算部件对于性能的影响">考虑增加浮点运算部件对于性能的影响</h3>
-<div class="tabs" id="res2"><ul class="nav-tabs"><li class="tab active"><a href="#res2-1">1 个浮点部件</a></li><li class="tab"><a href="#res2-2">4 个浮点部件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res2-1"><p><img data-src="image_Da5MgPENTq.png" alt="1个浮点部件" title="1个浮点部件"></p>
-<p><img data-src="image_B7x4cW0ajI.png" alt="1个浮点部件（图2）" title="1个浮点部件（图2）"></p></div><div class="tab-pane" id="res2-2"><p><img data-src="image_G26kibZeDp.png" alt="4个浮点部件" title="4个浮点部件"></p>
-<p><img data-src="image_HpO1C90ynd.png" alt="4个浮点部件（图2）" title="4个浮点部件（图2）"></p></div></div></div>
-<p>同一段代码执行相同步，但是经过对比发现浮点运算部件的增减对于程序执行效率没有影响，可能是因为程序中不存在结构相关，所以并行度没有增加，系统性能没有提升。</p>
-<h3 id="考虑增加forward部件对性能的影响">考虑增加 forward 部件对性能的影响</h3>
-<div class="tabs" id="res3"><ul class="nav-tabs"><li class="tab active"><a href="#res3-1">使用 Forward 组件</a></li><li class="tab"><a href="#res3-2">不使用 Forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res3-1"><p><img data-src="image_ksxwWa7qjZ.png" alt="使用Forward组件" title="使用Forward组件"></p></div><div class="tab-pane" id="res3-2"><p><img data-src="image_9ROBHMR9xL.png" alt="禁用Forward组件" title="禁用Forward组件"></p></div></div></div>
-<p>使用 forward 组件后，执行的 cycles 比不适用 forward 组件要少，且产生的 RAW stalls 有明显减少，程序执行的效率提高了很多。在代码优化前，RAW 相关占 48 个 stalls，在优化后，RAW 现象大量减少，数据相关明显改善，提高了代码执行效率。</p>
-<h3 id="观察转移指令在转移成功和转移不成功时的流水线开销">观察转移指令在转移成功和转移不成功时的流水线开销</h3>
-<p><img data-src="image_55nB__dTOL.png" alt="Conditional Branches 输出" title="Conditional Branches 输出"></p>
-<p>本次实验中，转移成功的几率比较大。由于系统按照预测成功来执行指令，当判断转移不成功时，系统对 trap 指令进行的操作全部作废，转而去执行别的指令。这里代码优化对于转移指令没有影响。</p>
 ]]></content>
       <categories>
         <category>实验</category>
@@ -3700,6 +3700,59 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
       </tags>
   </entry>
   <entry>
+    <title>基本漏洞利用</title>
+    <url>/2019/10/08/experiments/security/software/bufferOverflow/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
+<p>通过分析密码验证小程序，初步掌握缓冲区溢出漏洞的原理和应用</p>
+<span id="more"></span>
+<h2 id="测试步骤与结果">测试步骤与结果</h2>
+<p>实验的源码如下</p>
+<figure class="highlight c"><figcaption><span>password.c</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PASSWORD <span class="string">"1234567"</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">verify_password</span> <span class="params">(<span class="type">char</span> *password)</span></span><br><span class="line">{</span><br><span class="line">	<span class="type">int</span> authenticated;</span><br><span class="line">	authenticated=<span class="built_in">strcmp</span>(password,PASSWORD);</span><br><span class="line">	<span class="keyword">return</span> authenticated;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">{</span><br><span class="line">	<span class="type">int</span> valid_flag=<span class="number">0</span>;</span><br><span class="line">	<span class="type">char</span> password[<span class="number">1024</span>];</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">	{</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"please input password:       "</span>);</span><br><span class="line">		<span class="built_in">scanf</span>(<span class="string">"%s"</span>,password);</span><br><span class="line">		valid_flag = verify_password(password);</span><br><span class="line">		<span class="keyword">if</span>(valid_flag)</span><br><span class="line">		{</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"incorrect password!\n\n"</span>);</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		{</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"Congratulation! You have passed the verification!\n"</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<ol>
+<li>
+<p>简单阅读代码，发现程序检查了一个用户的输入，与内部存储的一个字符串进行比较，若相同，就返回验证成功。否则，显示验证失败并继续验证。 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/0.png" class=""></p>
+</li>
+<li>
+<p>打开 ollydbg，运行程序，在关键调用处（401030，401080 等地址）打上断点以便观察。 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/1.png" class=""></p>
+<div class="tabs" id="path"><ul class="nav-tabs"><li class="tab active"><a href="#path-1"><i class="fa fa-exclamation-circle"></i>Fail</a></li><li class="tab"><a href="#path-2"><i class="fa fa-check-circle"></i>Success</a></li></ul><div class="tab-content"><div class="tab-pane active" id="path-1"><p><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/2.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/3.png" class=""></p></div><div class="tab-pane" id="path-2"><p><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/4.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/5.png" class=""></p></div></div></div>
+<div class="note default"><p>这里，已经进入了密码验证函数中，传进来的参数 <code>s1</code> 与内部存储的 <code>s2</code>（<code>"1234567"</code>）进行了 <code>strcmp</code> 比较，<code>strcmp</code> 是一个 C 语言的比较函数，若两个字符串 <code>str1</code> 和 <code>str2</code> 相等，则返回 <code>0</code>，这里不相等，且 <code>str1&lt;str2</code>，所以 <code>strcmp</code> 返回值为 <code>-1</code>，<code>authenticated</code> 的值也为 <code>-1</code>，非零，验证失败。这里也可以看到，在 <code>4010E5</code> 处有一个关键的 <code>JE</code> 跳转，表示表达式为零即跳转，跳转不成功，就会执行打印 <code>"incorrect password!"</code>。若输入了正确密码，则跳转成功，转而执行输出 <code>"Congratulations"</code> 分支。</p>
+</div>
+</li>
+<li>
+<p>跳过验证的其中一个方法是修改关键部位的汇编语句。比如，把地址 <code>004010E5</code> 的 <code>JE</code> 改为 <code>JNZ</code>，具体方法是把 <code>opcode</code> 从 <code>74</code> 改成 <code>75</code>。这样修改的道理是取反逻辑，把原来的 “输入正确即通过验证” 改为 “输入不正确即可通过验证”，由于未知密码的概率相当大，这样修改相当于跳过了原有的验证过程（当然，假如经过修改后，作了一个 “错误输入” 程序反而崩溃退出了…… 就证明内部定义的密码被你蒙中了）。除此以外，这样的方法是不会对程序运行流程图有大的改变的。</p>
+<img data-src="/2019/10/08/experiments/security/software/bufferOverflow/6.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/7.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/8.png" class="" title="输错密码也能进">
+</li>
+<li>
+<p>修改汇编语句后，程序运行流程图表示。调试成功后，可以在 IDA 中静态修改相应位置的 opcode，然后 patch 回原来的程序中 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/9.png" class=""></p>
+</li>
+</ol>
+<h2 id="测试结论">测试结论</h2>
+<p>本次实验掌握了 ollydbg 的基本使用技巧和动态调试的快捷键：<kbd>F7</kbd>，<kbd>F8</kbd>，<kbd>F9</kbd>，同时也学会在调试中打断点，以便于观察栈运行情况。通过阅读一个模拟认证的代码，了解简单的认证流程，从安全角度试图对代码进行破解。</p>
+<h2 id="思考题">思考题</h2>
+<div class="tabs" id="thinking"><ul class="nav-tabs"><li class="tab active"><a href="#thinking-1">思路 1</a></li><li class="tab"><a href="#thinking-2">思路 2</a></li></ul><div class="tab-content"><div class="tab-pane active" id="thinking-1"><p>通过阅读代码并分析得知，只需要让 <code>004010F6</code> 处的代码得以执行，验证就可以通过。除了修改判断逻辑，我们也可以直接切断控制流，让代码不会执行到认证失败流中，从而通过验证。</p>
+<p>具体方法：将 <code>0x004010e5</code> 的 <code>jz</code> 改为 <code>jmp</code> 无条件跳转，然后抹掉 (<code>nop</code>)<code>0x004010f4</code> 的 <code>jmp</code> 语句，让验证成功语句得以输出。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/10.png" class=""></div><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/11.png" class=""></div></div></div>
+<p>根据修改之后的程序流图来看，这样改动直接孤立了验证失败流。用户的任何输入都可以一次成功通过验证流程，而不关 <code>verify_password</code> 的结果如何。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/12.png" class=""></div><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/13.png" class=""></div></div></div></div><div class="tab-pane" id="thinking-2"><div class="note warning"><p>没有成功做出来，只能先把思路留在这里了</p>
+</div> 
+<p>能不能用缓冲区溢出的方法来破解这个程序呢？</p>
+<p>重新阅读代码，发现其中的 <code>password</code> 变量是一个 <code>1024*2</code> 字节长的 <code>char</code> 数组，是有限长度的。而查阅资料知，<code>scanf</code> 是存在安全问题的。例如存在以下代码和运行结果：</p>
+<div class="tabs" id="code"><ul class="nav-tabs"><li class="tab active"><a href="#code-1"><i class="fa fa-code"></i>源码</a></li><li class="tab"><a href="#code-2"><i class="fa fa-terminal"></i>运行结果</a></li></ul><div class="tab-content"><div class="tab-pane active" id="code-1"><figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>{ </span><br><span class="line">   <span class="type">int</span> i=<span class="number">5</span>; </span><br><span class="line">   <span class="type">char</span> pass[<span class="number">6</span>]; </span><br><span class="line">   <span class="keyword">while</span>(<span class="number">1</span>){ </span><br><span class="line">      <span class="built_in">scanf</span>(<span class="string">"%s"</span>,pass); </span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,i); </span><br><span class="line">   } </span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="code-2"><figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">12345 5 </span><br><span class="line">123456 5 </span><br><span class="line">1234567 5 </span><br><span class="line">12345678 0 </span><br><span class="line">1234567890 12345 </span><br><span class="line">123456789 57 </span><br></pre></td></tr></tbody></table></figure></div></div></div>
+<p>由于 <code>scanf</code> 没有检验结束节点，当数组被溢出到一定程度时，就会覆盖整型变量 <code>i</code>，输出非预期值。我们可以借鉴这个思路，让输入的 <code>password</code> 强行将 <code>valid_flag</code> 置为 <code>0</code>，最好可以跳过检验密码函数，直接进入输出验证成功的函数中，以完成破解。</p></div></div></div>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>漏洞</category>
+        <category>软件安全</category>
+        <category>缓冲区溢出</category>
+        <category>二进制</category>
+      </categories>
+      <tags>
+        <tag>网络空间安全</tag>
+        <tag>软件安全</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>逆向分析 —SMC</title>
     <url>/2019/05/30/experiments/security/reverse/smc/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>了解 SMC 代码自修改程序在逆向分析中的表示，并体验其分析过程。</p>
@@ -3763,59 +3816,6 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
       <tags>
         <tag>网络空间安全</tag>
         <tag>逆向分析</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>基本漏洞利用</title>
-    <url>/2019/10/08/experiments/security/software/bufferOverflow/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
-<p>通过分析密码验证小程序，初步掌握缓冲区溢出漏洞的原理和应用</p>
-<span id="more"></span>
-<h2 id="测试步骤与结果">测试步骤与结果</h2>
-<p>实验的源码如下</p>
-<figure class="highlight c"><figcaption><span>password.c</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PASSWORD <span class="string">"1234567"</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">verify_password</span> <span class="params">(<span class="type">char</span> *password)</span></span><br><span class="line">{</span><br><span class="line">	<span class="type">int</span> authenticated;</span><br><span class="line">	authenticated=<span class="built_in">strcmp</span>(password,PASSWORD);</span><br><span class="line">	<span class="keyword">return</span> authenticated;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">{</span><br><span class="line">	<span class="type">int</span> valid_flag=<span class="number">0</span>;</span><br><span class="line">	<span class="type">char</span> password[<span class="number">1024</span>];</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">	{</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"please input password:       "</span>);</span><br><span class="line">		<span class="built_in">scanf</span>(<span class="string">"%s"</span>,password);</span><br><span class="line">		valid_flag = verify_password(password);</span><br><span class="line">		<span class="keyword">if</span>(valid_flag)</span><br><span class="line">		{</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"incorrect password!\n\n"</span>);</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		{</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"Congratulation! You have passed the verification!\n"</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<ol>
-<li>
-<p>简单阅读代码，发现程序检查了一个用户的输入，与内部存储的一个字符串进行比较，若相同，就返回验证成功。否则，显示验证失败并继续验证。 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/0.png" class=""></p>
-</li>
-<li>
-<p>打开 ollydbg，运行程序，在关键调用处（401030，401080 等地址）打上断点以便观察。 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/1.png" class=""></p>
-<div class="tabs" id="path"><ul class="nav-tabs"><li class="tab active"><a href="#path-1"><i class="fa fa-exclamation-circle"></i>Fail</a></li><li class="tab"><a href="#path-2"><i class="fa fa-check-circle"></i>Success</a></li></ul><div class="tab-content"><div class="tab-pane active" id="path-1"><p><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/2.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/3.png" class=""></p></div><div class="tab-pane" id="path-2"><p><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/4.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/5.png" class=""></p></div></div></div>
-<div class="note default"><p>这里，已经进入了密码验证函数中，传进来的参数 <code>s1</code> 与内部存储的 <code>s2</code>（<code>"1234567"</code>）进行了 <code>strcmp</code> 比较，<code>strcmp</code> 是一个 C 语言的比较函数，若两个字符串 <code>str1</code> 和 <code>str2</code> 相等，则返回 <code>0</code>，这里不相等，且 <code>str1&lt;str2</code>，所以 <code>strcmp</code> 返回值为 <code>-1</code>，<code>authenticated</code> 的值也为 <code>-1</code>，非零，验证失败。这里也可以看到，在 <code>4010E5</code> 处有一个关键的 <code>JE</code> 跳转，表示表达式为零即跳转，跳转不成功，就会执行打印 <code>"incorrect password!"</code>。若输入了正确密码，则跳转成功，转而执行输出 <code>"Congratulations"</code> 分支。</p>
-</div>
-</li>
-<li>
-<p>跳过验证的其中一个方法是修改关键部位的汇编语句。比如，把地址 <code>004010E5</code> 的 <code>JE</code> 改为 <code>JNZ</code>，具体方法是把 <code>opcode</code> 从 <code>74</code> 改成 <code>75</code>。这样修改的道理是取反逻辑，把原来的 “输入正确即通过验证” 改为 “输入不正确即可通过验证”，由于未知密码的概率相当大，这样修改相当于跳过了原有的验证过程（当然，假如经过修改后，作了一个 “错误输入” 程序反而崩溃退出了…… 就证明内部定义的密码被你蒙中了）。除此以外，这样的方法是不会对程序运行流程图有大的改变的。</p>
-<img data-src="/2019/10/08/experiments/security/software/bufferOverflow/6.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/7.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/8.png" class="" title="输错密码也能进">
-</li>
-<li>
-<p>修改汇编语句后，程序运行流程图表示。调试成功后，可以在 IDA 中静态修改相应位置的 opcode，然后 patch 回原来的程序中 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/9.png" class=""></p>
-</li>
-</ol>
-<h2 id="测试结论">测试结论</h2>
-<p>本次实验掌握了 ollydbg 的基本使用技巧和动态调试的快捷键：<kbd>F7</kbd>，<kbd>F8</kbd>，<kbd>F9</kbd>，同时也学会在调试中打断点，以便于观察栈运行情况。通过阅读一个模拟认证的代码，了解简单的认证流程，从安全角度试图对代码进行破解。</p>
-<h2 id="思考题">思考题</h2>
-<div class="tabs" id="thinking"><ul class="nav-tabs"><li class="tab active"><a href="#thinking-1">思路 1</a></li><li class="tab"><a href="#thinking-2">思路 2</a></li></ul><div class="tab-content"><div class="tab-pane active" id="thinking-1"><p>通过阅读代码并分析得知，只需要让 <code>004010F6</code> 处的代码得以执行，验证就可以通过。除了修改判断逻辑，我们也可以直接切断控制流，让代码不会执行到认证失败流中，从而通过验证。</p>
-<p>具体方法：将 <code>0x004010e5</code> 的 <code>jz</code> 改为 <code>jmp</code> 无条件跳转，然后抹掉 (<code>nop</code>)<code>0x004010f4</code> 的 <code>jmp</code> 语句，让验证成功语句得以输出。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/10.png" class=""></div><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/11.png" class=""></div></div></div>
-<p>根据修改之后的程序流图来看，这样改动直接孤立了验证失败流。用户的任何输入都可以一次成功通过验证流程，而不关 <code>verify_password</code> 的结果如何。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/12.png" class=""></div><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/13.png" class=""></div></div></div></div><div class="tab-pane" id="thinking-2"><div class="note warning"><p>没有成功做出来，只能先把思路留在这里了</p>
-</div> 
-<p>能不能用缓冲区溢出的方法来破解这个程序呢？</p>
-<p>重新阅读代码，发现其中的 <code>password</code> 变量是一个 <code>1024*2</code> 字节长的 <code>char</code> 数组，是有限长度的。而查阅资料知，<code>scanf</code> 是存在安全问题的。例如存在以下代码和运行结果：</p>
-<div class="tabs" id="code"><ul class="nav-tabs"><li class="tab active"><a href="#code-1"><i class="fa fa-code"></i>源码</a></li><li class="tab"><a href="#code-2"><i class="fa fa-terminal"></i>运行结果</a></li></ul><div class="tab-content"><div class="tab-pane active" id="code-1"><figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>{ </span><br><span class="line">   <span class="type">int</span> i=<span class="number">5</span>; </span><br><span class="line">   <span class="type">char</span> pass[<span class="number">6</span>]; </span><br><span class="line">   <span class="keyword">while</span>(<span class="number">1</span>){ </span><br><span class="line">      <span class="built_in">scanf</span>(<span class="string">"%s"</span>,pass); </span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,i); </span><br><span class="line">   } </span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="code-2"><figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">12345 5 </span><br><span class="line">123456 5 </span><br><span class="line">1234567 5 </span><br><span class="line">12345678 0 </span><br><span class="line">1234567890 12345 </span><br><span class="line">123456789 57 </span><br></pre></td></tr></tbody></table></figure></div></div></div>
-<p>由于 <code>scanf</code> 没有检验结束节点，当数组被溢出到一定程度时，就会覆盖整型变量 <code>i</code>，输出非预期值。我们可以借鉴这个思路，让输入的 <code>password</code> 强行将 <code>valid_flag</code> 置为 <code>0</code>，最好可以跳过检验密码函数，直接进入输出验证成功的函数中，以完成破解。</p></div></div></div>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>漏洞</category>
-        <category>软件安全</category>
-        <category>缓冲区溢出</category>
-        <category>二进制</category>
-      </categories>
-      <tags>
-        <tag>网络空间安全</tag>
-        <tag>软件安全</tag>
       </tags>
   </entry>
   <entry>
@@ -4729,6 +4729,114 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
       </tags>
   </entry>
   <entry>
+    <title>堆溢出漏洞</title>
+    <url>/2019/11/30/experiments/security/vulnerability_analysis/heap/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>根据一个重复释放漏洞利用例子，调试利用程序（<code>exp.py</code>），理解堆溢出的原理和利用过程中堆的变化。</p>
+<span id="more"></span>
+<h2 id="步骤">步骤</h2>
+<h3 id="程序运行">程序运行</h3>
+<p>程序运行后大致显示了如下结果。 <img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0.png" class=""></p>
+<h3 id="静态分析">静态分析</h3>
+<p>把程序拖入 IDA 中进行分析，发现主要的逻辑还是比较简单的。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-1.png" class="" title="主函数"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-2.png" class="" title="write选项"></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-3.png" class="" title="delete选项"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-4.png" class="" title="new选项"></div></div></div>
+<p>左上图为主要的程序逻辑，用户输入的选择数字对应了不同的子程序，其中输入 1 将进入 <code>sub_400909</code>，对应了 new 操作，从中可以得到，我们最多可以分配 10 个 chunk，每一块最多 96 字节大小。输入 2 将进入 <code>sub_4009f9</code>，对应了 write 操作，它也经历了严格的边界检查，利用基本上不可能。输入 3 将进入 <code>sub_400aef</code>，对应了 delete 操作，其中第 18 行将指针 <code>ptr[v1]</code> free 掉，在第 19 行把其中内容置空了，却没有把指向它的指针置空，留下了双重释放的漏洞。</p>
+<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/vulnerable.png" class="">
+<p>事实上，尝试连续释放两次相同的 chunk，的确会引发系统的 core dump。如图。</p>
+<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-5.png" class="" title="两次释放0号chunk，会引发core dump">
+<h3 id="动态分析-gdb调试">动态分析 (gdb 调试)</h3>
+<ol>
+<li>
+<p>当程序执行到第一个断点时，<code>exp.py</code> 做了这些事情：</p>
+<ol>
+<li>新建了两个 0x60 大小的 “chunk”（恰好为边界值）</li>
+<li>释放第一个堆块，释放第二个堆块，再释放第一个堆块（触发 Double Free），完成 fastbin attack。此时 heap 和 fastbin 的情况如图所示。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/1-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/1-heap.png" class="" title="heap情况"></div></div></div>
+从中可以推断，堆的当前情况是：
+<ol>
+<li>堆的头部为 <code>0x1a740e0</code>。</li>
+<li>有两个大小为 0x71（属于 0x70 类）的 fastbin 已被分配，它们目前处于首尾相连状态。因为从截图可以得知，<code>0x1a74000</code> 的前向指针指向了 <code>0x1a74070</code>，<code>0x1a74070</code> 的前向指针指向了 <code>0x1a74000</code>，刚好是一个闭环。</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>当程序执行到第二个断点时，<code>exp.py</code> 做了这些事情：</p>
+<ol>
+<li>
+<p>分配了第三个堆块，大小为 0x60。</p>
+</li>
+<li>
+<p>向其中写入地址 <code>0x60208d</code>。</p>
+<ul>
+<li>值得注意的是在每次分配堆块后，有一个全局变量的数字均自增了 1，这个全局变量在每次分配堆块前均和 9 检查，证明一共最多只能进行 10 次分配操作，10 次分配，在 <code>ptmalloc</code> 分配方式中只有 fastbin 中有 10 个堆块满足我们的要求，这也是采用 fastbin attack 的原因。</li>
+<li>下图显示堆块 <code>0x1a74000</code> 的前向指针 <code>fd</code> 被篡改为了我们所写的地址 <code>0x60208d</code> 上，而 <code>0x1a74010000000</code>，一个内存地址正在指向它。回环结构已被破坏。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-heap.png" class="" title="heap情况"></div></div></div>
+</li>
+</ul>
+ <div class="note info"><h4 id="为什么是-code-0x60208d-code-？">为什么是 <code>0x60208d</code>？</h4>
+<p>我们需要一个大小属于 0x70 类的空闲块来满足 <code>malloc</code> 安全分配的需求（程序中要求最大分配 0x60 的 chunk），观察内存，可以发现 <code>0x60208d</code> 为满足要求的内存块之一。</p>
+</div>
+ <img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-0.png" class="">
+ <div class="note info"><p>由于小端显示原因，此图显示实际上对应于内存中的顺序为：第二列 - 第一列 - 第四列 - 第三列，与 gdb-peda 的显示不太相同。</p>
+</div>
+</li>
+</ol>
+ <div class="note primary"><p>这次分配第三个堆块的意义是将所找到可以利用的内存地址推入 FASTBIN 链中，后续可以方便直接对内存中此处内容进行改写。</p>
+</div>
+</li>
+<li>
+<p>当程序执行到第三个断点时，<code>exp.py</code> 做了如下事情：</p>
+<ol>
+<li>分配了大小为 0x60 的第四、第五、第六块 chunk。</li>
+<li>向第五块 chunk 写入字符串 <code>/bin/sh\x00</code>。</li>
+<li>向第六块 chunk 写入 got 表中 <code>free</code> 的地址。
+<ul>
+<li>
+<p>这时 fastbin 中只剩下一个大小为 <code>0x70</code> 的块：<code>0x1a74010000000</code>，原来的 <code>0x1a74000</code> 已经指向了一个内存地址中。</p>
+</li>
+<li>
+<p>查看现在 <code>0x602080</code> 的内容，发现已经被我们所写入的 got 中 free 表地址所覆盖。哦，原来 <code>0x00602018</code> 是 got 表中 <code>free</code> 的地址啊！</p>
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-heap.png" class="" title="heap情况"></div></div></div>
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-0.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-1.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-2.png" class=""></div></div></div>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>当程序执行到第四个断点时，<code>exp.py</code> 做了如下事情：</p>
+<ul>
+<li>向第三块 chunk 中写入 plt 表中 <code>system</code> 的地址（第三块没有被 <code>free</code> 过，现在实际上在覆盖写）。</li>
+<li>Bin 和 heap 相较上一步没什么变化。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/4-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/4-heap.png" class="" title="heap情况"></div></div></div>
+</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>最终，我们释放了含有 <code>/bin/sh</code> 字符串的第五块 chunk，由于 <code>free</code> 的 got 表地址已经被改写成了 <code>system</code> 的 plt 表地址，再调用 <code>free</code> 就相当于调用了 <code>system</code>，而被释放的块中含有 <code>/bin/sh</code> 字符串，所以就相当于执行了 <code>system("/bin/sh")</code>，成功获取 shell。</li>
+</ul>
+<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/exploit-ok.png" class="">
+<h2 id="实验难点与收获">实验难点与收获</h2>
+<p>堆的结构比较复杂，需要的前置知识非常多，理解起来也会非常难。通过学习这次的利用程序，我掌握了大概的利用思路。</p>
+<p>其实应该再加一个断点，来观察一下 <code>free</code> 后 bin 和 heap 的情况，不过多半因为程序控制权转移而看不到这里的现象。</p>
+<p>实际上，所有的利用办法，最终都是要想办法执行 <code>system("/bin/sh")</code> 的，但是利用的路线是不相同的。</p>
+<h2 id="实验思考">实验思考</h2>
+<p>为什么可以在 <code>0x602018</code> 处发现符合要求的地址，大概是因为有一个在 <code>dword_6020f0</code> 的关键全局变量，所以可以推断可供利用的内存地址、全局变量等数据都会在其附近？（然后逐渐缩小查找范围……）</p>
+<h2 id="附录-exp-py源文件">附录:<code>exp.py</code> 源文件</h2>
+<script src="//gist.github.com/134b491e83d6b05966ebbae5bff15853.js?file=heap-exp.py"></script>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>漏洞</category>
+        <category>漏洞分析</category>
+        <category>双重释放</category>
+        <category>堆溢出</category>
+      </categories>
+      <tags>
+        <tag>网络空间安全</tag>
+        <tag>软件安全</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PHP 网站搭建和 SQLMAP 工具使用</title>
     <url>/2019/10/24/experiments/security/system/using-php-sqlmap/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
@@ -4902,114 +5010,6 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
       <tags>
         <tag>网络空间安全</tag>
         <tag>信息系统安全</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>堆溢出漏洞</title>
-    <url>/2019/11/30/experiments/security/vulnerability_analysis/heap/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>根据一个重复释放漏洞利用例子，调试利用程序（<code>exp.py</code>），理解堆溢出的原理和利用过程中堆的变化。</p>
-<span id="more"></span>
-<h2 id="步骤">步骤</h2>
-<h3 id="程序运行">程序运行</h3>
-<p>程序运行后大致显示了如下结果。 <img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0.png" class=""></p>
-<h3 id="静态分析">静态分析</h3>
-<p>把程序拖入 IDA 中进行分析，发现主要的逻辑还是比较简单的。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-1.png" class="" title="主函数"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-2.png" class="" title="write选项"></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-3.png" class="" title="delete选项"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-4.png" class="" title="new选项"></div></div></div>
-<p>左上图为主要的程序逻辑，用户输入的选择数字对应了不同的子程序，其中输入 1 将进入 <code>sub_400909</code>，对应了 new 操作，从中可以得到，我们最多可以分配 10 个 chunk，每一块最多 96 字节大小。输入 2 将进入 <code>sub_4009f9</code>，对应了 write 操作，它也经历了严格的边界检查，利用基本上不可能。输入 3 将进入 <code>sub_400aef</code>，对应了 delete 操作，其中第 18 行将指针 <code>ptr[v1]</code> free 掉，在第 19 行把其中内容置空了，却没有把指向它的指针置空，留下了双重释放的漏洞。</p>
-<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/vulnerable.png" class="">
-<p>事实上，尝试连续释放两次相同的 chunk，的确会引发系统的 core dump。如图。</p>
-<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-5.png" class="" title="两次释放0号chunk，会引发core dump">
-<h3 id="动态分析-gdb调试">动态分析 (gdb 调试)</h3>
-<ol>
-<li>
-<p>当程序执行到第一个断点时，<code>exp.py</code> 做了这些事情：</p>
-<ol>
-<li>新建了两个 0x60 大小的 “chunk”（恰好为边界值）</li>
-<li>释放第一个堆块，释放第二个堆块，再释放第一个堆块（触发 Double Free），完成 fastbin attack。此时 heap 和 fastbin 的情况如图所示。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/1-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/1-heap.png" class="" title="heap情况"></div></div></div>
-从中可以推断，堆的当前情况是：
-<ol>
-<li>堆的头部为 <code>0x1a740e0</code>。</li>
-<li>有两个大小为 0x71（属于 0x70 类）的 fastbin 已被分配，它们目前处于首尾相连状态。因为从截图可以得知，<code>0x1a74000</code> 的前向指针指向了 <code>0x1a74070</code>，<code>0x1a74070</code> 的前向指针指向了 <code>0x1a74000</code>，刚好是一个闭环。</li>
-</ol>
-</li>
-</ol>
-</li>
-<li>
-<p>当程序执行到第二个断点时，<code>exp.py</code> 做了这些事情：</p>
-<ol>
-<li>
-<p>分配了第三个堆块，大小为 0x60。</p>
-</li>
-<li>
-<p>向其中写入地址 <code>0x60208d</code>。</p>
-<ul>
-<li>值得注意的是在每次分配堆块后，有一个全局变量的数字均自增了 1，这个全局变量在每次分配堆块前均和 9 检查，证明一共最多只能进行 10 次分配操作，10 次分配，在 <code>ptmalloc</code> 分配方式中只有 fastbin 中有 10 个堆块满足我们的要求，这也是采用 fastbin attack 的原因。</li>
-<li>下图显示堆块 <code>0x1a74000</code> 的前向指针 <code>fd</code> 被篡改为了我们所写的地址 <code>0x60208d</code> 上，而 <code>0x1a74010000000</code>，一个内存地址正在指向它。回环结构已被破坏。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-heap.png" class="" title="heap情况"></div></div></div>
-</li>
-</ul>
- <div class="note info"><h4 id="为什么是-code-0x60208d-code-？">为什么是 <code>0x60208d</code>？</h4>
-<p>我们需要一个大小属于 0x70 类的空闲块来满足 <code>malloc</code> 安全分配的需求（程序中要求最大分配 0x60 的 chunk），观察内存，可以发现 <code>0x60208d</code> 为满足要求的内存块之一。</p>
-</div>
- <img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-0.png" class="">
- <div class="note info"><p>由于小端显示原因，此图显示实际上对应于内存中的顺序为：第二列 - 第一列 - 第四列 - 第三列，与 gdb-peda 的显示不太相同。</p>
-</div>
-</li>
-</ol>
- <div class="note primary"><p>这次分配第三个堆块的意义是将所找到可以利用的内存地址推入 FASTBIN 链中，后续可以方便直接对内存中此处内容进行改写。</p>
-</div>
-</li>
-<li>
-<p>当程序执行到第三个断点时，<code>exp.py</code> 做了如下事情：</p>
-<ol>
-<li>分配了大小为 0x60 的第四、第五、第六块 chunk。</li>
-<li>向第五块 chunk 写入字符串 <code>/bin/sh\x00</code>。</li>
-<li>向第六块 chunk 写入 got 表中 <code>free</code> 的地址。
-<ul>
-<li>
-<p>这时 fastbin 中只剩下一个大小为 <code>0x70</code> 的块：<code>0x1a74010000000</code>，原来的 <code>0x1a74000</code> 已经指向了一个内存地址中。</p>
-</li>
-<li>
-<p>查看现在 <code>0x602080</code> 的内容，发现已经被我们所写入的 got 中 free 表地址所覆盖。哦，原来 <code>0x00602018</code> 是 got 表中 <code>free</code> 的地址啊！</p>
- <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-heap.png" class="" title="heap情况"></div></div></div>
- <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-0.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-1.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-2.png" class=""></div></div></div>
-</li>
-</ul>
-</li>
-</ol>
-</li>
-<li>
-<p>当程序执行到第四个断点时，<code>exp.py</code> 做了如下事情：</p>
-<ul>
-<li>向第三块 chunk 中写入 plt 表中 <code>system</code> 的地址（第三块没有被 <code>free</code> 过，现在实际上在覆盖写）。</li>
-<li>Bin 和 heap 相较上一步没什么变化。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/4-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/4-heap.png" class="" title="heap情况"></div></div></div>
-</li>
-</ul>
-</li>
-</ol>
-<ul>
-<li>最终，我们释放了含有 <code>/bin/sh</code> 字符串的第五块 chunk，由于 <code>free</code> 的 got 表地址已经被改写成了 <code>system</code> 的 plt 表地址，再调用 <code>free</code> 就相当于调用了 <code>system</code>，而被释放的块中含有 <code>/bin/sh</code> 字符串，所以就相当于执行了 <code>system("/bin/sh")</code>，成功获取 shell。</li>
-</ul>
-<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/exploit-ok.png" class="">
-<h2 id="实验难点与收获">实验难点与收获</h2>
-<p>堆的结构比较复杂，需要的前置知识非常多，理解起来也会非常难。通过学习这次的利用程序，我掌握了大概的利用思路。</p>
-<p>其实应该再加一个断点，来观察一下 <code>free</code> 后 bin 和 heap 的情况，不过多半因为程序控制权转移而看不到这里的现象。</p>
-<p>实际上，所有的利用办法，最终都是要想办法执行 <code>system("/bin/sh")</code> 的，但是利用的路线是不相同的。</p>
-<h2 id="实验思考">实验思考</h2>
-<p>为什么可以在 <code>0x602018</code> 处发现符合要求的地址，大概是因为有一个在 <code>dword_6020f0</code> 的关键全局变量，所以可以推断可供利用的内存地址、全局变量等数据都会在其附近？（然后逐渐缩小查找范围……）</p>
-<h2 id="附录-exp-py源文件">附录:<code>exp.py</code> 源文件</h2>
-<script src="//gist.github.com/134b491e83d6b05966ebbae5bff15853.js?file=heap-exp.py"></script>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>漏洞</category>
-        <category>漏洞分析</category>
-        <category>双重释放</category>
-        <category>堆溢出</category>
-      </categories>
-      <tags>
-        <tag>网络空间安全</tag>
-        <tag>软件安全</tag>
       </tags>
   </entry>
   <entry>
