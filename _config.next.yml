@@ -67,8 +67,8 @@ footer:
 
   # Beian ICP and gongan information for Chinese users. See: https://beian.miit.gov.cn, http://www.beian.gov.cn
   beian:
-    enable: true
-    icp: 京ICP备19044050-3
+    enable: false
+    icp:
     # The digit in the num of gongan beian.
     gongan_id:
     # The full num of gongan beian.
@@ -137,11 +137,11 @@ sidebar:
   # Sidebar Position.
   position: left
   #position: right
-
-  # Manual define the sidebar width. If commented, will be default for:
-  # Muse | Mist: 320
-  # Pisces | Gemini: 240
-  #width: 300
+  # Sidebar width.
+  # Applicable to Muse | Mist and mobile of Pisces | Gemini.
+  width_expanded: 320
+  # Applicable to desktop of Pisces | Gemini.
+  width_dual_column: 240
 
   # Sidebar Display (only for Muse | Mist), available values:
   #  - post    expand on posts automatically. Default.
@@ -178,7 +178,7 @@ social:
   #E-Mail: mailto:yourname@gmail.com || fa fa-envelope
   #Weibo: https://weibo.com/yourname || fab fa-weibo
   #Google: https://plus.google.com/yourname || fab fa-google
-  X(前 Twitter): https://twitter.com/theRealRev270 || fab fa-x
+  X(前 Twitter): https://x.com/theRealRev270 || fab fa-x
   Facebook: https://www.facebook.com/renjason1999/ || fab fa-facebook
   #StackOverflow: https://stackoverflow.com/yourname || fab fa-stack-overflow
   #YouTube: https://youtube.com/yourname || fab fa-youtube
@@ -263,7 +263,7 @@ reward:
 # Subscribe through Telegram Channel, Twitter, etc.
 # Usage: `Key: permalink || icon` (Font Awesome)
 follow_me:
-  X(前 Twitter): https://twitter.com/theRealRev270 || fab fa-x
+  X(前 Twitter): https://x.com/theRealRev270 || fab fa-x
   Telegram: https://t.me/jrchan_blog || fab fa-telegram
   WeChat: /images/gongzhonghao.jpg || fab fa-weixin
   RSS: /atom.xml || fa fa-rss
