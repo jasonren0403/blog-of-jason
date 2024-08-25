@@ -265,18 +265,18 @@ mjx-container[display="true"] + br {
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-count">67</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">49</span>
+        <span class="site-state-item-count">51</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-count">39</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -332,6 +332,144 @@ mjx-container[display="true"] + br {
   
 
   <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/10/08/experiments/security/vulnerability_analysis/shellcode/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-v1.png">
+      <meta itemprop="name" content="Jason Ren">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="随心记">
+      <meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔">
+    </span>
+
+    <span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 随心记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/10/08/experiments/security/vulnerability_analysis/shellcode/" class="post-title-link" itemprop="url">二进制漏洞</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-08 00:54:24" itemprop="dateCreated datePublished" datetime="2019-10-08T00:54:24+08:00">2019-10-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-08-25 12:21:25" itemprop="dateModified" datetime="2024-08-25T12:21:25+08:00">2024-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%9E%E9%AA%8C/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">漏洞分析</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%BC%8F%E6%B4%9E/" itemprop="url" rel="index"><span itemprop="name">漏洞</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%BC%8F%E6%B4%9E/%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/" itemprop="url" rel="index"><span itemprop="name">缓冲区溢出</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%BC%8F%E6%B4%9E/%E4%BA%8C%E8%BF%9B%E5%88%B6/" itemprop="url" rel="index"><span itemprop="name">二进制</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/2019/10/08/experiments/security/vulnerability_analysis/shellcode/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/2019/10/08/experiments/security/vulnerability_analysis/shellcode/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="实验目的">实验目的</h2>
+<p>了解二进制漏洞的基本原理，应用简单的调试技术调试 shellcode 程序，理解 shellcode 如何执行。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/10/08/experiments/security/vulnerability_analysis/shellcode/#more" rel="contents">
+                阅读全文 »
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2019/09/29/experiments/security/web/arp/">
 
     <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -368,7 +506,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-08-24 23:33:00" itemprop="dateModified" datetime="2024-08-24T23:33:00+08:00">2024-08-24</time>
+      <time title="修改时间：2024-08-25 12:21:25" itemprop="dateModified" datetime="2024-08-25T12:21:25+08:00">2024-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -502,7 +640,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-08-24 23:33:00" itemprop="dateModified" datetime="2024-08-24T23:33:00+08:00">2024-08-24</time>
+      <time title="修改时间：2024-08-25 12:21:25" itemprop="dateModified" datetime="2024-08-25T12:21:25+08:00">2024-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -641,7 +779,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-08-24 23:33:00" itemprop="dateModified" datetime="2024-08-24T23:33:00+08:00">2024-08-24</time>
+      <time title="修改时间：2024-08-25 12:21:25" itemprop="dateModified" datetime="2024-08-25T12:21:25+08:00">2024-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -775,7 +913,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-08-24 23:33:00" itemprop="dateModified" datetime="2024-08-24T23:33:00+08:00">2024-08-24</time>
+      <time title="修改时间：2024-08-25 12:21:25" itemprop="dateModified" datetime="2024-08-25T12:21:25+08:00">2024-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -900,7 +1038,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-08-24 23:33:00" itemprop="dateModified" datetime="2024-08-24T23:33:00+08:00">2024-08-24</time>
+      <time title="修改时间：2024-08-25 12:21:25" itemprop="dateModified" datetime="2024-08-25T12:21:25+08:00">2024-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1029,7 +1167,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-08-24 23:33:00" itemprop="dateModified" datetime="2024-08-24T23:33:00+08:00">2024-08-24</time>
+      <time title="修改时间：2024-08-25 12:21:25" itemprop="dateModified" datetime="2024-08-25T12:21:25+08:00">2024-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1500,135 +1638,6 @@ mjx-container[display="true"] + br {
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.jason0743.space/2018/12/03/experiments/database/data-control/">
-
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar-v1.png">
-      <meta itemprop="name" content="Jason Ren">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="随心记">
-      <meta itemprop="description" content="技术博客，偶尔放一些心情相关随笔">
-    </span>
-
-    <span hidden="" itemprop="post" itemscope="" itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 随心记">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/12/03/experiments/database/data-control/" class="post-title-link" itemprop="url">数据控制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-12-03 09:44:22" itemprop="dateCreated datePublished" datetime="2018-12-03T09:44:22+08:00">2018-12-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-08-24 23:33:00" itemprop="dateModified" datetime="2024-08-24T23:33:00+08:00">2024-08-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%AE%9E%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">实验</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%AE%9E%E9%AA%8C/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/2018/12/03/experiments/database/data-control/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/2018/12/03/experiments/database/data-control/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 ≈</span>
-      <span>10 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="实验目的">实验目的</h2>
-<ol>
-<li>熟悉通过 SQL 对数据库进行数据控制，包括安全性和完整性。</li>
-<li>熟悉数据库的备份与恢复操作。</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/12/03/experiments/database/data-control/#more" rel="contents">
-                阅读全文 »
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">…</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1652,13 +1661,13 @@ mjx-container[display="true"] + br {
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">102k</span>
+    <span title="站点总字数">103k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:11</span>
+    <span title="站点阅读时长">6:15</span>
   </span>
 </div>
 <div class="busuanzi-count">

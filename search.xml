@@ -1,6 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Cypher 学习笔记</title>
+    <url>/2024/08/25/cypher-learn-notes/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>由于学校实验室项目的需求，需要简单了解一下图数据库的使用，根据之前留下的基础，选择了 Neo4j 的 Cypher 语言。本篇文章整理了一些常见的 Cypher 语法。</p>
+<span id="more"></span>
+<h2 id="简介">简介</h2>
+<p>Cypher 是 Neo4j 用于查询图形数据的语言，类似于 SQL。Cypher 关键字不区分大小写，但是属性值，标签，关系类型和变量是区分大小写的。</p>
+<div class="note info"><p>以下介绍的语法均适用于 Neo4j 版本 4。</p>
+</div>
+<h2 id="CREATE-命令">CREATE 命令</h2>
+<p>节点及关系一般使用 <code>CREATE</code> 命令创建。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">CREATE (&lt;node-name&gt;:&lt;label-name&gt;)</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>
+<p>创建带属性节点</p>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">CREATE (</span><br><span class="line">    &lt;node-name&gt;:&lt;label-name&gt; {&lt;property-name&gt;: &lt;property-value&gt;, ...}</span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>创建关系</p>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">match(p1:&lt;type1&gt;), (p2:&lt;type1&gt;)</span><br><span class="line">where p1.&lt;property-name&gt; = &lt;property-value&gt; and p2.&lt;property-name&gt; = &lt;property-value&gt;</span><br><span class="line marked">create (p1)-[r:&lt;relationship-type&gt;]-&gt;(p2)</span><br><span class="line">return r</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>创建或更新：<code>MERGE</code></p>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line marked">MATCH (person:Person)          # 先查询，可以创建新变量</span><br><span class="line marked">MERGE (city:City { name: person.bornIn })           # 合并的变量，变量可能会已经存在</span><br><span class="line">ON CREATE SET keanu.created = timestamp()   # 如果是创建了变量          </span><br><span class="line">ON MATCH SET keanu.lastSeen = timestamp()   # 如果是更新了操作</span><br><span class="line">RETURN person.name, person.bornIn, city</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ul>
+<h2 id="MATCH-命令">MATCH 命令</h2>
+<h3 id="从数据库获取有关节点、关系和属性的数据">从数据库获取有关节点、关系和属性的数据</h3>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">// 节点</span><br><span class="line">MATCH(&lt;node-name&gt;:&lt;label-name&gt;)</span><br><span class="line">// 相邻节点（用 `--` 标志）</span><br><span class="line">MATCH(&lt;node-name&gt;:&lt;label-name&gt;)--(&lt;node-name&gt;:&lt;label-name&gt;)</span><br><span class="line">// 方向 DIRECTED `&lt;--` / `--&gt;`</span><br><span class="line">MATCH(NODE1)--&gt;(NODE2)</span><br><span class="line">MATCH(NODE1)&lt;--(NODE2)</span><br><span class="line">// 关系（边）</span><br><span class="line">MATCH p=()-[&lt;relationship-name&gt;:&lt;relationship-type&gt;]-&gt;()</span><br><span class="line">MATCH (NODE1)&lt;-[r1]-(NODE2)-[r2]-&gt;(NODE2)</span><br><span class="line">MATCH ()-[:label*3]-() // 3 hops=*3</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="只返回感兴趣的结果">只返回感兴趣的结果</h3>
+<p><code>match (p:Person) return p</code> 返回所有节点，<code>match (p:Person) return p.name</code> 返回所有节点的 <code>name</code> 属性</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">RETURN </span><br><span class="line">   &lt;node-name&gt;.&lt;property1-name&gt;,</span><br><span class="line">   ........</span><br><span class="line">   &lt;node-name&gt;.&lt;propertyn-name&gt;</span><br></pre></td></tr></tbody></table></figure>
+<div class="note info"><p>例如：选出 movie 数据库中所有与 Oliver Stone 有关的电影</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">MATCH (:Person { name: 'Oliver Stone' })--&gt;(movie)</span><br><span class="line"></span><br><span class="line">RETURN movie.title</span><br></pre></td></tr></tbody></table></figure></div>
+<h3 id="WHERE-子句">WHERE 子句</h3>
+<ul>
+<li>读取节点 <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">match (n)  // &lt;--</span><br><span class="line">where id(n)=0</span><br><span class="line">return n</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>读取边 <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">match ()-[r]-&gt;()  // &lt;--</span><br><span class="line">where id(r)=0</span><br><span class="line">return r</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>批量读取 <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">match (n)  </span><br><span class="line">where id(n) in [0,1,2] // &lt;--</span><br><span class="line">return n</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>布尔运算符
+<ul>
+<li>AND、OR、XOR、NOT</li>
+<li> 也可以用 label、属性等过滤</li>
+</ul>
+</li>
+<li>包含属性判断
+<ul>
+<li><code>n.name is not null</code> 判断 n 节点是否有 name 属性</li>
+<li>字符串：<code>STARTS WITH</code>、<code>ENDS WITH</code>、<code>CONTAINS</code></li>
+</ul>
+</li>
+<li>孤立节点
+<ul>
+<li><code>match (n) where not (n)--() return n</code> 找到没有关系的节点</li>
+<li><code>match (n) where not (n)-[]-() return n</code> 找到没有关系的节点</li>
+<li><code>match (n) where not (n)-[:RELATIONSHIP]-() return n</code> 找到没有 RELATIONSHIP 关系的节点</li>
+</ul>
+</li>
+</ul>
+<h3 id="匹配一种或多种类型的关系">匹配一种或多种类型的关系</h3>
+<p>在表示关系的方括号中用 <code>|</code> 分隔</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">MATCH (wallstreet { title: 'Wall Street' })&lt;-[:ACTED_IN|DIRECTED]-(person)</span><br><span class="line">RETURN person.name</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="DELETE-命令">DELETE 命令</h2>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">// 删除节点</span><br><span class="line">match (p: Person) </span><br><span class="line">where p.name="刘备"</span><br><span class="line">delete p</span><br><span class="line"> </span><br><span class="line">// 删除关系</span><br><span class="line">MATCH (p:Person)-[r:MY_GENERAL]-(g:Person) </span><br><span class="line">DELETE r</span><br><span class="line"> </span><br><span class="line">// 删除两个节点和一个关系</span><br><span class="line">MATCH (cc: CreditCard)-[rel]-(c:Customer) </span><br><span class="line">DELETE cc,c,rel</span><br><span class="line"></span><br><span class="line">// 删除数据库中所有的节点和其上绑定的关系</span><br><span class="line">MATCH (n)</span><br><span class="line">DETACH DELETE n</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="管道：WITH">管道：WITH</h2>
+<p>聚合结果使用 <code>WITH</code> 子句进行过滤和排序：<code>ORDER BY</code>、<code>count(*)</code>、<code>limit</code>、<code>DISTINCT</code> 等。</p>
+<details class="note info"><summary><p>常见用途</p>
+</summary>
+<ul>
+<li>统计总节点数 <code>match (n) return count(n)</code></li>
+<li>统计总关系数 <code>match ()--&gt;() return count(*)</code></li>
+</ul>
+
+</details>
+<h2 id="SET-命令">SET 命令</h2>
+<h3 id="设置属性">设置属性</h3>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">MATCH (n { name: 'Andy' })</span><br><span class="line marked">SET n.surname = 'Taylor'</span><br><span class="line">RETURN n.name, n.surname</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="设置标签">设置标签</h3>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">MATCH (n { name: 'Stefan' })</span><br><span class="line marked">SET n:German        # 设置标签</span><br><span class="line marked">SET n:Swedish:Bossman   # 设置多标签</span><br><span class="line">RETURN n.name, labels(n) AS labels</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="节点或关系对象赋值">节点或关系对象赋值</h3>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">MATCH (at { name: 'Andy' }),(pn { name: 'Peter' })</span><br><span class="line marked">SET at = pn          #会删除原有属性</span><br><span class="line marked">SET p = { name: 'Peter Smith', position: 'Entrepreneur' }   #会删除原有属性</span><br><span class="line marked">SET p = { }     #会删除原有属性</span><br><span class="line marked">SET n = $props   #会删除原有属性</span><br><span class="line marked">SET p += { age: 38, hungry: TRUE , position: 'Entrepreneur' }   #不会删除原有属性</span><br><span class="line">RETURN at.name, at.age, at.hungry, pn.name, pn.age</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="图算法">图算法</h2>
+<h3 id="深度优先-bfs">深度优先 bfs</h3>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line marked">MATCH (c1:City {name: "London"})-[edge_list:ROAD_TO *bfs..10]-(c2:City {name: "Paris"})</span><br><span class="line">RETURN *;</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="加权最短路径">加权最短路径</h3>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked">MATCH (c1:City {name: "London"})-[</span><br><span class="line">    edge_list:ROAD_TO *wShortest 10 (e, n | e.weight) total_weight</span><br><span class="line">  ]-(c2:City {name: "Paris"})</span><br><span class="line">RETURN *;</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="调用图算法">调用图算法</h3>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">CALL &lt;algorithm_name&gt; YIELD *</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>如 <code>graph_analyzer.analyze()</code>、<code>wcc.get_components(nodes/* collect(n) */, edges/* collect(e) */)</code>、<code>nxalg.pagerank()</code></li>
+</ul>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://neo4j.com/docs/api/java-driver/current/org.neo4j.driver/org/neo4j/driver/package-summary.html">https://neo4j.com/docs/api/java-driver/current/org.neo4j.driver/org/neo4j/driver/package-summary.html</a></li>
+<li><a href="https://neo4j.com/docs/cypher-cheat-sheet/current/">https://neo4j.com/docs/cypher-cheat-sheet/current/</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>图数据库</category>
+        <category>Neo4j</category>
+      </categories>
+      <tags>
+        <tag>Cypher</tag>
+        <tag>Neo4j</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>来点朋友吧！互相学习一下！</title>
     <url>/2023/05/05/friendlink-apply/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>请按照下列格式在评论区中回复信息（登录、未登录均可）</p>
@@ -60,6 +169,32 @@
 ]]></content>
   </entry>
   <entry>
+    <title>同时推送多个 Git 仓库提交</title>
+    <url>/2023/10/10/publish-multiple-git-origins-at-the-same-time/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>在使用 Git 时，有一种场景是需要将代码同时推送到多个仓库中，分别进行提交、推送也勉强可以，但是太不优雅了！经过简单的资料查阅，我发现 Git 本身其实提供了这样的命令来完成这项任务。</p>
+<p>在多方对比后，我选择了 “一次推送” 的方案。直接修改了项目本地配置文件 <code>.git/config</code>，在 <code>remote "origin"</code> 做了如下设置：</p>
+<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">[remote "origin"]</span><br><span class="line">	url = github地址</span><br><span class="line">	url = gitee地址 # 新增</span><br><span class="line">	fetch = +refs/heads/*:refs/remotes/origin/*</span><br></pre></td></tr></tbody></table></figure>
+<div class="note "><p><code>git remote set-url --add origin &lt;newUrl&gt;</code> 的实质应该也是在配置文件中增加配置。</p>
+</div>
+<p>然后，在 ssh 配置文件 <code>.ssh/config</code> 配置了两个网站的公钥访问：</p>
+<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line"># gitee</span><br><span class="line">Host gitee.com</span><br><span class="line">    Port 22</span><br><span class="line">    HostName gitee.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/id_ed25519_gitee</span><br><span class="line">    User git</span><br><span class="line"># github</span><br><span class="line">Host github.com</span><br><span class="line">    HostName github.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/id_ed25519</span><br><span class="line">    User git</span><br></pre></td></tr></tbody></table></figure>
+<p>这样，推送的时候只需 <code>git push</code> 便可同时完成两个仓库的推送。</p>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E7%9A%84%E4%BD%BF%E7%94%A8">Git Ebook：远程仓库的使用</a></li>
+<li><a href="https://www.cnblogs.com/poloyy/p/12215199.html">将一个项目同时从本地推送到 GitHub 和 Gitee</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>版本控制</category>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+        <tag>VCS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>北邮小日记 —— 第一期</title>
     <url>/2017/10/11/diarys/bupt-1/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>大家好，我是任子恒，好久不见，你们也有很长时间没有看到我在这个公众号上更新文字了。进北邮也有一个月了，一直忙于其他琐碎事情，没有来得及停一下，用文字记录下多彩的大学生活。</p>
@@ -84,32 +219,6 @@
       <tags>
         <tag>北邮小日记</tag>
         <tag>life-in-bupt</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>同时推送多个 Git 仓库提交</title>
-    <url>/2023/10/10/publish-multiple-git-origins-at-the-same-time/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>在使用 Git 时，有一种场景是需要将代码同时推送到多个仓库中，分别进行提交、推送也勉强可以，但是太不优雅了！经过简单的资料查阅，我发现 Git 本身其实提供了这样的命令来完成这项任务。</p>
-<p>在多方对比后，我选择了 “一次推送” 的方案。直接修改了项目本地配置文件 <code>.git/config</code>，在 <code>remote "origin"</code> 做了如下设置：</p>
-<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">[remote "origin"]</span><br><span class="line">	url = github地址</span><br><span class="line">	url = gitee地址 # 新增</span><br><span class="line">	fetch = +refs/heads/*:refs/remotes/origin/*</span><br></pre></td></tr></tbody></table></figure>
-<div class="note "><p><code>git remote set-url --add origin &lt;newUrl&gt;</code> 的实质应该也是在配置文件中增加配置。</p>
-</div>
-<p>然后，在 ssh 配置文件 <code>.ssh/config</code> 配置了两个网站的公钥访问：</p>
-<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line"># gitee</span><br><span class="line">Host gitee.com</span><br><span class="line">    Port 22</span><br><span class="line">    HostName gitee.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/id_ed25519_gitee</span><br><span class="line">    User git</span><br><span class="line"># github</span><br><span class="line">Host github.com</span><br><span class="line">    HostName github.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/id_ed25519</span><br><span class="line">    User git</span><br></pre></td></tr></tbody></table></figure>
-<p>这样，推送的时候只需 <code>git push</code> 便可同时完成两个仓库的推送。</p>
-<h2 id="参考资料">参考资料</h2>
-<ul>
-<li><a href="https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E7%9A%84%E4%BD%BF%E7%94%A8">Git Ebook：远程仓库的使用</a></li>
-<li><a href="https://www.cnblogs.com/poloyy/p/12215199.html">将一个项目同时从本地推送到 GitHub 和 Gitee</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>版本控制</category>
-        <category>Git</category>
-      </categories>
-      <tags>
-        <tag>Git</tag>
-        <tag>VCS</tag>
       </tags>
   </entry>
   <entry>
@@ -400,6 +509,30 @@
       </tags>
   </entry>
   <entry>
+    <title>北邮小日记 —— 第二期</title>
+    <url>/2017/10/19/diarys/bupt-2/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>还记得上一期留下的坑吗？</p>
+<p>我估计你们都不会记得了，谁让我偷懒这么久不更新……</p>
+<span id="more"></span>
+<p>好啦我接着写就是啦～</p>
+<p>空了这么多天，我干嘛去了？当然是学习啦，上次写完之后我不是去肝高数和线代了嘛……（认真脸）</p>
+<p>（好吧我扯远了） 上次提到，这一期要来讲讲我遇到的一些大佬，噢，不对，是我的同学，他们可谓多才多艺，能歌善舞，琴棋书画样样精通…… 从离我最近的开始说起。在我的宿舍里就有一个，住在我床位对面，是一个电吉他大佬，每天都能听到他练吉他音阶 100 遍（最近可能是 200 遍），偶尔还会叫另外一些大佬到宿舍合练歌曲…… 另外他还会自编伴奏鼓点，让我这个只会自己弹钢琴，还有点不熟的我都有点自愧不如（毕竟好久不练了 (┬＿┬)），好吧，他也会弹钢琴…… 他现在有了要建立乐队的想法，我表示很有兴趣并且很期待能够加入。</p>
+<p>随着认识的人越来越多，我发现，这一届会吉他的真多啊… 略慌</p>
+<p>除了乐器大神以外，给我印象最深的大概就是技术大佬了，在我们网安院大群里就有这样一位人物。初次在网上遇见他的时候，我误加了网安 801 班的班群（他那会是群主），看到他粉嫩的聊天气泡和很 “萌” 的说话风格，再加上他时不时的在大群里冒出几句技术性词语，我以为他是个女的技术大神。后来得知班委选举那天，是他在前面放的 PPT，顿时感觉颇为受骗┭┮﹏┭┮不只我一个人是这样的感觉啊ヾ (。￣□￣)ﾂ゜゜゜ （我都这么说了他当然是男的了。）</p>
+<p>自从进入了技术组之后，我遇到的技术大神简直太多了…… 我这种只会用会声会影的渣渣几乎无法与用 PR、AE 的大佬相提并论，那个一开始的自我介绍视频也算是勉强符合要求，除此以外真是没什么亮点了…… 就算是图片组也十分让我惊讶，p 图技术简直赶超了我不知道有多少条街。我是去找不自在的吗…… 不过，不要虚嘛。</p>
+<p>好了，这期到此结束。（我编不下去了）</p>
+]]></content>
+      <categories>
+        <category>北邮小日记</category>
+        <category>Life</category>
+        <category>life-in-bupt</category>
+      </categories>
+      <tags>
+        <tag>北邮小日记</tag>
+        <tag>life-in-bupt</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>北邮小日记 —— 第三期</title>
     <url>/2017/11/12/diarys/bupt-3/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>第三期，姗姗来迟～</p>
@@ -460,36 +593,12 @@
       </tags>
   </entry>
   <entry>
-    <title>北邮小日记 —— 第二期</title>
-    <url>/2017/10/19/diarys/bupt-2/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>还记得上一期留下的坑吗？</p>
-<p>我估计你们都不会记得了，谁让我偷懒这么久不更新……</p>
-<span id="more"></span>
-<p>好啦我接着写就是啦～</p>
-<p>空了这么多天，我干嘛去了？当然是学习啦，上次写完之后我不是去肝高数和线代了嘛……（认真脸）</p>
-<p>（好吧我扯远了） 上次提到，这一期要来讲讲我遇到的一些大佬，噢，不对，是我的同学，他们可谓多才多艺，能歌善舞，琴棋书画样样精通…… 从离我最近的开始说起。在我的宿舍里就有一个，住在我床位对面，是一个电吉他大佬，每天都能听到他练吉他音阶 100 遍（最近可能是 200 遍），偶尔还会叫另外一些大佬到宿舍合练歌曲…… 另外他还会自编伴奏鼓点，让我这个只会自己弹钢琴，还有点不熟的我都有点自愧不如（毕竟好久不练了 (┬＿┬)），好吧，他也会弹钢琴…… 他现在有了要建立乐队的想法，我表示很有兴趣并且很期待能够加入。</p>
-<p>随着认识的人越来越多，我发现，这一届会吉他的真多啊… 略慌</p>
-<p>除了乐器大神以外，给我印象最深的大概就是技术大佬了，在我们网安院大群里就有这样一位人物。初次在网上遇见他的时候，我误加了网安 801 班的班群（他那会是群主），看到他粉嫩的聊天气泡和很 “萌” 的说话风格，再加上他时不时的在大群里冒出几句技术性词语，我以为他是个女的技术大神。后来得知班委选举那天，是他在前面放的 PPT，顿时感觉颇为受骗┭┮﹏┭┮不只我一个人是这样的感觉啊ヾ (。￣□￣)ﾂ゜゜゜ （我都这么说了他当然是男的了。）</p>
-<p>自从进入了技术组之后，我遇到的技术大神简直太多了…… 我这种只会用会声会影的渣渣几乎无法与用 PR、AE 的大佬相提并论，那个一开始的自我介绍视频也算是勉强符合要求，除此以外真是没什么亮点了…… 就算是图片组也十分让我惊讶，p 图技术简直赶超了我不知道有多少条街。我是去找不自在的吗…… 不过，不要虚嘛。</p>
-<p>好了，这期到此结束。（我编不下去了）</p>
-]]></content>
-      <categories>
-        <category>北邮小日记</category>
-        <category>Life</category>
-        <category>life-in-bupt</category>
-      </categories>
-      <tags>
-        <tag>北邮小日记</tag>
-        <tag>life-in-bupt</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>北邮小日记 —— 第五期</title>
     <url>/2017/12/10/diarys/bupt-5/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>期中考试终于都结束了！！有时间写东西啦～</p>
 <span id="more"></span>
 
-    <div id="aplayer-MrfZOxdS" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
+    <div id="aplayer-THdscIAg" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
 <p>分数都还可以，至少都及格了，当然还可以做到更好，这得靠接下来的努力了～</p>
 <p>不过，我这些同学，还得往上带一带…… 毕竟作为学委的我还是见识到了不少让人抓狂的情况的…… 跟这里我吐槽一下，作业交得晚、借作业去抄… 都是常事。当然，也有很努力在学习的同学，他们会找我问题，我也会很乐意给出解答，这给我一次运用知识的机会，也增强了我和同学们的交流。对了，借这个当学委的机会我也几乎把全班同学认全了，哦耶！</p>
 <p>上周五听说要搬宿舍了，据说原因是另一个校区一整个院的同学都搬了过来，需要腾出一个楼来给其中的女生住，调整方案是说我现在所在楼 - 5 楼的同学要搬到 3 楼去，而 3 楼的女生要搬过来和要住进来的女生并一个楼。如果不出意外的话，这就是我的坐标处于 S5-535 的最后几天了，没想到我之前曾经说过要去 S3 看一看的愿望竟然这么快就实现了 hhh，但是我这么多东西该怎么搬啊……</p>
@@ -807,192 +916,6 @@
       </tags>
   </entry>
   <entry>
-    <title>给自己的小破站上个 HTTPS</title>
-    <url>/2023/04/21/works/working-with-https/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="为何配置-HTTPS">为何配置 HTTPS</h2>
-<p>HTTPS 是 HTTP 的安全版，使用了 SSL/TLS 协议对通信进行加密，防止被窃听、篡改、伪造等，是现代网站必备的安全配置。现代的浏览器也偏向对那些没有使用 HTTPS 的网站标记为” 不安全 “，且 HTTPS 对于用户和网站开发者来说，都可以提供安全的保证，即使并不一定涉及到敏感数据的传输，也可以防止 ISP 注入广告，引起普通用户的反感。对于普通用户来说，是值得信赖的认证。</p>
-<p>现如今，HTTPS 技术经过不断发展，已经变得相当方便，成本也越来越低，即使是个人用户，也可以至少申请一份一年的免费证书，通过一些配置安装到自己的网站上（虽然额度有限，当然一些云服务商肯定会让你去买正式证书）。</p>
-<p>写这篇文章的时候（2023.5），我去看了一下<a href="https://buy.cloud.tencent.com/ssl">腾讯云 SSL 证书购买页面</a>，目前的定价对于个人用户来说，还是白嫖好了：（打折后 / 打折前，单位为元）</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center"></th>
-<th style="text-align:center">单域名证书</th>
-<th style="text-align:center">泛域名证书</th>
-<th style="text-align:center">多域名证书</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">个人（DV 型）</td>
-<td style="text-align:center">532/560</td>
-<td style="text-align:center">2147/2260</td>
-<td style="text-align:center">912/960 (3 个域名)</td>
-</tr>
-<tr>
-<td style="text-align:center"> 企业（OV 型）</td>
-<td style="text-align:center">2470/2600</td>
-<td style="text-align:center">5662/5960</td>
-<td style="text-align:center">5282/5560 (3 个域名)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="GitHub-Pages-启用-HTTPS">GitHub Pages 启用 HTTPS</h2>
-<p>有几个域名是使用 GitHub Pages 托管的，其开启 HTTPS 的方式很容易。</p>
-<ol>
-<li>
-<p>首先进入要配置的仓库，点击上方的 <code>Settings</code> 进入配置。</p>
-</li>
-<li>
-<p>点击左侧的 <code>Pages</code>，在 <code>Build and deployment</code> 中选择要部署的分支，点击 <code>Save</code> 保存。</p>
-</li>
-<li>
-<p>在 <code>Custom domain</code> 部分填写自己的域名（如果有），点击 <code>Save</code> 保存。GitHub 会立即进行一次检查。</p>
- <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2023/04/21/works/working-with-https/github-pages-1.png" class=""></div><div class="group-picture-column"><img data-src="/2023/04/21/works/working-with-https/github-pages-2.png" class=""></div></div></div>
- <div class="note "><p>如果使用的是 github.io 默认域名，则 HTTPS 会自动开启，无需手动配置。</p>
-</div>
-</li>
-<li>
-<p>一开始，这里一定是检查失败的，因为还没有按照 GitHub 的要求正确配置完毕。</p>
- <img data-src="/2023/04/21/works/working-with-https/github-pages-3.png" class="">
-</li>
-<li>
-<p>我的域名是在 DNSPod 注册的，现在转到 DNSPod 控制台，添加一个 CNAME 记录，其主机记录填写自定义域名的主机部分，记录值填写 <code>&lt;你的github用户名&gt;.github.io</code>，TTL 保持默认，保存。</p>
- <img data-src="/2023/04/21/works/working-with-https/github-pages-4.png" class="">
-</li>
-<li>
-<p>回到刚才的 Pages 设置页面，DNS 检查已经通过了，现在 GitHub 已经开始申请 TLS 证书了。</p>
- <img data-src="/2023/04/21/works/working-with-https/github-pages-5.png" class="">
-</li>
-<li>
-<p>等待一段时间，证书申请完毕，就可以把下方的 <code>Enforce HTTPS</code> 勾选上了，这样站点就可以仅通过 HTTPS 访问了，更加安全。</p>
- <img data-src="/2023/04/21/works/working-with-https/github-pages-6.png" class="">
-</li>
-</ol>
-<div class="note "><p>可以在项目设置中勾选 “Use your GitHub Pages website”，省去每次想不起域名的麻烦，也可以更方便地访问部署所在网页。<br>
-<img data-src="/2023/04/21/works/working-with-https/gh-setting.png" class=""></p>
-</div>
-<h2 id="不怕麻烦的nginx手动配置过程">不怕麻烦的 nginx 手动配置过程</h2>
-<div class="note "><p>不要忘记在安全组设置中放开 443 端口哦～</p>
-</div>
-<h3 id="申请证书">申请证书</h3>
-<p>腾讯云对于每个个人用户都有 50 张免费证书的额度，对于我这种轻度开发用户来说，当然是一个域名一张证书就够用了，而且所需要的证书类型也是最简单的 DV 型，所以申请证书的过程也很简单。</p>
-<img data-src="/2023/04/21/works/working-with-https/tcloud-1.png" class="" title="呃，有了之后要介绍的技术这些打叉的项算什么嘛">
-<p>根据<a href="https://cloud.tencent.com/document/product/400/6814">文档</a>介绍和申请页所示，申请的证书是 TrustAsia 颁发的一年期证书，且同一域下最多有 20 张免费证书。这一步完成后，会获得颁发的证书，接下来需要将证书部署到相关服务上。</p>
-<h3 id="部署证书">部署证书</h3>
-<p>首先当然要从<a href="https://console.cloud.tencent.com/ssl">控制台</a>中下载证书。</p>
-<p>nginx 中，SSL 的配置项主要在配置文件的 <code>server</code> 块中，为了支持 HTTPS，至少需要添加如下配置，其中 <code>DOMAIN</code> 是你申请证书的域名：</p>
-<figure class="highlight nginx"><table><tbody><tr><td class="code"><pre><span class="line"><span class="section">server</span> {</span><br><span class="line">     <span class="attribute">listen</span> <span class="number">443</span> ssl; </span><br><span class="line">     <span class="attribute">server_name</span> &lt;DOMAIN&gt;; </span><br><span class="line">     <span class="attribute">ssl_certificate</span> /path/to/&lt;DOMAIN&gt;_bundle.crt; </span><br><span class="line">     <span class="attribute">ssl_certificate_key</span> /path/to/&lt;DOMAIN&gt;.key; </span><br><span class="line">     <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;</span><br><span class="line">     <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>; </span><br><span class="line">     <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE; </span><br><span class="line">     <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">     <span class="comment"># ... location 配置省略</span></span><br><span class="line"> }</span><br></pre></td></tr></tbody></table></figure>
-<p>将证书使用 WinSCP 等工具上传至服务器，然后在配置文件中填写正确的路径即可。</p>
-<p>如果需要将 HTTP 请求重定向到 HTTPS 中，需要对配置的主机增加 80 端口监听，并将其转到 HTTPS 版本的链接上：</p>
-<figure class="highlight nginx"><table><tbody><tr><td class="code"><pre><span class="line"><span class="section">server</span> {</span><br><span class="line">	<span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">	<span class="attribute">server_name</span> &lt;DOMAIN&gt;;</span><br><span class="line">	<span class="attribute">return</span> <span class="number">301</span> https://<span class="variable">$server_name</span><span class="variable">$request_uri</span>;  // 这行是关键</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<h2 id="certbot-申请证书大作战">certbot 申请证书大作战</h2>
-<p>之前一段时间一直在使用 certbot 的 dnspod 脚本来自动申请和续期证书，但是最近发现这个脚本突然不可用了，故趁这个机会总结一下手动申请证书的过程。</p>
-<p>我的服务器操作系统是 ubuntu 18，使用 nginx 承担网站的日常工作。</p>
-<div class="note "><p><a href="https://certbot.eff.org/instructions">certbot 官方网站</a>上分系统地提供了安装的方法，具体可以跟随那里操作。</p>
-</div>
-<h3 id="先安装">先安装</h3>
-<ol>
-<li>
-<p>certbot 需要使用 snapd 安装，如果没有安装的话，需要使用以下命令安装：</p>
- <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install snapd</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>保证 snapd 为最新版本</p>
- <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo snap install core</span><br><span class="line">   sudo snap refresh core</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>卸载目前系统中残留的 certbot 组件</p>
- <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo apt-get remove certbot</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>安装 certbot</p>
- <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo snap install --classic certbot</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>创建软链接</p>
- <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo <span class="built_in">ln</span> -s /snap/bin/certbot /usr/bin/certbot</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>验证安装</p>
- <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo certbot --version</span><br></pre></td></tr></tbody></table></figure>
-</li>
-</ol>
-<h3 id="撤销之前错误的证书">撤销之前错误的证书</h3>
-<p>需要使用 <code>sudo certbot certificates</code> 查看当前已经申请的证书，如果有错误的证书，可以使用 <code>sudo certbot revoke --cert-path /etc/letsencrypt/live/xxx/fullchain.pem</code> 撤销。</p>
-<h3 id="nginx-申请模式">nginx 申请模式</h3>
-<ol>
-<li>
-<p>直接运行 <code>sudo certbot --nginx</code>，certbot 会自动扫描所有有效的 nginx 配置文件，列出所有可以申请证书的域名，选择需要申请的域名，输入序号，回车。或者，使用 <code>-d</code> 参数指定需要申请的域名，例如 <code>sudo certbot --nginx -d example.com</code>。</p>
- <img data-src="/2023/04/21/works/working-with-https/certbot-1.png" class="">
- <div class="note "><p>如果指定多次 <code>-d</code> 参数，则可以进行多域名申请。</p>
-</div>
-</li>
-<li>
-<p>等待脚本申请完成。</p>
- <div class="note warning no-icon"><img data-src="/2023/04/21/works/working-with-https/certbot-3.png" class="">
-这种情况通常是之前配置过，没有清理干净，把报错提到的那行改成这个就行：
-<figure class="highlight nginx"><table><tbody><tr><td class="code"><pre><span class="line"><span class="attribute">return</span> <span class="number">301</span> https://<span class="variable">$host</span><span class="variable">$request_uri</span>;</span><br></pre></td></tr></tbody></table></figure>
-<p>然后重新运行</p>
-<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo certbot install --cert-name xxxx</span><br></pre></td></tr></tbody></table></figure>
-<p>即可继续配置</p>
-</div>
-</li>
-<li>
-<p>然后可以使用 <code>sudo certbot certificates</code> 看到自己刚才申请的证书了，现在有 90 天有效期。</p>
- <img data-src="/2023/04/21/works/working-with-https/certbot-2.png" class="">
- <div class="note success"><p>有些博客会引导我们手动去配 cronjob 任务，但实际上，在刚才的部署过程中，certbot 会自动将更新命令加入到系统的 cronjob 中，在临期时自动续期证书。其位于 <code>/etc/cron.d/certbot</code> 中，源码如下</p>
-<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">0 */12 * * * root <span class="built_in">test</span> -x /usr/bin/certbot -a \! -d /run/systemd/system &amp;&amp; perl -e <span class="string">'sleep int(rand(43200))'</span> &amp;&amp; certbot -q renew</span><br></pre></td></tr></tbody></table></figure></div>
-</li>
-<li>
-<p>使用 <code>sudo certbot renew --dry-run</code> 测试一下续期命令是否可用。以后，可以使用不带 <code>--dry-run</code> 的命令来手动续期。</p>
-</li>
-<li>
-<p>访问网站，发现已经可以使用 HTTPS 访问了。</p>
- <img data-src="/2023/04/21/works/working-with-https/certbot-4.png" class="">
-</li>
-</ol>
-<h3 id="泛域名证书申请">泛域名证书申请</h3>
-<blockquote>
-<p>泛域名证书是指可以同时为多个子域名申请证书的证书，例如 <code>*.example.com</code> 可以为 <code>a.example.com</code>、<code>b.example.com</code> 等多个域名申请证书。</p>
-</blockquote>
-<p>上述的方法是针对单个域名的，虽然一次可以申请多个域名，但那些域名都是预先有配置的，如果以后想再添加的话需要手动加入配置，非常麻烦。</p>
-<p>泛域名的证书需要 DNS 解析服务商支持自动验证，其需要通过官方插件来实现自动更新 DNS 以通过监测，很可惜，截至目前，并没有 dnspod 的插件，所以只能手动更新 DNS 了。</p>
-<div class="note info"><p>在安装 certbot 插件（<code>sudo snap install certbot-dns-&lt;PLUGIN&gt;</code>）前，需要先运行如下命令</p>
-<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo snap <span class="built_in">set</span> certbot trust-plugin-with-root=ok</span><br></pre></td></tr></tbody></table></figure>
-<p>以保证其具有与 certbot snap 同样的 classic containment。</p>
-</div>
-<p>以下讲述手动更改配置的过程。</p>
-<h4 id="手工通过验证">手工通过验证</h4>
-<p>首先删除之前的证书</p>
-<div class="note warning"><p>过期的证书不能撤销 <code>revoke</code>，只能删除 <code>delete</code></p>
-</div>
-<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo certbot delete --cert-name xxxx</span><br></pre></td></tr></tbody></table></figure>
-<p>然后运行该命令</p>
-<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo certbot certonly --preferred-challenges dns --manual -d *.&lt;要申请的域名&gt; --server https://acme-v02.api.letsencrypt.org/directory</span><br></pre></td></tr></tbody></table></figure>
-<div class="note warning"><p>注意必须在 <code>--server</code> 中指定 <code>https://acme-v02.api.letsencrypt.org/directory</code> ，Let’s Encrypt V2 版本才支持泛域名解析。</p>
-</div>
-<p>然后会提示你添加一个 TXT 记录，访问你的 DNS 服务商后台，将给定的 TXT 记录添加，添加后等待一段时间，然后回车，就可以申请成功了。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2023/04/21/works/working-with-https/certbot-wildcard-1.png" class=""></div><div class="group-picture-column"><img data-src="/2023/04/21/works/working-with-https/certbot-wildcard-2.png" class=""></div></div></div>
-<p>如果配置正确，certbot 会显示部署成功</p>
-<img data-src="/2023/04/21/works/working-with-https/certbot-wildcard-3.png" class="">
-<div class="note warning"><p>正如上个截图所说的那样，这种认证方式只有 90 天的有效期，且不能使用 <code>certbot renew</code> 的方式更新证书，所以需要手动续期，续期的时候，需要再次添加 TXT 记录。对于没有 API 支持的服务商来说，也只能这么做了。</p>
-</div>
-<p>完成以后，需要手动向配置文件增加相关配置。如果使用的是 nginx，则在站点的 nginx 配置文件中，将证书换为 Let’s Encrypt 提供的证书即可：</p>
-<figure class="highlight nginx"><table><tbody><tr><td class="code"><pre><span class="line">server{</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/letsencrypt/live/&lt;要申请的域名&gt;/fullchain.pem;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/letsencrypt/live/&lt;要申请的域名&gt;/privkey.pem;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>过几分钟后查看，就可以看到已经成功申请了泛域名证书。</p>
-<img data-src="/2023/04/21/works/working-with-https/certbot-wildcard-4.png" class="" title="注意CN字段部分">
-]]></content>
-      <categories>
-        <category>运维</category>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>运维</tag>
-        <tag>建站</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>我是如何一步步把这个博客搭建起来的</title>
     <url>/2023/04/03/works/how-i-built-the-blog/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>好久不见！经过许久的折腾以后，终于闲下功夫来复盘一下博客如何部署起来的了！话不多说，这就进入主题！</p>
@@ -1245,6 +1168,192 @@
 </li>
 </ol>
 </section>
+]]></content>
+      <categories>
+        <category>运维</category>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>运维</tag>
+        <tag>建站</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>给自己的小破站上个 HTTPS</title>
+    <url>/2023/04/21/works/working-with-https/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="为何配置-HTTPS">为何配置 HTTPS</h2>
+<p>HTTPS 是 HTTP 的安全版，使用了 SSL/TLS 协议对通信进行加密，防止被窃听、篡改、伪造等，是现代网站必备的安全配置。现代的浏览器也偏向对那些没有使用 HTTPS 的网站标记为” 不安全 “，且 HTTPS 对于用户和网站开发者来说，都可以提供安全的保证，即使并不一定涉及到敏感数据的传输，也可以防止 ISP 注入广告，引起普通用户的反感。对于普通用户来说，是值得信赖的认证。</p>
+<p>现如今，HTTPS 技术经过不断发展，已经变得相当方便，成本也越来越低，即使是个人用户，也可以至少申请一份一年的免费证书，通过一些配置安装到自己的网站上（虽然额度有限，当然一些云服务商肯定会让你去买正式证书）。</p>
+<p>写这篇文章的时候（2023.5），我去看了一下<a href="https://buy.cloud.tencent.com/ssl">腾讯云 SSL 证书购买页面</a>，目前的定价对于个人用户来说，还是白嫖好了：（打折后 / 打折前，单位为元）</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">单域名证书</th>
+<th style="text-align:center">泛域名证书</th>
+<th style="text-align:center">多域名证书</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">个人（DV 型）</td>
+<td style="text-align:center">532/560</td>
+<td style="text-align:center">2147/2260</td>
+<td style="text-align:center">912/960 (3 个域名)</td>
+</tr>
+<tr>
+<td style="text-align:center"> 企业（OV 型）</td>
+<td style="text-align:center">2470/2600</td>
+<td style="text-align:center">5662/5960</td>
+<td style="text-align:center">5282/5560 (3 个域名)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="GitHub-Pages-启用-HTTPS">GitHub Pages 启用 HTTPS</h2>
+<p>有几个域名是使用 GitHub Pages 托管的，其开启 HTTPS 的方式很容易。</p>
+<ol>
+<li>
+<p>首先进入要配置的仓库，点击上方的 <code>Settings</code> 进入配置。</p>
+</li>
+<li>
+<p>点击左侧的 <code>Pages</code>，在 <code>Build and deployment</code> 中选择要部署的分支，点击 <code>Save</code> 保存。</p>
+</li>
+<li>
+<p>在 <code>Custom domain</code> 部分填写自己的域名（如果有），点击 <code>Save</code> 保存。GitHub 会立即进行一次检查。</p>
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2023/04/21/works/working-with-https/github-pages-1.png" class=""></div><div class="group-picture-column"><img data-src="/2023/04/21/works/working-with-https/github-pages-2.png" class=""></div></div></div>
+ <div class="note "><p>如果使用的是 github.io 默认域名，则 HTTPS 会自动开启，无需手动配置。</p>
+</div>
+</li>
+<li>
+<p>一开始，这里一定是检查失败的，因为还没有按照 GitHub 的要求正确配置完毕。</p>
+ <img data-src="/2023/04/21/works/working-with-https/github-pages-3.png" class="">
+</li>
+<li>
+<p>我的域名是在 DNSPod 注册的，现在转到 DNSPod 控制台，添加一个 CNAME 记录，其主机记录填写自定义域名的主机部分，记录值填写 <code>&lt;你的github用户名&gt;.github.io</code>，TTL 保持默认，保存。</p>
+ <img data-src="/2023/04/21/works/working-with-https/github-pages-4.png" class="">
+</li>
+<li>
+<p>回到刚才的 Pages 设置页面，DNS 检查已经通过了，现在 GitHub 已经开始申请 TLS 证书了。</p>
+ <img data-src="/2023/04/21/works/working-with-https/github-pages-5.png" class="">
+</li>
+<li>
+<p>等待一段时间，证书申请完毕，就可以把下方的 <code>Enforce HTTPS</code> 勾选上了，这样站点就可以仅通过 HTTPS 访问了，更加安全。</p>
+ <img data-src="/2023/04/21/works/working-with-https/github-pages-6.png" class="">
+</li>
+</ol>
+<div class="note "><p>可以在项目设置中勾选 “Use your GitHub Pages website”，省去每次想不起域名的麻烦，也可以更方便地访问部署所在网页。<br>
+<img data-src="/2023/04/21/works/working-with-https/gh-setting.png" class=""></p>
+</div>
+<h2 id="不怕麻烦的nginx手动配置过程">不怕麻烦的 nginx 手动配置过程</h2>
+<div class="note "><p>不要忘记在安全组设置中放开 443 端口哦～</p>
+</div>
+<h3 id="申请证书">申请证书</h3>
+<p>腾讯云对于每个个人用户都有 50 张免费证书的额度，对于我这种轻度开发用户来说，当然是一个域名一张证书就够用了，而且所需要的证书类型也是最简单的 DV 型，所以申请证书的过程也很简单。</p>
+<img data-src="/2023/04/21/works/working-with-https/tcloud-1.png" class="" title="呃，有了之后要介绍的技术这些打叉的项算什么嘛">
+<p>根据<a href="https://cloud.tencent.com/document/product/400/6814">文档</a>介绍和申请页所示，申请的证书是 TrustAsia 颁发的一年期证书，且同一域下最多有 20 张免费证书。这一步完成后，会获得颁发的证书，接下来需要将证书部署到相关服务上。</p>
+<h3 id="部署证书">部署证书</h3>
+<p>首先当然要从<a href="https://console.cloud.tencent.com/ssl">控制台</a>中下载证书。</p>
+<p>nginx 中，SSL 的配置项主要在配置文件的 <code>server</code> 块中，为了支持 HTTPS，至少需要添加如下配置，其中 <code>DOMAIN</code> 是你申请证书的域名：</p>
+<figure class="highlight nginx"><table><tbody><tr><td class="code"><pre><span class="line"><span class="section">server</span> {</span><br><span class="line">     <span class="attribute">listen</span> <span class="number">443</span> ssl; </span><br><span class="line">     <span class="attribute">server_name</span> &lt;DOMAIN&gt;; </span><br><span class="line">     <span class="attribute">ssl_certificate</span> /path/to/&lt;DOMAIN&gt;_bundle.crt; </span><br><span class="line">     <span class="attribute">ssl_certificate_key</span> /path/to/&lt;DOMAIN&gt;.key; </span><br><span class="line">     <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;</span><br><span class="line">     <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>; </span><br><span class="line">     <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE; </span><br><span class="line">     <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">     <span class="comment"># ... location 配置省略</span></span><br><span class="line"> }</span><br></pre></td></tr></tbody></table></figure>
+<p>将证书使用 WinSCP 等工具上传至服务器，然后在配置文件中填写正确的路径即可。</p>
+<p>如果需要将 HTTP 请求重定向到 HTTPS 中，需要对配置的主机增加 80 端口监听，并将其转到 HTTPS 版本的链接上：</p>
+<figure class="highlight nginx"><table><tbody><tr><td class="code"><pre><span class="line"><span class="section">server</span> {</span><br><span class="line">	<span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">	<span class="attribute">server_name</span> &lt;DOMAIN&gt;;</span><br><span class="line">	<span class="attribute">return</span> <span class="number">301</span> https://<span class="variable">$server_name</span><span class="variable">$request_uri</span>;  // 这行是关键</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="certbot-申请证书大作战">certbot 申请证书大作战</h2>
+<p>之前一段时间一直在使用 certbot 的 dnspod 脚本来自动申请和续期证书，但是最近发现这个脚本突然不可用了，故趁这个机会总结一下手动申请证书的过程。</p>
+<p>我的服务器操作系统是 ubuntu 18，使用 nginx 承担网站的日常工作。</p>
+<div class="note "><p><a href="https://certbot.eff.org/instructions">certbot 官方网站</a>上分系统地提供了安装的方法，具体可以跟随那里操作。</p>
+</div>
+<h3 id="先安装">先安装</h3>
+<ol>
+<li>
+<p>certbot 需要使用 snapd 安装，如果没有安装的话，需要使用以下命令安装：</p>
+ <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install snapd</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>保证 snapd 为最新版本</p>
+ <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo snap install core</span><br><span class="line">   sudo snap refresh core</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>卸载目前系统中残留的 certbot 组件</p>
+ <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo apt-get remove certbot</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>安装 certbot</p>
+ <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo snap install --classic certbot</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>创建软链接</p>
+ <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo <span class="built_in">ln</span> -s /snap/bin/certbot /usr/bin/certbot</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>验证安装</p>
+ <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo certbot --version</span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ol>
+<h3 id="撤销之前错误的证书">撤销之前错误的证书</h3>
+<p>需要使用 <code>sudo certbot certificates</code> 查看当前已经申请的证书，如果有错误的证书，可以使用 <code>sudo certbot revoke --cert-path /etc/letsencrypt/live/xxx/fullchain.pem</code> 撤销。</p>
+<h3 id="nginx-申请模式">nginx 申请模式</h3>
+<ol>
+<li>
+<p>直接运行 <code>sudo certbot --nginx</code>，certbot 会自动扫描所有有效的 nginx 配置文件，列出所有可以申请证书的域名，选择需要申请的域名，输入序号，回车。或者，使用 <code>-d</code> 参数指定需要申请的域名，例如 <code>sudo certbot --nginx -d example.com</code>。</p>
+ <img data-src="/2023/04/21/works/working-with-https/certbot-1.png" class="">
+ <div class="note "><p>如果指定多次 <code>-d</code> 参数，则可以进行多域名申请。</p>
+</div>
+</li>
+<li>
+<p>等待脚本申请完成。</p>
+ <div class="note warning no-icon"><img data-src="/2023/04/21/works/working-with-https/certbot-3.png" class="">
+这种情况通常是之前配置过，没有清理干净，把报错提到的那行改成这个就行：
+<figure class="highlight nginx"><table><tbody><tr><td class="code"><pre><span class="line"><span class="attribute">return</span> <span class="number">301</span> https://<span class="variable">$host</span><span class="variable">$request_uri</span>;</span><br></pre></td></tr></tbody></table></figure>
+<p>然后重新运行</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo certbot install --cert-name xxxx</span><br></pre></td></tr></tbody></table></figure>
+<p>即可继续配置</p>
+</div>
+</li>
+<li>
+<p>然后可以使用 <code>sudo certbot certificates</code> 看到自己刚才申请的证书了，现在有 90 天有效期。</p>
+ <img data-src="/2023/04/21/works/working-with-https/certbot-2.png" class="">
+ <div class="note success"><p>有些博客会引导我们手动去配 cronjob 任务，但实际上，在刚才的部署过程中，certbot 会自动将更新命令加入到系统的 cronjob 中，在临期时自动续期证书。其位于 <code>/etc/cron.d/certbot</code> 中，源码如下</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">0 */12 * * * root <span class="built_in">test</span> -x /usr/bin/certbot -a \! -d /run/systemd/system &amp;&amp; perl -e <span class="string">'sleep int(rand(43200))'</span> &amp;&amp; certbot -q renew</span><br></pre></td></tr></tbody></table></figure></div>
+</li>
+<li>
+<p>使用 <code>sudo certbot renew --dry-run</code> 测试一下续期命令是否可用。以后，可以使用不带 <code>--dry-run</code> 的命令来手动续期。</p>
+</li>
+<li>
+<p>访问网站，发现已经可以使用 HTTPS 访问了。</p>
+ <img data-src="/2023/04/21/works/working-with-https/certbot-4.png" class="">
+</li>
+</ol>
+<h3 id="泛域名证书申请">泛域名证书申请</h3>
+<blockquote>
+<p>泛域名证书是指可以同时为多个子域名申请证书的证书，例如 <code>*.example.com</code> 可以为 <code>a.example.com</code>、<code>b.example.com</code> 等多个域名申请证书。</p>
+</blockquote>
+<p>上述的方法是针对单个域名的，虽然一次可以申请多个域名，但那些域名都是预先有配置的，如果以后想再添加的话需要手动加入配置，非常麻烦。</p>
+<p>泛域名的证书需要 DNS 解析服务商支持自动验证，其需要通过官方插件来实现自动更新 DNS 以通过监测，很可惜，截至目前，并没有 dnspod 的插件，所以只能手动更新 DNS 了。</p>
+<div class="note info"><p>在安装 certbot 插件（<code>sudo snap install certbot-dns-&lt;PLUGIN&gt;</code>）前，需要先运行如下命令</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo snap <span class="built_in">set</span> certbot trust-plugin-with-root=ok</span><br></pre></td></tr></tbody></table></figure>
+<p>以保证其具有与 certbot snap 同样的 classic containment。</p>
+</div>
+<p>以下讲述手动更改配置的过程。</p>
+<h4 id="手工通过验证">手工通过验证</h4>
+<p>首先删除之前的证书</p>
+<div class="note warning"><p>过期的证书不能撤销 <code>revoke</code>，只能删除 <code>delete</code></p>
+</div>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo certbot delete --cert-name xxxx</span><br></pre></td></tr></tbody></table></figure>
+<p>然后运行该命令</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">sudo certbot certonly --preferred-challenges dns --manual -d *.&lt;要申请的域名&gt; --server https://acme-v02.api.letsencrypt.org/directory</span><br></pre></td></tr></tbody></table></figure>
+<div class="note warning"><p>注意必须在 <code>--server</code> 中指定 <code>https://acme-v02.api.letsencrypt.org/directory</code> ，Let’s Encrypt V2 版本才支持泛域名解析。</p>
+</div>
+<p>然后会提示你添加一个 TXT 记录，访问你的 DNS 服务商后台，将给定的 TXT 记录添加，添加后等待一段时间，然后回车，就可以申请成功了。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2023/04/21/works/working-with-https/certbot-wildcard-1.png" class=""></div><div class="group-picture-column"><img data-src="/2023/04/21/works/working-with-https/certbot-wildcard-2.png" class=""></div></div></div>
+<p>如果配置正确，certbot 会显示部署成功</p>
+<img data-src="/2023/04/21/works/working-with-https/certbot-wildcard-3.png" class="">
+<div class="note warning"><p>正如上个截图所说的那样，这种认证方式只有 90 天的有效期，且不能使用 <code>certbot renew</code> 的方式更新证书，所以需要手动续期，续期的时候，需要再次添加 TXT 记录。对于没有 API 支持的服务商来说，也只能这么做了。</p>
+</div>
+<p>完成以后，需要手动向配置文件增加相关配置。如果使用的是 nginx，则在站点的 nginx 配置文件中，将证书换为 Let’s Encrypt 提供的证书即可：</p>
+<figure class="highlight nginx"><table><tbody><tr><td class="code"><pre><span class="line">server{</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/letsencrypt/live/&lt;要申请的域名&gt;/fullchain.pem;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/letsencrypt/live/&lt;要申请的域名&gt;/privkey.pem;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>过几分钟后查看，就可以看到已经成功申请了泛域名证书。</p>
+<img data-src="/2023/04/21/works/working-with-https/certbot-wildcard-4.png" class="" title="注意CN字段部分">
 ]]></content>
       <categories>
         <category>运维</category>
