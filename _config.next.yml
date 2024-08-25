@@ -273,7 +273,7 @@ follow_me:
 # Dependencies: https://github.com/sergeyzwezdin/hexo-related-posts
 related_posts:
   enabled: true
-#  enable_env_name: prod
+  enable_env_name: prod
   filter_threshold: 0.3
   related_count: 3
   weight:

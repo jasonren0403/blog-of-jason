@@ -54,5 +54,5 @@ jobs:
       - name: Build Hexo 🔧
         run: |
           hexo clean
-          hexo generate
+          hexo generate -- --prod
           hexo deploy
