@@ -195,198 +195,6 @@
       </tags>
   </entry>
   <entry>
-    <title>借助 ANTLR 分析代码中的漏洞</title>
-    <url>/2019/06/09/experiments/antlr-2/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>通过分析特定漏洞代码特点，借助 ANTLR 分析代码中的特定漏洞。</p>
-<span id="more"></span>
-<h2 id="实验条件">实验条件</h2>
-<ol>
-<li>Windows 10 专业版</li>
-<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
-<li>ANTLR 环境 ——ANTLR 4</li>
-</ol>
-<h2 id="实验内容">实验内容</h2>
-<h3 id="漏洞描述">漏洞描述</h3>
-<ul>
-<li>
-<p>Double Free，多次释放漏洞，是对指向同一个地址的指针进行两次及以上的操作，可能会造成任意代码执行或其他非预期危害。虽然一般把它叫做 double free。其实只要是 <code>free</code> 一个指向堆内存的指针都有可能产生可以利用的漏洞。</p>
-</li>
-<li>
-<p>一段简单的漏洞代码示例如下所示，其中对 <code>char* buf2R1</code> 所指向的内存进行了两次释放操作</p>
-  <figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE1 512</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE2 ((BUFSIZE1/2) - 8) <span class="comment">//248</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> { </span><br><span class="line">	<span class="type">char</span> *buf1R1; </span><br><span class="line">	<span class="type">char</span> *buf2R1; </span><br><span class="line">	<span class="type">char</span> *buf1R2; </span><br><span class="line">	buf1R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	buf2R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	<span class="built_in">free</span>(buf1R1); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	buf1R2 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE1); </span><br><span class="line">	<span class="built_in">strncpy</span>(buf1R2, argv[<span class="number">1</span>], BUFSIZE1<span class="number">-1</span>); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	<span class="built_in">free</span>(buf1R2); </span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>double free 的原理其实和堆溢出的原理差不多，都是通过 unlink 这个双向链表删除的宏来利用的。只是 double free 需要由自己来伪造整个 chunk 并且欺骗操作系统。</p>
-</li>
-</ul>
-<h3 id="语法识别">语法识别</h3>
-<div class="note info"><p>利用 ANTLR4 的 C++ 语言语法规则文件，对漏洞代码进行分析。</p>
-</div>
-<ol>
-<li>
-<p>右键点击 g4 中的 translationunit，选择 test rule，将那个有漏洞的 C 代码制作成 expr 文件后，作为输入。</p>
-</li>
-<li>
-<p>然后在输出位置就可以看到好大一棵 parseTree 了！右键另存为一张图。</p>
- <img data-src="/2019/06/09/experiments/antlr-2/parseTree-full.png" class="" width="500" height="500">
-</li>
-<li>
-<p>ParseTree 全貌，其中左边的一小撮是函数头定义，右边的一大撮才是函数体定义。</p>
-<ul>
-<li>首先定义了三个字符指针型变量 <code>buf1R1</code>、<code>buf2R1</code>、<code>buf1R2</code><img data-src="/2019/06/09/experiments/antlr-2/1.png" class="">
-</li>
-<li>然后为 <code>buf1R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间，为 <code>buf2R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间 <img data-src="/2019/06/09/experiments/antlr-2/3.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/4.png" class=""></li>
-</ul>
-</li>
-<li>
-<p>紧接着 <code>free</code> 掉它们 <img data-src="/2019/06/09/experiments/antlr-2/5.png" class=""></p>
-</li>
-<li>
-<p>为 <code>buf1R2</code> 分配空间，大小为 <code>bufsize1</code></p>
-<img data-src="/2019/06/09/experiments/antlr-2/6.png" class="">
-</li>
-<li>
-<p>把 <code>argv[1]</code> 中的内容复制到 <code>buf1R2</code> 所指空间中 <img data-src="/2019/06/09/experiments/antlr-2/7.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/8.png" class=""></p>
-</li>
-<li>
-<p>最后的两个 <code>free</code> 语句都在语法分析树的右侧 <img data-src="/2019/06/09/experiments/antlr-2/9.png" class=""></p>
-</li>
-</ol>
-<div class="note primary"><p>从语法分析树中看不出任何问题，因为这个存在漏洞的代码是语法正确的，而且也符合 C 语言语法结构。所以我们在编写相关代码时，要自行检查指针的使用情况，最好在释放指针所指向的空间后，将其置为 <code>NULL</code>。</p>
-</div>
-<h2 id="实验总结">实验总结</h2>
-<p>本实验中通过学习带有漏洞的 C 语言代码，了解到一些常见的二进制相关漏洞，借助到 C 语言的语法规则文件，对漏洞代码进行分解研究，了解到了我们所写的程序通过语法树展开后的样子，并试着提取其规则，编写漏洞描述 xml 文件。</p>
-<p>中途遇到了 IntelliJ IDEA 无法解析规则，找不到 start rule 的问题，后来通过在 cpp14.g4 文件中右击 translationunit 规则，点击 test translationunit rule 找到了语法树的生成点，从而成功在 ANTLR Output 中看到了所生成的语法树。</p>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>编译原理</category>
-        <category>漏洞</category>
-        <category>双重释放</category>
-      </categories>
-      <tags>
-        <tag>ANTLR</tag>
-        <tag>编译原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ANTLR 语言识别工具</title>
-    <url>/2019/05/20/experiments/antlr/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<ol>
-<li>了解 ANTLR 语言识别工具，安装 ANTLR 环境，熟悉 ANTLR 的使用。</li>
-<li>掌握使用 ANTLR 构建的语法分析器和树解析器分析语言，通过 ANTLR 实现语法分析过程。</li>
-</ol>
-<span id="more"></span>
-<h2 id="实验条件">实验条件</h2>
-<ol>
-<li>Windows 10 专业版</li>
-<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
-<li>ANTLR 环境 ——ANTLR 4</li>
-</ol>
-<h2 id="实验内容">实验内容</h2>
-<h3 id="安装ANTLR">安装 ANTLR</h3>
-<p>个人所用的集成开发环境中提供 ANTLR 插件的安装，故可直接进入插件下载功能中下载该插件。运行时环境配置过程和安装过程不再赘述。</p>
-<img data-src="/2019/05/20/experiments/antlr/1.png" class=""> 
-<p>安装以后，下方工具栏会多出两个窗口：ANTLR Preview 和 Tool Output。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/2.png" class="" title="ANTLR Preivew窗口"></div><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/3.png" class="" title="Tool Output窗口"></div></div></div> 
-<p>Preview 中可以显示 Parse tree，从而省去了在控制台中输入 <code>-gui</code> 命令的麻烦。</p>
-<h3 id="使用ANTLR实现实数的四则运算">使用 ANTLR 实现实数的四则运算</h3>
-<div class="note info"><h4 id="要求">要求</h4>
-<p>创建 ANTLR 语法文件 <code>expr.g4</code>，解析如赋值语句 <code>a = 5.5</code> 和表达式 <code>a+4*3÷2-1</code> 这样的语句。</p>
-<ul>
-<li>要验证所编写的文法是否正确，可使用 TestRig 测试语法，在 CMD 中输入 <code>-gui</code> 可直观展示其语法分析树。</li>
-<li>创建 expr 文件（如 test.expr，输入一个表达式）检验程序是否能够正确运行和计算四则算式。</li>
-</ul>
-</div>
-<ol>
-<li>
-<p>文法设计</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">E -&gt; E OP E|VAR = E|E'; E'-&gt; D; OP: [+|-|*|/]; D:[0-9]+; VAR:[a-zA-Z]+; </span><br></pre></td></tr></tbody></table></figure>
-<p>由此编写的 <code>expr.g4</code> 文件如下：（还考虑了一些换行及空格因素）</p>
-<figure class="highlight plaintext"><figcaption><span>expr.g4</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">grammar expr; </span><br><span class="line">exprs : setExpr | calcExpr ; </span><br><span class="line">setExpr : id=ID '=' num=NUMBER ; </span><br><span class="line">calcExpr: calcExpr op=(MUL | DIV) calcExpr | calcExpr op=(ADD | SUB) calcExpr | factor ; </span><br><span class="line">factor: (sign=(ADD | SUB))? num=NUMBER // 计算因子可以是一个正数或负数 </span><br><span class="line">                           | id=ID // 计算因子可以是一个变量 ; </span><br><span class="line">WS : [ \t\n\r]+ -&gt; skip ; </span><br><span class="line">ID : [a-zA-Z]+ ; </span><br><span class="line">NUMBER : [0-9]+('.'([0-9]+)?)? ; </span><br><span class="line">ADD : '+' ; </span><br><span class="line">SUB : '-' ; </span><br><span class="line">MUL : '*' ; </span><br><span class="line">DIV : '/' ; </span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>运行结果</p>
-</li>
-</ol>
-<div class="tabs" id="results"><ul class="nav-tabs"><li class="tab active"><a href="#results-1">赋值语句</a></li><li class="tab"><a href="#results-2">不完整的式子</a></li><li class="tab"><a href="#results-3">一个正常的运算式</a></li><li class="tab"><a href="#results-4">异常处理</a></li></ul><div class="tab-content"><div class="tab-pane active" id="results-1"><p>控制台工具显示如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res1-1.png" class=""></p>
-<p>Main 函数如下</p>
-<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a=5.5"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
-<p>运行结果如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res1-2.png" class="" title="在visitSetExpr时触发了其中的打印操作，外层返回值为null"></p></div><div class="tab-pane" id="results-2"><div class="note "><p>本次测试的式子为 <code>a+4*3/2-1</code></p>
-</div>
-<p>控制台工具显示如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res2-1.png" class=""></p>
-<p>Main 函数如下</p>
-<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a+4*3/2-1"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
-<img data-src="/2019/05/20/experiments/antlr/res2-2.png" class="" title="为了方便，在每个函数的visit函数外层加了一个控制台打印输出"> 
-从输出来看，对语法树的遍历过程几乎遍及了句子的每一个结点。由于最后得到的句型是一个类似于 <code>a + &lt;数字&gt;</code> 的格式，所以它输出 <code>NaN</code>，与预期一致。
-<div class="note warning"><p><code>a</code> 是与前一个赋值语句分开输入的，所以它并没有被定义值</p>
-</div></div><div class="tab-pane" id="results-3"><div class="note "><p>本次测试的式子为 <code>1+4.5*2-3/3</code></p>
-</div>
-<p>Main 函数代码类似，控制台工具显示如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res3-1.png" class="" title="分析树的结构与预期一致"></p>
-<p>代码输出结果如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res3-2.png" class=""><br>
-得到了正确的输出结果，证明我们写的语法解析是正确的。</p></div><div class="tab-pane" id="results-4"><ol>
-<li>针对除 0 错误，程序可以顺利显示出 <code>Infinity</code>，没有中断程序<br>
-<img data-src="/2019/05/20/experiments/antlr/res4-1.png" class=""></li>
-<li>输入过长也不会中断程序<br>
-<img data-src="/2019/05/20/experiments/antlr/res4-2.png" class=""></li>
-<li>符号错误需要单独处理<br>
-<img data-src="/2019/05/20/experiments/antlr/res4-3.png" class="" title="报错：不被识别的字符（本例输入了分号），需要一个ID，NUMBER，加号或减号"></li>
-</ol>
-<div class="note warning"><p>这说明符号错误需要单独处理，java 中可以使用 try-catch 来完成这项工作。除此之外，也可从前端角度考虑，提前检验用户输入。</p>
-</div></div></div></div>
-<h2 id="总结">总结</h2>
-<p>这个解析过程是怎么实现的呢？</p>
-<ul>
-<li>在生成 ANTLR 识别文件时，实际上生成了很多个 java 和 token 源文件。</li>
-</ul>
-<img data-src="/2019/05/20/experiments/antlr/end1.png" class="">
-<img data-src="/2019/05/20/experiments/antlr/end2.png" class="">
-<ul>
-<li>
-<p>有两个 tokens 文件和六个 java 文件，<code>Listener</code> 和 <code>Visitor</code> 是两个接口，<code>Listener</code> 中定义了一些退出或进入一个表达式中所进行的语法动作，<code>Visitor</code> 中定义了遍历语法树中项目的返回动作，一个语法项对应一个 <code>visit</code> 函数。具体由 <code>xxBaseListener</code> 或 <code>xxBaseVisitor</code> 来实现。默认状态下，所有的实现都是空的，我们可以扩展 <code>xxBase[Listener|Visitor]</code> 类，自己定义语法动作。本实验中，只需要实现 <code>Visitor</code> 的内容即可，不过由于上下文的关系，我们需要自建一个 <code>Context</code> 类，负责上下文内容的保存和识别。</p>
-</li>
-<li>
-<p>重写 <code>visit</code> 函数：</p>
-  <figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;你需要的返回值&gt; visit&lt;A&gt;(xxParser.&lt;A&gt;Context ctx)</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>.tokens 文件中将语法常量对应了一个整数数值，方便常量的建立。.interp 文件则记录了字面值。</p>
-</li>
-<li>
-<p>Parser 中，对每一个语法变量，生成了很多上下文相关的方法（xxContext）。其中的某些常量在前面所述的.tokens 文件中可以找到。</p>
-</li>
-<li>
-<p>Lexer 中，则存储了字面量及其相关方法，某些内容可在.interp 文件中找到。</p>
-</li>
-<li>
-<p>而所有开头的 xx 来自于语法文件第一行的 grammar xx，即为语法名。</p>
-</li>
-<li>
-<p><code>Visitor</code> 实现完成后，在主函数中建立 <code>visitor</code> 对象，调用 <code>visit</code> 语法树方法，将用户输入作为参数传入，其返回值即为语法分析结果。</p>
-</li>
-</ul>
-<figure class="highlight java"><figcaption><span>visitor.java</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Visitor</span> <span class="keyword">extends</span> <span class="title class_">exprBaseVisitor</span>&lt;Double&gt;{</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitExprs</span><span class="params">(exprParser.ExprsContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit exprs"); </span></span><br><span class="line">		<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>)); </span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitSetExpr</span><span class="params">(exprParser.SetExprContext ctx)</span>{</span><br><span class="line">		Context.getInstance().setContext(ctx.id.getText(), ctx.num.getText());</span><br><span class="line">		System.out.println(<span class="string">"Assign operation in current line:"</span> + ctx.id.getText() + <span class="string">" = "</span> + ctx.num.getText());</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitCalcExpr</span><span class="params">(exprParser.CalcExprContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit calc expr "); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">switch</span> (ctx.op.getType()) { </span><br><span class="line">				<span class="keyword">case</span> exprParser.ADD:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) + visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.SUB:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) - visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.MUL:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) * visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.DIV:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) / visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">			}</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>)</span><br><span class="line">		{</span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>));</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitFactor</span><span class="params">(exprParser.FactorContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit factor"); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">1</span>)); </span><br><span class="line">		} <span class="keyword">else</span> <span class="keyword">if</span> (cc == <span class="number">2</span>) { </span><br><span class="line">			<span class="keyword">if</span> (ctx.sign.getType() == exprParser.ADD)</span><br><span class="line">				<span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.sign.getType() == exprParser.SUB) </span><br><span class="line">				<span class="keyword">return</span> -<span class="number">1</span> * Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>){</span><br><span class="line">			<span class="keyword">if</span>(ctx.num != <span class="literal">null</span>) <span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">0</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.id != <span class="literal">null</span>) <span class="keyword">return</span> Context.getInstance().getValue(ctx.id.getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<ul>
-<li>目前实现的版本中，可以正确地进行运算，但还没有实现连续赋值功能，也没有考虑到多语句的分隔及分开解析，例如输入 <code>"a=1 a+1"</code> 后不能得到 <code>2</code>，可能需要修改 <code>Context</code> 类和 <code>Visitor</code> 类中的代码，使其可以记录上下文信息，将 <code>a</code> 的值存入暂存区。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>编译原理</category>
-      </categories>
-      <tags>
-        <tag>ANTLR</tag>
-        <tag>编译原理</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>北邮小日记 —— 第一期</title>
     <url>/2017/10/11/diarys/bupt-1/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>大家好，我是任子恒，好久不见，你们也有很长时间没有看到我在这个公众号上更新文字了。进北邮也有一个月了，一直忙于其他琐碎事情，没有来得及停一下，用文字记录下多彩的大学生活。</p>
@@ -790,7 +598,7 @@
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>期中考试终于都结束了！！有时间写东西啦～</p>
 <span id="more"></span>
 
-    <div id="aplayer-nbbaZGrI" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
+    <div id="aplayer-yGwaynGR" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
 <p>分数都还可以，至少都及格了，当然还可以做到更好，这得靠接下来的努力了～</p>
 <p>不过，我这些同学，还得往上带一带…… 毕竟作为学委的我还是见识到了不少让人抓狂的情况的…… 跟这里我吐槽一下，作业交得晚、借作业去抄… 都是常事。当然，也有很努力在学习的同学，他们会找我问题，我也会很乐意给出解答，这给我一次运用知识的机会，也增强了我和同学们的交流。对了，借这个当学委的机会我也几乎把全班同学认全了，哦耶！</p>
 <p>上周五听说要搬宿舍了，据说原因是另一个校区一整个院的同学都搬了过来，需要腾出一个楼来给其中的女生住，调整方案是说我现在所在楼 - 5 楼的同学要搬到 3 楼去，而 3 楼的女生要搬过来和要住进来的女生并一个楼。如果不出意外的话，这就是我的坐标处于 S5-535 的最后几天了，没想到我之前曾经说过要去 S3 看一看的愿望竟然这么快就实现了 hhh，但是我这么多东西该怎么搬啊……</p>
@@ -913,6 +721,198 @@
         <tag>北邮小日记</tag>
         <tag>life-in-bupt</tag>
         <tag>special</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>借助 ANTLR 分析代码中的漏洞</title>
+    <url>/2019/06/09/experiments/antlr-2/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>通过分析特定漏洞代码特点，借助 ANTLR 分析代码中的特定漏洞。</p>
+<span id="more"></span>
+<h2 id="实验条件">实验条件</h2>
+<ol>
+<li>Windows 10 专业版</li>
+<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
+<li>ANTLR 环境 ——ANTLR 4</li>
+</ol>
+<h2 id="实验内容">实验内容</h2>
+<h3 id="漏洞描述">漏洞描述</h3>
+<ul>
+<li>
+<p>Double Free，多次释放漏洞，是对指向同一个地址的指针进行两次及以上的操作，可能会造成任意代码执行或其他非预期危害。虽然一般把它叫做 double free。其实只要是 <code>free</code> 一个指向堆内存的指针都有可能产生可以利用的漏洞。</p>
+</li>
+<li>
+<p>一段简单的漏洞代码示例如下所示，其中对 <code>char* buf2R1</code> 所指向的内存进行了两次释放操作</p>
+  <figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE1 512</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE2 ((BUFSIZE1/2) - 8) <span class="comment">//248</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> { </span><br><span class="line">	<span class="type">char</span> *buf1R1; </span><br><span class="line">	<span class="type">char</span> *buf2R1; </span><br><span class="line">	<span class="type">char</span> *buf1R2; </span><br><span class="line">	buf1R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	buf2R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	<span class="built_in">free</span>(buf1R1); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	buf1R2 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE1); </span><br><span class="line">	<span class="built_in">strncpy</span>(buf1R2, argv[<span class="number">1</span>], BUFSIZE1<span class="number">-1</span>); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	<span class="built_in">free</span>(buf1R2); </span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>double free 的原理其实和堆溢出的原理差不多，都是通过 unlink 这个双向链表删除的宏来利用的。只是 double free 需要由自己来伪造整个 chunk 并且欺骗操作系统。</p>
+</li>
+</ul>
+<h3 id="语法识别">语法识别</h3>
+<div class="note info"><p>利用 ANTLR4 的 C++ 语言语法规则文件，对漏洞代码进行分析。</p>
+</div>
+<ol>
+<li>
+<p>右键点击 g4 中的 translationunit，选择 test rule，将那个有漏洞的 C 代码制作成 expr 文件后，作为输入。</p>
+</li>
+<li>
+<p>然后在输出位置就可以看到好大一棵 parseTree 了！右键另存为一张图。</p>
+ <img data-src="/2019/06/09/experiments/antlr-2/parseTree-full.png" class="" width="500" height="500">
+</li>
+<li>
+<p>ParseTree 全貌，其中左边的一小撮是函数头定义，右边的一大撮才是函数体定义。</p>
+<ul>
+<li>首先定义了三个字符指针型变量 <code>buf1R1</code>、<code>buf2R1</code>、<code>buf1R2</code><img data-src="/2019/06/09/experiments/antlr-2/1.png" class="">
+</li>
+<li>然后为 <code>buf1R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间，为 <code>buf2R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间 <img data-src="/2019/06/09/experiments/antlr-2/3.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/4.png" class=""></li>
+</ul>
+</li>
+<li>
+<p>紧接着 <code>free</code> 掉它们 <img data-src="/2019/06/09/experiments/antlr-2/5.png" class=""></p>
+</li>
+<li>
+<p>为 <code>buf1R2</code> 分配空间，大小为 <code>bufsize1</code></p>
+<img data-src="/2019/06/09/experiments/antlr-2/6.png" class="">
+</li>
+<li>
+<p>把 <code>argv[1]</code> 中的内容复制到 <code>buf1R2</code> 所指空间中 <img data-src="/2019/06/09/experiments/antlr-2/7.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/8.png" class=""></p>
+</li>
+<li>
+<p>最后的两个 <code>free</code> 语句都在语法分析树的右侧 <img data-src="/2019/06/09/experiments/antlr-2/9.png" class=""></p>
+</li>
+</ol>
+<div class="note primary"><p>从语法分析树中看不出任何问题，因为这个存在漏洞的代码是语法正确的，而且也符合 C 语言语法结构。所以我们在编写相关代码时，要自行检查指针的使用情况，最好在释放指针所指向的空间后，将其置为 <code>NULL</code>。</p>
+</div>
+<h2 id="实验总结">实验总结</h2>
+<p>本实验中通过学习带有漏洞的 C 语言代码，了解到一些常见的二进制相关漏洞，借助到 C 语言的语法规则文件，对漏洞代码进行分解研究，了解到了我们所写的程序通过语法树展开后的样子，并试着提取其规则，编写漏洞描述 xml 文件。</p>
+<p>中途遇到了 IntelliJ IDEA 无法解析规则，找不到 start rule 的问题，后来通过在 cpp14.g4 文件中右击 translationunit 规则，点击 test translationunit rule 找到了语法树的生成点，从而成功在 ANTLR Output 中看到了所生成的语法树。</p>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>编译原理</category>
+        <category>漏洞</category>
+        <category>双重释放</category>
+      </categories>
+      <tags>
+        <tag>ANTLR</tag>
+        <tag>编译原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ANTLR 语言识别工具</title>
+    <url>/2019/05/20/experiments/antlr/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<ol>
+<li>了解 ANTLR 语言识别工具，安装 ANTLR 环境，熟悉 ANTLR 的使用。</li>
+<li>掌握使用 ANTLR 构建的语法分析器和树解析器分析语言，通过 ANTLR 实现语法分析过程。</li>
+</ol>
+<span id="more"></span>
+<h2 id="实验条件">实验条件</h2>
+<ol>
+<li>Windows 10 专业版</li>
+<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
+<li>ANTLR 环境 ——ANTLR 4</li>
+</ol>
+<h2 id="实验内容">实验内容</h2>
+<h3 id="安装ANTLR">安装 ANTLR</h3>
+<p>个人所用的集成开发环境中提供 ANTLR 插件的安装，故可直接进入插件下载功能中下载该插件。运行时环境配置过程和安装过程不再赘述。</p>
+<img data-src="/2019/05/20/experiments/antlr/1.png" class=""> 
+<p>安装以后，下方工具栏会多出两个窗口：ANTLR Preview 和 Tool Output。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/2.png" class="" title="ANTLR Preivew窗口"></div><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/3.png" class="" title="Tool Output窗口"></div></div></div> 
+<p>Preview 中可以显示 Parse tree，从而省去了在控制台中输入 <code>-gui</code> 命令的麻烦。</p>
+<h3 id="使用ANTLR实现实数的四则运算">使用 ANTLR 实现实数的四则运算</h3>
+<div class="note info"><h4 id="要求">要求</h4>
+<p>创建 ANTLR 语法文件 <code>expr.g4</code>，解析如赋值语句 <code>a = 5.5</code> 和表达式 <code>a+4*3÷2-1</code> 这样的语句。</p>
+<ul>
+<li>要验证所编写的文法是否正确，可使用 TestRig 测试语法，在 CMD 中输入 <code>-gui</code> 可直观展示其语法分析树。</li>
+<li>创建 expr 文件（如 test.expr，输入一个表达式）检验程序是否能够正确运行和计算四则算式。</li>
+</ul>
+</div>
+<ol>
+<li>
+<p>文法设计</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">E -&gt; E OP E|VAR = E|E'; E'-&gt; D; OP: [+|-|*|/]; D:[0-9]+; VAR:[a-zA-Z]+; </span><br></pre></td></tr></tbody></table></figure>
+<p>由此编写的 <code>expr.g4</code> 文件如下：（还考虑了一些换行及空格因素）</p>
+<figure class="highlight plaintext"><figcaption><span>expr.g4</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">grammar expr; </span><br><span class="line">exprs : setExpr | calcExpr ; </span><br><span class="line">setExpr : id=ID '=' num=NUMBER ; </span><br><span class="line">calcExpr: calcExpr op=(MUL | DIV) calcExpr | calcExpr op=(ADD | SUB) calcExpr | factor ; </span><br><span class="line">factor: (sign=(ADD | SUB))? num=NUMBER // 计算因子可以是一个正数或负数 </span><br><span class="line">                           | id=ID // 计算因子可以是一个变量 ; </span><br><span class="line">WS : [ \t\n\r]+ -&gt; skip ; </span><br><span class="line">ID : [a-zA-Z]+ ; </span><br><span class="line">NUMBER : [0-9]+('.'([0-9]+)?)? ; </span><br><span class="line">ADD : '+' ; </span><br><span class="line">SUB : '-' ; </span><br><span class="line">MUL : '*' ; </span><br><span class="line">DIV : '/' ; </span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>运行结果</p>
+</li>
+</ol>
+<div class="tabs" id="results"><ul class="nav-tabs"><li class="tab active"><a href="#results-1">赋值语句</a></li><li class="tab"><a href="#results-2">不完整的式子</a></li><li class="tab"><a href="#results-3">一个正常的运算式</a></li><li class="tab"><a href="#results-4">异常处理</a></li></ul><div class="tab-content"><div class="tab-pane active" id="results-1"><p>控制台工具显示如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res1-1.png" class=""></p>
+<p>Main 函数如下</p>
+<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a=5.5"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
+<p>运行结果如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res1-2.png" class="" title="在visitSetExpr时触发了其中的打印操作，外层返回值为null"></p></div><div class="tab-pane" id="results-2"><div class="note "><p>本次测试的式子为 <code>a+4*3/2-1</code></p>
+</div>
+<p>控制台工具显示如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res2-1.png" class=""></p>
+<p>Main 函数如下</p>
+<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a+4*3/2-1"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
+<img data-src="/2019/05/20/experiments/antlr/res2-2.png" class="" title="为了方便，在每个函数的visit函数外层加了一个控制台打印输出"> 
+从输出来看，对语法树的遍历过程几乎遍及了句子的每一个结点。由于最后得到的句型是一个类似于 <code>a + &lt;数字&gt;</code> 的格式，所以它输出 <code>NaN</code>，与预期一致。
+<div class="note warning"><p><code>a</code> 是与前一个赋值语句分开输入的，所以它并没有被定义值</p>
+</div></div><div class="tab-pane" id="results-3"><div class="note "><p>本次测试的式子为 <code>1+4.5*2-3/3</code></p>
+</div>
+<p>Main 函数代码类似，控制台工具显示如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res3-1.png" class="" title="分析树的结构与预期一致"></p>
+<p>代码输出结果如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res3-2.png" class=""><br>
+得到了正确的输出结果，证明我们写的语法解析是正确的。</p></div><div class="tab-pane" id="results-4"><ol>
+<li>针对除 0 错误，程序可以顺利显示出 <code>Infinity</code>，没有中断程序<br>
+<img data-src="/2019/05/20/experiments/antlr/res4-1.png" class=""></li>
+<li>输入过长也不会中断程序<br>
+<img data-src="/2019/05/20/experiments/antlr/res4-2.png" class=""></li>
+<li>符号错误需要单独处理<br>
+<img data-src="/2019/05/20/experiments/antlr/res4-3.png" class="" title="报错：不被识别的字符（本例输入了分号），需要一个ID，NUMBER，加号或减号"></li>
+</ol>
+<div class="note warning"><p>这说明符号错误需要单独处理，java 中可以使用 try-catch 来完成这项工作。除此之外，也可从前端角度考虑，提前检验用户输入。</p>
+</div></div></div></div>
+<h2 id="总结">总结</h2>
+<p>这个解析过程是怎么实现的呢？</p>
+<ul>
+<li>在生成 ANTLR 识别文件时，实际上生成了很多个 java 和 token 源文件。</li>
+</ul>
+<img data-src="/2019/05/20/experiments/antlr/end1.png" class="">
+<img data-src="/2019/05/20/experiments/antlr/end2.png" class="">
+<ul>
+<li>
+<p>有两个 tokens 文件和六个 java 文件，<code>Listener</code> 和 <code>Visitor</code> 是两个接口，<code>Listener</code> 中定义了一些退出或进入一个表达式中所进行的语法动作，<code>Visitor</code> 中定义了遍历语法树中项目的返回动作，一个语法项对应一个 <code>visit</code> 函数。具体由 <code>xxBaseListener</code> 或 <code>xxBaseVisitor</code> 来实现。默认状态下，所有的实现都是空的，我们可以扩展 <code>xxBase[Listener|Visitor]</code> 类，自己定义语法动作。本实验中，只需要实现 <code>Visitor</code> 的内容即可，不过由于上下文的关系，我们需要自建一个 <code>Context</code> 类，负责上下文内容的保存和识别。</p>
+</li>
+<li>
+<p>重写 <code>visit</code> 函数：</p>
+  <figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;你需要的返回值&gt; visit&lt;A&gt;(xxParser.&lt;A&gt;Context ctx)</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>.tokens 文件中将语法常量对应了一个整数数值，方便常量的建立。.interp 文件则记录了字面值。</p>
+</li>
+<li>
+<p>Parser 中，对每一个语法变量，生成了很多上下文相关的方法（xxContext）。其中的某些常量在前面所述的.tokens 文件中可以找到。</p>
+</li>
+<li>
+<p>Lexer 中，则存储了字面量及其相关方法，某些内容可在.interp 文件中找到。</p>
+</li>
+<li>
+<p>而所有开头的 xx 来自于语法文件第一行的 grammar xx，即为语法名。</p>
+</li>
+<li>
+<p><code>Visitor</code> 实现完成后，在主函数中建立 <code>visitor</code> 对象，调用 <code>visit</code> 语法树方法，将用户输入作为参数传入，其返回值即为语法分析结果。</p>
+</li>
+</ul>
+<figure class="highlight java"><figcaption><span>visitor.java</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Visitor</span> <span class="keyword">extends</span> <span class="title class_">exprBaseVisitor</span>&lt;Double&gt;{</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitExprs</span><span class="params">(exprParser.ExprsContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit exprs"); </span></span><br><span class="line">		<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>)); </span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitSetExpr</span><span class="params">(exprParser.SetExprContext ctx)</span>{</span><br><span class="line">		Context.getInstance().setContext(ctx.id.getText(), ctx.num.getText());</span><br><span class="line">		System.out.println(<span class="string">"Assign operation in current line:"</span> + ctx.id.getText() + <span class="string">" = "</span> + ctx.num.getText());</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitCalcExpr</span><span class="params">(exprParser.CalcExprContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit calc expr "); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">switch</span> (ctx.op.getType()) { </span><br><span class="line">				<span class="keyword">case</span> exprParser.ADD:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) + visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.SUB:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) - visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.MUL:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) * visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.DIV:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) / visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">			}</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>)</span><br><span class="line">		{</span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>));</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitFactor</span><span class="params">(exprParser.FactorContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit factor"); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">1</span>)); </span><br><span class="line">		} <span class="keyword">else</span> <span class="keyword">if</span> (cc == <span class="number">2</span>) { </span><br><span class="line">			<span class="keyword">if</span> (ctx.sign.getType() == exprParser.ADD)</span><br><span class="line">				<span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.sign.getType() == exprParser.SUB) </span><br><span class="line">				<span class="keyword">return</span> -<span class="number">1</span> * Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>){</span><br><span class="line">			<span class="keyword">if</span>(ctx.num != <span class="literal">null</span>) <span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">0</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.id != <span class="literal">null</span>) <span class="keyword">return</span> Context.getInstance().getValue(ctx.id.getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>目前实现的版本中，可以正确地进行运算，但还没有实现连续赋值功能，也没有考虑到多语句的分隔及分开解析，例如输入 <code>"a=1 a+1"</code> 后不能得到 <code>2</code>，可能需要修改 <code>Context</code> 类和 <code>Visitor</code> 类中的代码，使其可以记录上下文信息，将 <code>a</code> 的值存入暂存区。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>编译原理</category>
+      </categories>
+      <tags>
+        <tag>ANTLR</tag>
+        <tag>编译原理</tag>
       </tags>
   </entry>
   <entry>
@@ -2291,273 +2291,6 @@
       </tags>
   </entry>
   <entry>
-    <title>WinDLX 模拟器安装与使用</title>
-    <url>/2022/10/15/experiments/jizu/installing-and-using-windlx/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>建立实验环境，了解 WINDLX 模拟器的结构及使用。</p>
-<h2 id="实验原理">实验原理</h2>
-<p>WinDLX 软件包中带有说明文件，供安装程序时候使用。</p>
-<h2 id="实验步骤">实验步骤</h2>
-<h3 id="安装WinDLX">安装 WinDLX</h3>
-<p>由于 WinDLX 是一个非常古老的模拟软件，但是我们现在多用 Win10 和 Win11 系统，所以需要使用虚拟机运行该软件。Win11 可以使用 Hyper-V 虚拟化运行方案，其界面如下所示：</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_qFbv2Qa_D3.png" class="" title="Hyper-V管理器主界面">
-<p>具体启用支持的方法在这里不多说了，之后可以像 VMware 虚拟机一样，添加一个 Windows XP 的系统镜像，并等待虚拟机上操作系统安装的流程走完，即可开始使用。</p>
-<div class="note info"><p>Hyper-V 无法像 VMware 虚拟机那样直接将文件拖入窗口来复制，但可以先将需要用到的文件制作成 vhd 虚拟硬盘，然后再加载硬盘。</p>
-</div>
-<p>所给定的 WinDLX 文件夹如下所示，我们可以直接双击 WinDLX.exe 来启动软件。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_sPpeg0VgHi.png" class="">
-<h3 id="熟悉使用界面">熟悉使用界面</h3>
-<p>启动软件过后，可以看到一个窗口和六个子窗口，子窗口的名称分别为 Clock Cycle Diagram、Statistics、Breakpoints、Register、Code 和 Pipeline，双击这些子窗口或单击其上方的还原键即可看到子窗口的内容。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_KxjgEY9_X1.png" class="">
-<p>要初始化模拟器，可以点击 File 菜单中的 Reset all 菜单项，弹出一个 “Reset DLX” 对话框。然后点击窗口中的 “确认” 按钮即可。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_YEchSWiXz5.png" class="">
-<p>要载入文件或代码，需要点击 File 菜单的 Load Code or Data，在以下对话框中，依次选择 Fact.s 和 Input.s 文件，完成后单击 Load，将它们加载到主存中。</p>
-<div class="note warning"><p>注意：要先选择 fact.s 再选择 input.s 文件。程序在内存中出现的顺序很重要。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_XfmJxGPgJb.png" class="">
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_jU6xYnVOwT.png" class="" title="现在，单击Load按钮将它们加载到主存中"></div>
-<p>成功加载文件后，会提示你重置 DLX，单击 “是”。这样，文件就已经装入到存储器中了。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_zGYcGmsMFa.png" class="">
-<p>结合装载的文件，来介绍一下六大窗口的主要功能</p>
-<h4 id="Code-代码窗口">Code 代码窗口</h4>
-<p>在 Code 窗口中，我们能够看到代表存储器内容的三栏信息，从左到右依次为：地址 (符号或数字)、命令的十六进制机器代码和汇编命令。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_N5Tfs32zDs.png" class="">
-<p>单击 WinDLX 窗口的 Execute（执行）按钮可以执行装入的程序，可以选择单步执行（Single Cycle，快捷键 F7）或多步执行（Multi Cycles，快捷键 F8）。当单步执行时，也有流水段颜色的区分（IF、ID、intEX、MEM 和 WB）</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_OAHMDNAJGN.png" class="">
-<p>如果需要多步执行，就在这个对话框中输入要执行的流水数目即可。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_1Zzwpmaorh.png" class="">
-<h4 id="Pipeline流水线窗口">Pipeline 流水线窗口</h4>
-<p>流水线窗口主要显示了 DLX 处理器的内部结构，窗口下标识了 DLX 处理器的五个流水段和浮点操作（加 / 减、乘和除）的单元。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_bphLLi5PTe.png" class="">
-<p>在运行指令时，将 Pipeline 窗口放大，即可看到当前与 Code 中所处的时刻相同的指令流水，可以清晰看到不同流水段执行的是哪条指令。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ar42V_rtMT.png" class="">
-<h4 id="Clock-Circle-Diagram时钟周期图窗口">Clock Circle Diagram 时钟周期图窗口</h4>
-<p>Clock Cycle Diagram 窗口主要显示了运行代码时流水线的时空图，时空图反映的是不同时隙内的运行情况。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_mC0USoVaqr.png" class="">
-<p>在非空转代码的时候，显示如下：</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_bYqORtx7CN.png" class="">
-<p>任意双击指令的一行，可以详细看到不同流水段的情况，如下图所示。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ijbidVFTvq.png" class="">
-<h4 id="Register寄存器窗口">Register 寄存器窗口</h4>
-<p>Register 窗口会显示各个寄存器中的内容。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_oSJhNz14hV.png" class="">
-<h4 id="Statistic统计数据窗口">Statistic 统计数据窗口</h4>
-<p>Statistics 窗口提供对运行程序中任何数据的分析，主要包括模拟器中硬件配置的情况。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ph76EvKYO5.png" class="">
-<p>这里包含：</p>
-<ol>
-<li>整体指令执行情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_RVWe28mDgc.png" class="">
-</li>
-<li>硬件配置情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_341IwOGYJ5.png" class="">
-</li>
-<li>暂停次数、百分比和原因分析<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_8KxD3jZ_MV.png" class="">
-</li>
-<li>分支次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_JHGpyQ6kXB.png" class="">
-</li>
-<li>Load/Store 指令执行情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_4o7Y5cy8hA.png" class="">
-</li>
-<li>浮点指令执行次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_di1vmW6RNZ.png" class="">
-</li>
-<li>trap 发生次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_A9oR1nMPWT.png" class="">
-</li>
-</ol>
-<h4 id="Breakpoints断点窗口">Breakpoints 断点窗口</h4>
-<p>该窗口主要用来观察代码运行的情况。使用前，需要打开 Breakpoints 窗口（首先需要激活 Breakpoints 小窗口才会出现 Breakpoints 菜单项）来设置 breakpoint，这个值代表了指令运行到流水线的哪个阶段就暂停运行。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_5qA1KGdijo.png" class=""></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_sM6iUTJGxM.png" class=""></div><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_cgfKBRYSZU.png" class="" title="从菜单中选择Set后，出现Set Breakpoint窗口"></div></div></div>
-<p>如果选择了 ID 阶段，在 Code 窗口相应行会出现 BID，表示程序执行到取指令 IF 结束译码 ID 开始的时候，程序将中止。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_XrK7jIlqPf.png" class="" title="此时，Breakpoints窗口的显示为地址、中止阶段和当前指令">
-<p>WinDLX 可以在多种配置下工作。可以改变流水线的结构和时间要求、存储器大小和其他几个控制模拟的参数。均在 Configuration 菜单中完成配置。</p>
-<h5 id="Floating-Point-Stages配置窗口">Floating Point Stages 配置窗口</h5>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_T_5pLEA9Z3.png" class="">
-<p>可以设置加法、乘法和触发的单元数目和延迟。</p>
-<h5 id="Memory-Size配置窗口">Memory Size 配置窗口</h5>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image__EPQPVWZ6k.png" class="">
-<p>可以设置存储空间的大小。</p>
-<h5 id="其他配置窗口">其他配置窗口</h5>
-<p>Configuration 菜单中的还有其他三种配置，它们是：Symbolic addresses、Absolute Cycle Count 和 Enable Forwarding。点击相应菜单项后，在它的旁边将显示一个小钩。</p>
-<ul>
-<li>最重要的配置项为 Enable Forwarding，指的是启用定向技术，定向技术是指将某个计算结果从其产生的地方直接送到其它指令需要它的地方，可以减少数据冲突引起的停顿。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>计算机组成原理</category>
-      </categories>
-      <tags>
-        <tag>WinDLX</tag>
-        <tag>计算机组成原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>代码优化</title>
-    <url>/2022/10/24/experiments/jizu/optimize/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>学习简单编译优化方法，观察采用编译优化方法所带来的性能的提高。</p>
-<h2 id="实验原理">实验原理</h2>
-<p>采用静态调度方法重排指令序列，减少相关，优化程序。</p>
-<h2 id="实验步骤">实验步骤</h2>
-<h3 id="用静态调度算法手工优化代码">用静态调度算法手工优化代码</h3>
-<p>选择上一个实验的两双精度浮点一维向量的加法运算代码作为优化对象，优化后的代码如下所示：</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">VecLen: .word 16</span><br><span class="line">Vector1: .double 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16</span><br><span class="line">; vec1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]</span><br><span class="line">Vector2: .double 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32</span><br><span class="line">; vec2=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]</span><br><span class="line">; 声明向量长度以及两个向量1、2</span><br><span class="line">Printf1: .asciiz "The result is\n"</span><br><span class="line">Printf2: .asciiz "%f\t"</span><br><span class="line"></span><br><span class="line">.align 2</span><br><span class="line"></span><br><span class="line">PrintfHead: .word Printf1</span><br><span class="line">PrintfValue: .word Printf2</span><br><span class="line">result: .space 8</span><br><span class="line">; 打印数据空间的申请</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">addi r14,r0,PrintfHead</span><br><span class="line">trap 5</span><br><span class="line">addi r2,r0,0</span><br><span class="line">lw r20,VecLen</span><br><span class="line">;addi r2,r0,0</span><br><span class="line"></span><br><span class="line">loop: ; 循环读入向量</span><br><span class="line">ld f0,Vector1(r2)</span><br><span class="line">ld f2,Vector2(r2)</span><br><span class="line">; 插入指令，避免f2的RAW</span><br><span class="line">addi r2,r2,8</span><br><span class="line">subi r20,r20,1</span><br><span class="line"></span><br><span class="line">addd f4,f0,f2</span><br><span class="line">; 主要的加法运算</span><br><span class="line">sd result,f4</span><br><span class="line">addi r14,r0,PrintfValue</span><br><span class="line">trap 5</span><br><span class="line">;addi r2,r2,8</span><br><span class="line">;subi r20,r20,1 提前到了前面</span><br><span class="line">bnez r20,loop</span><br><span class="line"></span><br><span class="line">trap 0</span><br><span class="line">; 系统中断，输出结果 "The result is 3.000000, 6.000000, ...."</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="分析已优化程序中出现的数据-控制-结构相关">分析已优化程序中出现的数据 / 控制 / 结构相关</h3>
-<div class="tabs" id="res1"><ul class="nav-tabs"><li class="tab active"><a href="#res1-1">优化前</a></li><li class="tab"><a href="#res1-2">优化后</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res1-1"><p><img data-src="image_czojEXSniG.png" alt="优化前程序" title="优化前程序"></p></div><div class="tab-pane" id="res1-2"><p><img data-src="image__c0vohBdpb.png" alt="优化后程序" title="优化后程序"></p></div></div></div>
-<p>优化后的程序的时钟周期从 267 个减少到了 235 个，RAW 相关也从 48 个大大减少到了 16 个，控制相关和结构相关的数量没有改变，由此可见本次所作代码优化对数据相关的改善最大。</p>
-<h3 id="考虑增加浮点运算部件对于性能的影响">考虑增加浮点运算部件对于性能的影响</h3>
-<div class="tabs" id="res2"><ul class="nav-tabs"><li class="tab active"><a href="#res2-1">1 个浮点部件</a></li><li class="tab"><a href="#res2-2">4 个浮点部件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res2-1"><p><img data-src="image_Da5MgPENTq.png" alt="1个浮点部件" title="1个浮点部件"></p>
-<p><img data-src="image_B7x4cW0ajI.png" alt="1个浮点部件（图2）" title="1个浮点部件（图2）"></p></div><div class="tab-pane" id="res2-2"><p><img data-src="image_G26kibZeDp.png" alt="4个浮点部件" title="4个浮点部件"></p>
-<p><img data-src="image_HpO1C90ynd.png" alt="4个浮点部件（图2）" title="4个浮点部件（图2）"></p></div></div></div>
-<p>同一段代码执行相同步，但是经过对比发现浮点运算部件的增减对于程序执行效率没有影响，可能是因为程序中不存在结构相关，所以并行度没有增加，系统性能没有提升。</p>
-<h3 id="考虑增加forward部件对性能的影响">考虑增加 forward 部件对性能的影响</h3>
-<div class="tabs" id="res3"><ul class="nav-tabs"><li class="tab active"><a href="#res3-1">使用 Forward 组件</a></li><li class="tab"><a href="#res3-2">不使用 Forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res3-1"><p><img data-src="image_ksxwWa7qjZ.png" alt="使用Forward组件" title="使用Forward组件"></p></div><div class="tab-pane" id="res3-2"><p><img data-src="image_9ROBHMR9xL.png" alt="禁用Forward组件" title="禁用Forward组件"></p></div></div></div>
-<p>使用 forward 组件后，执行的 cycles 比不适用 forward 组件要少，且产生的 RAW stalls 有明显减少，程序执行的效率提高了很多。在代码优化前，RAW 相关占 48 个 stalls，在优化后，RAW 现象大量减少，数据相关明显改善，提高了代码执行效率。</p>
-<h3 id="观察转移指令在转移成功和转移不成功时的流水线开销">观察转移指令在转移成功和转移不成功时的流水线开销</h3>
-<p><img data-src="image_55nB__dTOL.png" alt="Conditional Branches 输出" title="Conditional Branches 输出"></p>
-<p>本次实验中，转移成功的几率比较大。由于系统按照预测成功来执行指令，当判断转移不成功时，系统对 trap 指令进行的操作全部作废，转而去执行别的指令。这里代码优化对于转移指令没有影响。</p>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>计算机组成原理</category>
-      </categories>
-      <tags>
-        <tag>WinDLX</tag>
-        <tag>计算机组成原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>DLX 处理器程序设计</title>
-    <url>/2022/10/24/experiments/jizu/programming/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>学习使用 DLX 汇编语言编程，进一步分析相关现象</p>
-<h2 id="实验原理">实验原理</h2>
-<p>掌握向量运算算法和编程方法。由于操作数为双精度，需要使用操作浮点双精度的指令。</p>
-<p>本次使用到的指令为</p>
-<ul>
-<li>ADDD 浮点加指令，其命令格式为 <code>rd,rs1,rs2</code>，rs1 和 rs2 将加到 rd 上。</li>
-<li>ADDI 立即数加指令，其命令格式为 <code>rd,rs1,immediate</code>，rs1 和一个立即数将加到 rd 上。</li>
-<li>SD 存储浮点数指令，其命令格式为 <code>offset(rs1),rd</code>，将 rs1 对应空间的数存储在 rd 上。</li>
-<li>LD 读取浮点数指令，其命令格式为 <code>rd,offset(rs1)</code>，将 rs1 对应空间的数取到 rd 上。</li>
-<li>BNEZ 判断指令，其命令格式为 <code>rs1,name</code>，如果 CPR 寄存器不为零，则继续执行 name 部分。</li>
-</ul>
-<h2 id="实验步骤">实验步骤</h2>
-<ol>
-<li>
-<p>自编一段汇编代码，完成两双精度浮点一维向量的加法（或乘除法）运算，并输出结果。向量长度 &gt;=16。</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">VecLen: .word 16</span><br><span class="line">Vector1: .double 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16</span><br><span class="line">; vec1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]</span><br><span class="line">Vector2: .double 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32</span><br><span class="line">; vec2=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]</span><br><span class="line">; 声明向量长度以及两个向量1、2</span><br><span class="line">Printf1: .asciiz "The result is\n"</span><br><span class="line">Printf2: .asciiz "%f\t"</span><br><span class="line"></span><br><span class="line">.align 2</span><br><span class="line"></span><br><span class="line">PrintfHead: .word Printf1</span><br><span class="line">PrintfValue: .word Printf2</span><br><span class="line">result: .space 8</span><br><span class="line">; 打印数据空间的申请</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">addi r14,r0,PrintfHead</span><br><span class="line">trap 5</span><br><span class="line">lw r20,VecLen</span><br><span class="line">addi r2,r0,0</span><br><span class="line"></span><br><span class="line">loop: ; 循环读入向量</span><br><span class="line">ld f0,Vector1(r2)</span><br><span class="line">ld f2,Vector2(r2)</span><br><span class="line">addd f4,f0,f2</span><br><span class="line">; 主要的加法运算</span><br><span class="line">sd result,f4</span><br><span class="line">addi r14,r0,PrintfValue</span><br><span class="line">trap 5</span><br><span class="line">addi r2,r2,8</span><br><span class="line">subi r20,r20,1</span><br><span class="line">bnez r20,loop</span><br><span class="line"></span><br><span class="line">trap 0</span><br><span class="line">; 系统中断，输出结果 "The result is 3.000000, 6.000000, ...."</span><br></pre></td></tr></tbody></table></figure>
-<p>程序，运行结果为下图</p>
-<img data-src="/2022/10/24/experiments/jizu/programming/image_phympq_63F.png" class="">
-<p>数据统计为下窗口所示：</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_jmdoV6noOX.png" alt=""></div><div class="group-picture-column"><img data-src="image_nIrZXuh4OD.png" alt=""></div></div></div>
-</li>
-<li>
-<p>观察程序中出现的数据 / 控制 / 结构相关。</p>
- <img data-src="/2022/10/24/experiments/jizu/programming/image_30Lxy8oMOz.png" class="">
-<p>数据相关：对当前指令的操作数寄存器进行操作（EX）的时候，前几条指令的运算结果还未写回（WB）结果寄存器，产生了数据相关。</p>
-<p>典型指令组合</p>
- <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">subi r16,r16,0x1</span><br><span class="line">bnez r16,Loop</span><br></pre></td></tr></tbody></table></figure>
-<p>控制相关：由于系统按照预测成功来执行指令，所以执行 bnez 后会马上将其下一条指令 trap 读取进来</p>
-<p>典型指令组合：</p>
- <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">bnez r20,Loop</span><br><span class="line">trap 0x0</span><br></pre></td></tr></tbody></table></figure>
-<p>程序中并没有出现结构相关。因为整体仅仅做了一次简单的加法。</p>
-</li>
-<li>
-<p>浮点运算部件带来的影响</p>
-<div class="tabs" id="floats"><ul class="nav-tabs"><li class="tab active"><a href="#floats-1">使用 1 个浮点加法器</a></li><li class="tab"><a href="#floats-2">使用 2 个浮点加法器</a></li></ul><div class="tab-content"><div class="tab-pane active" id="floats-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_CHQj5DasyE.png" class=""></div><div class="tab-pane" id="floats-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_mT6P512ORr.png" class=""></div></div></div>
-<p>增加浮点加法器的数量后，程序执行的性能并未得到提升。</p>
-</li>
-<li>
-<p>Forward 组件的影响</p>
-<div class="tabs" id="forwards"><ul class="nav-tabs"><li class="tab"><a href="#forwards-1">启用 Forward 组件</a></li><li class="tab active"><a href="#forwards-2">禁用 Forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane" id="forwards-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_uFBPKTACNp.png" class=""></div><div class="tab-pane active" id="forwards-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_4mnDTJDUV_.png" class=""></div></div></div>
-<p>关闭 Forward 后，运行时间由 267 个周期增加到 333 个周期，可计算 Forward 技术为该程序带来了 333/267=1.25 的加速比。且 Forward 技术明显减少了 RAW stalls，降低了数据相关的数量。</p>
-</li>
-<li>
-<p>转移指令的影响</p>
-<div class="tabs" id="transfer"><ul class="nav-tabs"><li class="tab"><a href="#transfer-1">转移成功</a></li><li class="tab"><a href="#transfer-2">转移失败</a></li></ul><div class="tab-content"><div class="tab-pane" id="transfer-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_OWjDOo_wJ6.png" class=""></div><div class="tab-pane" id="transfer-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_vaMruizC-Z.png" class=""></div></div></div>
-<p>成功时，已经进入取指阶段的指令会被放弃（aborted），转入转移的目标指令的取指操作，造成流水线断流；若转移失败，已经进入取指阶段的指令继续进入译码阶段，流水线不断流。</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>计算机组成原理</category>
-      </categories>
-      <tags>
-        <tag>WinDLX</tag>
-        <tag>计算机组成原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>指令流水线相关性分析</title>
-    <url>/2022/10/15/experiments/jizu/relation-analysis/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>通过使用 WINDLX 模拟器，对程序中的三种相关原理进行观察，并对使用专用通路，增加运算部件等技术对性能的影响进行考察，加深对流水线和 RISC 处理器的特点的理解。</p>
-<h2 id="实验原理">实验原理</h2>
-<p>指令流水线中主要有结构相关、数据相关、控制相关。相关影响流水线性能。</p>
-<h3 id="数据相关">数据相关</h3>
-<p>由于相邻的两条或多条指令使用了相同的数据地址而发生的关联。</p>
-<h3 id="结构相关">结构相关</h3>
-<p>结构相关是指因为程序的执行方向可能被改变而引起的相关。可能改变程序执行方向的指令通常有无条件转移、一般条件转移、复合条件转移、子程序调用、中断等。</p>
-<h3 id="控制相关">控制相关</h3>
-<p>控制相关是指由转移指令引发的相关。</p>
-<h2 id="实验步骤">实验步骤</h2>
-<div class="note info"><h4 id="实验准备">实验准备</h4>
-<p>将浮点运算的延时设为 4 个周期<br>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_aXqazps9yb.png" class=""></p>
-</div>
-<p>选择 File→Load Code or Data，将 input.s 文件和 fact.s 文件按下图顺序装入主存</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_6o0VQk_-Ji.png" class="">
-<p>使用 WinDLX 模拟器，对 Fact.s 做如下分析：</p>
-<h3 id="观察程序中出现的数据-控制-结构相关，指出程序中出现上述现象的指令组合">观察程序中出现的数据 / 控制 / 结构相关，指出程序中出现上述现象的指令组合</h3>
-<h4 id="数据相关及其组合">数据相关及其组合</h4>
-<p>5 个周期里，Clock Cycle Diagram 窗口的时空图和 Pipeline 窗口中的流图第一次出现了橘黄色的 R-Stall</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_nALPeNEB9z.png" class="">
-<p>点击 <code>seqi r5,r3,0xa</code>，出现的具体信息如下图</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_l4MCfQqj2b.png" class="">
-<p><code>lbu r3,0x0(r2)</code> 要在 WB 周期内写回 R3 的数据，而下一条指令 <code>seqi r5,r3,0xa</code> 要在 intEX 周期内读取 r3 的数据，发生了写后读 RAW，所以为了避免冲突，<code>seqi r5,r3,0xa</code> 的 <code>intEX</code> 指令延迟了一个周期进行。</p>
-<p>指令组合为</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">lbu r3,0x0(r2)</span><br><span class="line">seqi r5,r3,0xa</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="控制相关及其组合">控制相关及其组合</h4>
-<p>在第 4 个时钟周期，第一条命令处于 MEM 段，第二条命令处于 intEX 段，第四条命令处于 IF 段，而第三条命令显示为 aborted。</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_QGI1hfUiiE.png" class="">
-<p>发生 aborted 的原因为，<code>jal InputUnsigned</code> 是无条件分支指令，但只有在第三个时钟周期，<code>jal</code> 指令被译码后才知道。这时，下一条指令 <code>movei2fp</code> 已经取出，但需执行的下一条指令在另一个地址处，因此，<code>movi2fp</code> 的执行应该被取消，在流水线中留下气泡，此处为控制相关。</p>
-<p>指令组合为</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">addi r1,r0,0x1000</span><br><span class="line">jal InputUnsigned</span><br><span class="line">movi2fp,f10,r1</span><br><span class="line">sw SaveR2(r0),r2</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="结构相关及其组合">结构相关及其组合</h4>
-<p>从 Clock Cycle Diagram 中，可以看出指令 stall 了 4 个周期</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_JX5gYYzGzj.png" class="">
-<p><code>addi r2,r2,0x1</code> 与前面的一条指令 <code>add r1,r1,r3</code> 发生了结构相关。由于上一条指令数据相关需要停 4 个周期，在 ID 段停滞，不能进入 intEX 段，故 <code>addi r2,r2,0x1</code> 也不能进入 ID 段，译码部分被占用，故发生了结构相关。</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_Zwun2HbC43.png" class="">
-<p>相关指令组合</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">add r1,r1,r3</span><br><span class="line">addi r2,r2,0x1</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="考察增加浮点运算部件对性能的影响">考察增加浮点运算部件对性能的影响</h3>
-<div class="tabs" id="results"><ul class="nav-tabs"><li class="tab active"><a href="#results-1">count=1</a></li><li class="tab"><a href="#results-2">count=2</a></li></ul><div class="tab-content"><div class="tab-pane active" id="results-1"><p>浮点运算部件的 Count 均为 1</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_q0ciOGmpYn.png" alt=""></div><div class="group-picture-column"><img data-src="image_b9tWK4nJeR.png" alt=""></div></div></div></div><div class="tab-pane" id="results-2"><p>浮点运算部件的 Count 均为 2</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_9uzcYEaJhk.png" alt=""></div><div class="group-picture-column"><img data-src="image_jD1hxscOAo.png" alt=""></div></div></div></div></div></div>
-<p>比较各个数据，发现没有变化，无论怎么增加统计结果都一样，由此可见，在该程序中，浮点运算部件的增减对效率没有影响。原因在于，此程序浮点计算指令没有重叠，所以并行度没有增加，性能没有提高。</p>
-<h3 id="考察增加forward部件对性能的影响">考察增加 forward 部件对性能的影响</h3>
-<div class="tabs" id="results-2"><ul class="nav-tabs"><li class="tab"><a href="#results-2-1">不启用 forward 组件</a></li><li class="tab active"><a href="#results-2-2">使用 forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane" id="results-2-1"><p><img data-src="image_qREd2veXyT.png" alt=""></p></div><div class="tab-pane active" id="results-2-2"><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_aJF5rKvDFD.png" alt=""></div><div class="group-picture-column"><img data-src="image_5MH0T4ijzq.png" alt=""></div></div></div></div></div></div>
-<p>由以上截图可以发现：</p>
-<ul>
-<li>增加 forward 组件后所执行总的时钟周期相应有所减少</li>
-<li>增加 forward 组件使得 Stall 的总数有所下降，RAW 的总时钟周期从 29.09% 下降到了 13.64%</li>
-</ul>
-<p>总之，使用 forward 部件后，数据相关减少，性能得到一定的改善</p>
-<h3 id="观察转移指令在转移成功和转移不成功时候的流水线开销">观察转移指令在转移成功和转移不成功时候的流水线开销</h3>
-<p>floating 设置为 2，4，forward 启动时条件转移结果如下图：</p>
-<p><img data-src="image_IBeOkazciZ.png" alt=""></p>
-<p>转移指令一共 6 条，成功转移 2 条，不成功转移 4 条。</p>
-<p>若转移不成功，对流水线执行无影响，流水线吞吐率和效率没有降低。若转移成功，则要废弃预先读入的指令，重新从转移成功处读取指令，每执行一条条件转移指令，一条 x 段流水线就有 x-2 个流水线被浪费掉，执行效率降低，性能有一定损失。</p>
-<h2 id="实验总结">实验总结</h2>
-<p>流水线技术可以提高计算机执行效率，但也有很多不足，当发生一些相关的时候执行就需要延迟，这会影响到流水线的吞吐率，而要保证高效，就需要对代码进行优化处理，这是需要个人的努力的。</p>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>计算机组成原理</category>
-      </categories>
-      <tags>
-        <tag>WinDLX</tag>
-        <tag>计算机组成原理</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>文件系统实验</title>
     <url>/2019/11/11/experiments/oskernel/file-system/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
@@ -3070,6 +2803,75 @@ M --&gt; B
       </tags>
   </entry>
   <entry>
+    <title>进程管理实验</title>
+    <url>/2019/10/12/experiments/oskernel/process-management/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>本次实验主要进行了进程有关的实验，利用 Linux 下的系统 API——<code>fork()</code> 函数来在 Linux 下创建一个新的进程，运行一个小程序来观察进程的争用资源和互相通信的现象。</p>
+<span id="more"></span>
+<h2 id="实验步骤">实验步骤</h2>
+<h3 id="进程的软中断通信">进程的软中断通信</h3>
+<div class="note primary"><h4 id="要求">要求</h4>
+<p>使用系统调用 <code>fork()</code> 创建两个子进程，再用系统调用 <code>signal()</code> 让父进程捕捉键盘上来的中断信号（即按<kbd> Delete</kbd> 键），当父进程接受到这两个软中断的其中某一个后，父进程用系统调用 <code>kill()</code> 向两个子进程分别发送整数值为 16 和 17 软中断信号，子进程获得对应软中断信号后，分别输出下列信息后终止：</p>
+<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">Child process 1 is killed by parent!!</span><br><span class="line">Child process 2 is killed by parent!!</span><br></pre></td></tr></tbody></table></figure>
+<p>父进程调用 <code>wait()</code> 函数等待两个子进程终止后，输出以下信息后终止:</p>
+<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">Parent process is killed!!</span><br></pre></td></tr></tbody></table></figure>
+</div>
+<div class="tabs" id="res1"><ul class="nav-tabs"><li class="tab active"><a href="#res1-1"><i class="fa fa-code"></i>源代码</a></li><li class="tab"><a href="#res1-2"><i class="fa fa-check"></i>运行结果</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res1-1"><figure class="highlight c"><figcaption><span>process.c</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> wait_flag;</span><br><span class="line"><span class="type">void</span> <span class="title function_">stop</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>{</span><br><span class="line">	<span class="type">int</span> pid1,pid2;</span><br><span class="line">	signal(<span class="number">3</span>,stop);</span><br><span class="line">	<span class="keyword">while</span>((pid1=fork())&lt;<span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span>(pid1&gt;<span class="number">0</span>){</span><br><span class="line">		<span class="keyword">while</span>((pid2=fork())&lt;<span class="number">0</span>);</span><br><span class="line">		<span class="keyword">if</span>(pid2&gt;<span class="number">0</span>){</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"----\npid1:%d\npid2:%d\n\n----"</span>,pid1,pid2);</span><br><span class="line">			wait_flag=<span class="number">1</span>;</span><br><span class="line">			sleep(<span class="number">5</span>);</span><br><span class="line">			kill(pid1,<span class="number">16</span>);</span><br><span class="line">			kill(pid2,<span class="number">17</span>);</span><br><span class="line">			wait(<span class="number">0</span>);</span><br><span class="line">			wait(<span class="number">0</span>);</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"\n Parent process is killed!\n"</span>);</span><br><span class="line">			<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span>{</span><br><span class="line">			wait_flag = <span class="number">1</span>;</span><br><span class="line">			signal(<span class="number">17</span>,stop);</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"\n Child process 2 is killed by parent!\n"</span>);</span><br><span class="line">			<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">		}</span><br><span class="line">	}<span class="keyword">else</span>{</span><br><span class="line">		wait_flag=<span class="number">1</span>;</span><br><span class="line">		signal(<span class="number">16</span>,stop);</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"\n Child process 1 is killed by parent!\n"</span>);</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line"><span class="type">void</span> <span class="title function_">stop</span><span class="params">()</span>{</span><br><span class="line">	wait_flag=<span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="res1-2"><img data-src="/2019/10/12/experiments/oskernel/process-management/00.png" class=""></div></div></div>
+<h3 id="进程的管道通信">进程的管道通信</h3>
+<div class="note primary"><h4 id="要求">要求</h4>
+<p>使用系统调用 <code>pipe()</code> 建立一条管道线，两个子进程分别向管道写一句话:</p>
+<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">Child process 1 is sending a message!</span><br><span class="line">Child process 2 is sending a message!</span><br></pre></td></tr></tbody></table></figure>
+<p>而父进程则从管道中读出来自于两个子进程的信息，显示在屏幕上。父进程先接收子进程 P1 发来的消息，然后再接收子进程 P2 发来的消息。</p>
+</div>
+<div class="tabs" id="res2"><ul class="nav-tabs"><li class="tab active"><a href="#res2-1"><i class="fa fa-code"></i>源代码</a></li><li class="tab"><a href="#res2-2"><i class="fa fa-check"></i>运行结果</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res2-1"><figure class="highlight c"><figcaption><span>pipe.c</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> pid1,pid2;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>{</span><br><span class="line">	<span class="type">int</span> fd[<span class="number">2</span>];</span><br><span class="line">	<span class="type">char</span> outpipe[<span class="number">100</span>],inpipe[<span class="number">100</span>];</span><br><span class="line">	pipe(fd);</span><br><span class="line">	<span class="keyword">while</span>((pid1=fork())== <span class="number">-1</span>);</span><br><span class="line">	<span class="keyword">if</span>(pid1==<span class="number">0</span>){</span><br><span class="line">		lockf(fd[<span class="number">1</span>],<span class="number">1</span>,<span class="number">0</span>); <span class="comment">//lock the pipe</span></span><br><span class="line">		<span class="built_in">sprintf</span>(outpipe,<span class="string">"\nChild process 1 is sending message!\n"</span>);</span><br><span class="line">		write(fd[<span class="number">1</span>],outpipe,<span class="number">50</span>);</span><br><span class="line">		sleep(<span class="number">5</span>);         <span class="comment">//wait for read process</span></span><br><span class="line">		lockf(fd[<span class="number">1</span>],<span class="number">0</span>,<span class="number">0</span>); <span class="comment">//unlock the pipe</span></span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">else</span>{</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"\npid1:%d\n"</span>,pid1);</span><br><span class="line">		<span class="keyword">while</span>((pid2=fork())== <span class="number">-1</span>);</span><br><span class="line">		<span class="keyword">if</span>(pid2==<span class="number">0</span>){</span><br><span class="line">			lockf(fd[<span class="number">1</span>],<span class="number">1</span>,<span class="number">0</span>);</span><br><span class="line">			<span class="built_in">sprintf</span>(outpipe,<span class="string">"\nChild process 2 is sending message!\n"</span>);</span><br><span class="line">			write(fd[<span class="number">1</span>],outpipe,<span class="number">50</span>);</span><br><span class="line">			sleep(<span class="number">5</span>);</span><br><span class="line">			lockf(fd[<span class="number">1</span>],<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">			<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span>{</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"\npid2:%d\n"</span>,pid2);</span><br><span class="line">			wait(<span class="number">0</span>);  <span class="comment">//wait for child process 1</span></span><br><span class="line">			read(fd[<span class="number">0</span>],inpipe,<span class="number">50</span>);</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"%s\n"</span>,inpipe);</span><br><span class="line">			wait(<span class="number">0</span>);  <span class="comment">//wait for child process 2</span></span><br><span class="line">			read(fd[<span class="number">0</span>],inpipe,<span class="number">50</span>);</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"%s\n"</span>,inpipe);</span><br><span class="line">			<span class="built_in">exit</span>(<span class="number">0</span>);  <span class="comment">//parent process terminated</span></span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="res2-2"><img data-src="/2019/10/12/experiments/oskernel/process-management/2.png" class=""></div></div></div>
+<h2 id="实验关键里程碑数据与结果">实验关键里程碑数据与结果</h2>
+<h3 id="进程的软中断通信-2">进程的软中断通信</h3>
+<p>前面的运行结果中，虽然 <code>pid1</code> 总是小于 <code>pid2</code>，但是两个进程结束的顺序总是不一样的。我们来把程序后台运行一下，观察程序中所有的 <code>pid</code> 值和行为。</p>
+<img data-src="/2019/10/12/experiments/oskernel/process-management/0.png" class="">
+<img data-src="/2019/10/12/experiments/oskernel/process-management/1.png" class="">
+<p>我们运行了 <code>ps -aux</code> 命令来查看系统中的后台进程，在最下方找到了 <code>process</code> 进程，其父进程 <code>pid</code> 为 4473，而两个子进程 <code>pid</code> 分别为 4475 和 4476。</p>
+<p>之所以两个进程结束的顺序不同，是因为 <code>kill</code> 发出的信号没有被及时处理或可能被封锁。虽然调用 <code>kill</code> 的顺序是先 1 后 2，但是发送的都是软中断信号，它们都需要等待所有相关资源的释放。而释放的顺序是不确定的，由于存在资源争夺，信号接受的先后也是不确定的。</p>
+<p>观察它们在后台表现的程序名发现，它们都是由中括号括起的，后面有一个 <code>defunct</code> 标志，同时又显示为 "Z" 状态，表明此进程为僵尸进程，直接 <code>kill</code> 其 <code>pid</code> 将不会奏效。需要对其父进程 <code>pid</code> 进行 <code>kill</code> 操作，才可以正确结束进程。</p>
+<h3 id="进程的管道通信-2">进程的管道通信</h3>
+<p>仍然将程序置于后台运行，观察后台 <code>pid</code> 和行为。</p>
+<img data-src="/2019/10/12/experiments/oskernel/process-management/3.png" class=""> <img data-src="/2019/10/12/experiments/oskernel/process-management/4.png" class="">
+<p>以上后台输出表明，在管道通信时，实质上启动了三个 <code>pipe</code> 进程，其中一个是父进程，它开启了下面的两个子进程，并监听管道中子进程传达的消息。在这个过程中，进程均为 "S" 状态，为休眠状态。</p>
+<div class="note info"><p>那为什么每次运行程序时，子进程发送信息的先后总是不同呢？这其中应该也存在资源的争用问题。虽然 <code>pid1</code> 的创建一定早于 <code>pid2</code>，但是调用 <code>lockf</code> 的先后顺序是不一定的，如果子进程 1 率先执行到 <code>lockf(fd[1],1,0)</code>，那么它将先阻塞管道，把信息传入管道中，供父进程读出并打印在终端中。子进程 2 此时即使创建成功，有 <code>pid</code> 号，但是因为管道被阻塞，无法进入管道，故阻塞在它的 <code>lockf(fd[1],1,0)</code> 语句中，等到子进程 1 释放管道时，才可进入管道。反之相似。</p>
+</div>
+<h2 id="实验难点与收获">实验难点与收获</h2>
+<ul>
+<li>这次的实验步骤不是很多，主要难点在于编程和对进程资源争用的理解上。</li>
+<li>掌握了 Linux 下进程管理相关的 C 语言 API。</li>
+<li>对于进程的并发执行有了更深层次的理解。</li>
+</ul>
+<h2 id="实验思考">实验思考</h2>
+<p>子进程的结束和父进程的运行是一个异步过程，即父进程永远无法预测子进程到底什么时候结束。那么会不会因为父进程太忙来不及 <code>wait</code> 子进程，或者说不知道子进程什么时候结束，而丢失子进程结束时的状态信息呢？</p>
+<p>查阅资料得知：“不会。因为 Linux 提供了一种机制可以保证，只要父进程想知道子进程结束时的状态信息，就可以得到。这种机制就是：当子进程走完了自己的生命周期后，它会执行 <code>exit()</code> 系统调用，内核释放该进程所有的资源，包括打开的文件，占用的内存等。但是仍然为其保留一定的信息 (包括进程号、退出码、退出状态、运行时间等)，这些数据会一直保留到系统将它传递给它的父进程为止，直到父进程通过 <code>wait</code> / <code>waitpid</code> 来取时才释放。</p>
+<p>也就是说，当一个进程死亡时，它并不是完全的消失了。进程终止，它不再运行，但是还有一些残留的数据等待父进程收回。当父进程 <code>fork()</code> 一个子进程后，它必须用 <code>wait()</code> (或者 <code>waitpid()</code>) 等待子进程退出。正是这个 <code>wait()</code> 动作来让子进程的残留数据消失。”</p>
+<p>根据这个资料，我想到了一个问题：假如进程通信代码中去掉父进程的 <code>wait</code> 调用，<code>fork</code> 出来的两个子进程还能正确结束吗？</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/10/12/experiments/oskernel/process-management/5.png" class=""></div><div class="group-picture-column"><img data-src="/2019/10/12/experiments/oskernel/process-management/6.png" class=""></div></div></div>
+<p>仍然正确地结束了两个进程。出现这样的现象可能是因为 Linux 系统中有一些特殊的机制来保证 “僵尸进程” 被正确地接管 (具体来说，由 init 进程来接管，其 pid 为 1)。</p>
+<h3 id="Windows对应的API">Windows 对应的 API</h3>
+<div class="tabs" id="windowsapi"><ul class="nav-tabs"><li class="tab active"><a href="#windowsapi-1"><code>createProcess</code></a></li><li class="tab"><a href="#windowsapi-2"><code>WaitForSingleObject</code></a></li><li class="tab"><a href="#windowsapi-3"><code>ExitProcess</code></a></li><li class="tab"><a href="#windowsapi-4">信号机制</a></li><li class="tab"><a href="#windowsapi-5"><code>TerminateProcess</code></a></li></ul><div class="tab-content"><div class="tab-pane active" id="windowsapi-1"><p>对应于 Linux 的 <code>fork()</code>API</p>
+<figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line">BOOL <span class="title function_">CreateProcess</span><span class="params">(</span></span><br><span class="line"><span class="params">    LPCTSTR lpApplicationName,        <span class="comment">//指向一个NULL结尾的、用来指定可执行模块的字符串。</span></span></span><br><span class="line"><span class="params">    LPTSTR lpCommandLine,        <span class="comment">//指向一个以NULL结尾的字符串，该字符串指定要执行的命令行。</span></span></span><br><span class="line"><span class="params">    LPSECURITY_ATTRIBUTES lpProcessAttributes。<span class="comment">//指向一个SECURITY_ATTRIBUTES结构体，这个结构体决定是否返回的句柄可以被子进程继承。如果lpProcessAttributes参数为空（NULL），那么句柄不能被继承。</span></span></span><br><span class="line"><span class="params">    LPSECURITY_ATTRIBUTES lpThreadAttributes,        <span class="comment">//同lpProcessAttribute，不过这个参数决定的是线程是否被继承，通常置为NULL。</span></span></span><br><span class="line"><span class="params">    BOOL bInheritHandles,       <span class="comment">//指示新进程是否从调用进程处继承了句柄。</span></span></span><br><span class="line"><span class="params">    DWORD dwCreationFlags,  <span class="comment">//指定附加的、用来控制优先类和进程的创建的标志。</span></span></span><br><span class="line"><span class="params">    LPVOID lpEnvironment,        <span class="comment">//指向一个新进程的环境块。如果此参数为空，新进程使用调用进程的环境。</span></span></span><br><span class="line"><span class="params">    LPCTSTR lpCurrentDirectory,        <span class="comment">//指向一个以NULL结尾的字符串，这个字符串用来指定子进程的工作路径。</span></span></span><br><span class="line"><span class="params">    LPSTARTUPINFO lpStartupInfo,        <span class="comment">//指向一个用于决定新进程的主窗体如何显示的STARTUPINFO结构体。</span></span></span><br><span class="line"><span class="params">    LPPROCESS_INFORMATION lpProcessInformation  <span class="comment">//指向一个用来接收新进程的识别信息的PROCESS_INFORMATION结构体。</span></span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="windowsapi-2"><p>对应于 Linux 的 <code>waitpid()</code></p>
+<figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line">DWORD <span class="title function_">WaitForSingleObject</span><span class="params">(</span></span><br><span class="line"><span class="params">HANDLE hHandle,   <span class="comment">//线程的Handle</span></span></span><br><span class="line"><span class="params">DWORDdwMilliseconds  <span class="comment">// 相应的Timeout时间</span></span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="windowsapi-3"><p>对应于 <code>exit()</code></p>
+<figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">ExitProcess</span><span class="params">(UINT uExitCode)</span>;</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="windowsapi-4"><p>Windows 也使用 <code>signal.h</code> 并也有 <code>signal</code> 函数作为信号控制函数。</p>
+<figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="type">void</span> __cdecl *<span class="title function_">signal</span><span class="params">(<span class="type">int</span> sig, <span class="type">int</span> (*func)(<span class="type">int</span>, <span class="type">int</span>))</span></span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="windowsapi-5"><p>有关进程终止，Windows 使用 <code>TerminateProcess</code> 函数</p>
+<figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line">BOOL <span class="title function_">TerminateProcess</span><span class="params">(</span></span><br><span class="line"><span class="params">HANDLE hProcess,  <span class="comment">//要终止(杀死)进程的句柄，需要有PROCESS_TERMINATE权限。</span></span></span><br><span class="line"><span class="params">UINT uExitCode  <span class="comment">//设置进程的退出值。可通过GetExitCodeProcess函数得到一个进程的退出值。</span></span></span><br><span class="line"><span class="params">)</span></span><br></pre></td></tr></tbody></table></figure></div></div></div>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>技术</category>
+        <category>OS</category>
+        <category>操作系统内核</category>
+        <category>进程管理</category>
+      </categories>
+      <tags>
+        <tag>OS</tag>
+        <tag>进程管理</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Red Hat Linux 的安装和使用</title>
     <url>/2019/09/26/experiments/oskernel/using-rhel-and-gcc/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
@@ -3363,72 +3165,270 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
       </tags>
   </entry>
   <entry>
-    <title>进程管理实验</title>
-    <url>/2019/10/12/experiments/oskernel/process-management/</url>
+    <title>WinDLX 模拟器安装与使用</title>
+    <url>/2022/10/15/experiments/jizu/installing-and-using-windlx/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>本次实验主要进行了进程有关的实验，利用 Linux 下的系统 API——<code>fork()</code> 函数来在 Linux 下创建一个新的进程，运行一个小程序来观察进程的争用资源和互相通信的现象。</p>
-<span id="more"></span>
+<p>建立实验环境，了解 WINDLX 模拟器的结构及使用。</p>
+<h2 id="实验原理">实验原理</h2>
+<p>WinDLX 软件包中带有说明文件，供安装程序时候使用。</p>
 <h2 id="实验步骤">实验步骤</h2>
-<h3 id="进程的软中断通信">进程的软中断通信</h3>
-<div class="note primary"><h4 id="要求">要求</h4>
-<p>使用系统调用 <code>fork()</code> 创建两个子进程，再用系统调用 <code>signal()</code> 让父进程捕捉键盘上来的中断信号（即按<kbd> Delete</kbd> 键），当父进程接受到这两个软中断的其中某一个后，父进程用系统调用 <code>kill()</code> 向两个子进程分别发送整数值为 16 和 17 软中断信号，子进程获得对应软中断信号后，分别输出下列信息后终止：</p>
-<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">Child process 1 is killed by parent!!</span><br><span class="line">Child process 2 is killed by parent!!</span><br></pre></td></tr></tbody></table></figure>
-<p>父进程调用 <code>wait()</code> 函数等待两个子进程终止后，输出以下信息后终止:</p>
-<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">Parent process is killed!!</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="安装WinDLX">安装 WinDLX</h3>
+<p>由于 WinDLX 是一个非常古老的模拟软件，但是我们现在多用 Win10 和 Win11 系统，所以需要使用虚拟机运行该软件。Win11 可以使用 Hyper-V 虚拟化运行方案，其界面如下所示：</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_qFbv2Qa_D3.png" class="" title="Hyper-V管理器主界面">
+<p>具体启用支持的方法在这里不多说了，之后可以像 VMware 虚拟机一样，添加一个 Windows XP 的系统镜像，并等待虚拟机上操作系统安装的流程走完，即可开始使用。</p>
+<div class="note info"><p>Hyper-V 无法像 VMware 虚拟机那样直接将文件拖入窗口来复制，但可以先将需要用到的文件制作成 vhd 虚拟硬盘，然后再加载硬盘。</p>
 </div>
-<div class="tabs" id="res1"><ul class="nav-tabs"><li class="tab active"><a href="#res1-1"><i class="fa fa-code"></i>源代码</a></li><li class="tab"><a href="#res1-2"><i class="fa fa-check"></i>运行结果</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res1-1"><figure class="highlight c"><figcaption><span>process.c</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> wait_flag;</span><br><span class="line"><span class="type">void</span> <span class="title function_">stop</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>{</span><br><span class="line">	<span class="type">int</span> pid1,pid2;</span><br><span class="line">	signal(<span class="number">3</span>,stop);</span><br><span class="line">	<span class="keyword">while</span>((pid1=fork())&lt;<span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span>(pid1&gt;<span class="number">0</span>){</span><br><span class="line">		<span class="keyword">while</span>((pid2=fork())&lt;<span class="number">0</span>);</span><br><span class="line">		<span class="keyword">if</span>(pid2&gt;<span class="number">0</span>){</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"----\npid1:%d\npid2:%d\n\n----"</span>,pid1,pid2);</span><br><span class="line">			wait_flag=<span class="number">1</span>;</span><br><span class="line">			sleep(<span class="number">5</span>);</span><br><span class="line">			kill(pid1,<span class="number">16</span>);</span><br><span class="line">			kill(pid2,<span class="number">17</span>);</span><br><span class="line">			wait(<span class="number">0</span>);</span><br><span class="line">			wait(<span class="number">0</span>);</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"\n Parent process is killed!\n"</span>);</span><br><span class="line">			<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span>{</span><br><span class="line">			wait_flag = <span class="number">1</span>;</span><br><span class="line">			signal(<span class="number">17</span>,stop);</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"\n Child process 2 is killed by parent!\n"</span>);</span><br><span class="line">			<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">		}</span><br><span class="line">	}<span class="keyword">else</span>{</span><br><span class="line">		wait_flag=<span class="number">1</span>;</span><br><span class="line">		signal(<span class="number">16</span>,stop);</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"\n Child process 1 is killed by parent!\n"</span>);</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line"><span class="type">void</span> <span class="title function_">stop</span><span class="params">()</span>{</span><br><span class="line">	wait_flag=<span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="res1-2"><img data-src="/2019/10/12/experiments/oskernel/process-management/00.png" class=""></div></div></div>
-<h3 id="进程的管道通信">进程的管道通信</h3>
-<div class="note primary"><h4 id="要求">要求</h4>
-<p>使用系统调用 <code>pipe()</code> 建立一条管道线，两个子进程分别向管道写一句话:</p>
-<figure class="highlight text"><table><tbody><tr><td class="code"><pre><span class="line">Child process 1 is sending a message!</span><br><span class="line">Child process 2 is sending a message!</span><br></pre></td></tr></tbody></table></figure>
-<p>而父进程则从管道中读出来自于两个子进程的信息，显示在屏幕上。父进程先接收子进程 P1 发来的消息，然后再接收子进程 P2 发来的消息。</p>
-</div>
-<div class="tabs" id="res2"><ul class="nav-tabs"><li class="tab active"><a href="#res2-1"><i class="fa fa-code"></i>源代码</a></li><li class="tab"><a href="#res2-2"><i class="fa fa-check"></i>运行结果</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res2-1"><figure class="highlight c"><figcaption><span>pipe.c</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> pid1,pid2;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>{</span><br><span class="line">	<span class="type">int</span> fd[<span class="number">2</span>];</span><br><span class="line">	<span class="type">char</span> outpipe[<span class="number">100</span>],inpipe[<span class="number">100</span>];</span><br><span class="line">	pipe(fd);</span><br><span class="line">	<span class="keyword">while</span>((pid1=fork())== <span class="number">-1</span>);</span><br><span class="line">	<span class="keyword">if</span>(pid1==<span class="number">0</span>){</span><br><span class="line">		lockf(fd[<span class="number">1</span>],<span class="number">1</span>,<span class="number">0</span>); <span class="comment">//lock the pipe</span></span><br><span class="line">		<span class="built_in">sprintf</span>(outpipe,<span class="string">"\nChild process 1 is sending message!\n"</span>);</span><br><span class="line">		write(fd[<span class="number">1</span>],outpipe,<span class="number">50</span>);</span><br><span class="line">		sleep(<span class="number">5</span>);         <span class="comment">//wait for read process</span></span><br><span class="line">		lockf(fd[<span class="number">1</span>],<span class="number">0</span>,<span class="number">0</span>); <span class="comment">//unlock the pipe</span></span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">else</span>{</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"\npid1:%d\n"</span>,pid1);</span><br><span class="line">		<span class="keyword">while</span>((pid2=fork())== <span class="number">-1</span>);</span><br><span class="line">		<span class="keyword">if</span>(pid2==<span class="number">0</span>){</span><br><span class="line">			lockf(fd[<span class="number">1</span>],<span class="number">1</span>,<span class="number">0</span>);</span><br><span class="line">			<span class="built_in">sprintf</span>(outpipe,<span class="string">"\nChild process 2 is sending message!\n"</span>);</span><br><span class="line">			write(fd[<span class="number">1</span>],outpipe,<span class="number">50</span>);</span><br><span class="line">			sleep(<span class="number">5</span>);</span><br><span class="line">			lockf(fd[<span class="number">1</span>],<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">			<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span>{</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"\npid2:%d\n"</span>,pid2);</span><br><span class="line">			wait(<span class="number">0</span>);  <span class="comment">//wait for child process 1</span></span><br><span class="line">			read(fd[<span class="number">0</span>],inpipe,<span class="number">50</span>);</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"%s\n"</span>,inpipe);</span><br><span class="line">			wait(<span class="number">0</span>);  <span class="comment">//wait for child process 2</span></span><br><span class="line">			read(fd[<span class="number">0</span>],inpipe,<span class="number">50</span>);</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"%s\n"</span>,inpipe);</span><br><span class="line">			<span class="built_in">exit</span>(<span class="number">0</span>);  <span class="comment">//parent process terminated</span></span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="res2-2"><img data-src="/2019/10/12/experiments/oskernel/process-management/2.png" class=""></div></div></div>
-<h2 id="实验关键里程碑数据与结果">实验关键里程碑数据与结果</h2>
-<h3 id="进程的软中断通信-2">进程的软中断通信</h3>
-<p>前面的运行结果中，虽然 <code>pid1</code> 总是小于 <code>pid2</code>，但是两个进程结束的顺序总是不一样的。我们来把程序后台运行一下，观察程序中所有的 <code>pid</code> 值和行为。</p>
-<img data-src="/2019/10/12/experiments/oskernel/process-management/0.png" class="">
-<img data-src="/2019/10/12/experiments/oskernel/process-management/1.png" class="">
-<p>我们运行了 <code>ps -aux</code> 命令来查看系统中的后台进程，在最下方找到了 <code>process</code> 进程，其父进程 <code>pid</code> 为 4473，而两个子进程 <code>pid</code> 分别为 4475 和 4476。</p>
-<p>之所以两个进程结束的顺序不同，是因为 <code>kill</code> 发出的信号没有被及时处理或可能被封锁。虽然调用 <code>kill</code> 的顺序是先 1 后 2，但是发送的都是软中断信号，它们都需要等待所有相关资源的释放。而释放的顺序是不确定的，由于存在资源争夺，信号接受的先后也是不确定的。</p>
-<p>观察它们在后台表现的程序名发现，它们都是由中括号括起的，后面有一个 <code>defunct</code> 标志，同时又显示为 "Z" 状态，表明此进程为僵尸进程，直接 <code>kill</code> 其 <code>pid</code> 将不会奏效。需要对其父进程 <code>pid</code> 进行 <code>kill</code> 操作，才可以正确结束进程。</p>
-<h3 id="进程的管道通信-2">进程的管道通信</h3>
-<p>仍然将程序置于后台运行，观察后台 <code>pid</code> 和行为。</p>
-<img data-src="/2019/10/12/experiments/oskernel/process-management/3.png" class=""> <img data-src="/2019/10/12/experiments/oskernel/process-management/4.png" class="">
-<p>以上后台输出表明，在管道通信时，实质上启动了三个 <code>pipe</code> 进程，其中一个是父进程，它开启了下面的两个子进程，并监听管道中子进程传达的消息。在这个过程中，进程均为 "S" 状态，为休眠状态。</p>
-<div class="note info"><p>那为什么每次运行程序时，子进程发送信息的先后总是不同呢？这其中应该也存在资源的争用问题。虽然 <code>pid1</code> 的创建一定早于 <code>pid2</code>，但是调用 <code>lockf</code> 的先后顺序是不一定的，如果子进程 1 率先执行到 <code>lockf(fd[1],1,0)</code>，那么它将先阻塞管道，把信息传入管道中，供父进程读出并打印在终端中。子进程 2 此时即使创建成功，有 <code>pid</code> 号，但是因为管道被阻塞，无法进入管道，故阻塞在它的 <code>lockf(fd[1],1,0)</code> 语句中，等到子进程 1 释放管道时，才可进入管道。反之相似。</p>
-</div>
-<h2 id="实验难点与收获">实验难点与收获</h2>
+<p>所给定的 WinDLX 文件夹如下所示，我们可以直接双击 WinDLX.exe 来启动软件。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_sPpeg0VgHi.png" class="">
+<h3 id="熟悉使用界面">熟悉使用界面</h3>
+<p>启动软件过后，可以看到一个窗口和六个子窗口，子窗口的名称分别为 Clock Cycle Diagram、Statistics、Breakpoints、Register、Code 和 Pipeline，双击这些子窗口或单击其上方的还原键即可看到子窗口的内容。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_KxjgEY9_X1.png" class="">
+<p>要初始化模拟器，可以点击 File 菜单中的 Reset all 菜单项，弹出一个 “Reset DLX” 对话框。然后点击窗口中的 “确认” 按钮即可。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_YEchSWiXz5.png" class="">
+<p>要载入文件或代码，需要点击 File 菜单的 Load Code or Data，在以下对话框中，依次选择 Fact.s 和 Input.s 文件，完成后单击 Load，将它们加载到主存中。</p>
+<div class="note warning"><p>注意：要先选择 fact.s 再选择 input.s 文件。程序在内存中出现的顺序很重要。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_XfmJxGPgJb.png" class="">
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_jU6xYnVOwT.png" class="" title="现在，单击Load按钮将它们加载到主存中"></div>
+<p>成功加载文件后，会提示你重置 DLX，单击 “是”。这样，文件就已经装入到存储器中了。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_zGYcGmsMFa.png" class="">
+<p>结合装载的文件，来介绍一下六大窗口的主要功能</p>
+<h4 id="Code-代码窗口">Code 代码窗口</h4>
+<p>在 Code 窗口中，我们能够看到代表存储器内容的三栏信息，从左到右依次为：地址 (符号或数字)、命令的十六进制机器代码和汇编命令。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_N5Tfs32zDs.png" class="">
+<p>单击 WinDLX 窗口的 Execute（执行）按钮可以执行装入的程序，可以选择单步执行（Single Cycle，快捷键 F7）或多步执行（Multi Cycles，快捷键 F8）。当单步执行时，也有流水段颜色的区分（IF、ID、intEX、MEM 和 WB）</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_OAHMDNAJGN.png" class="">
+<p>如果需要多步执行，就在这个对话框中输入要执行的流水数目即可。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_1Zzwpmaorh.png" class="">
+<h4 id="Pipeline流水线窗口">Pipeline 流水线窗口</h4>
+<p>流水线窗口主要显示了 DLX 处理器的内部结构，窗口下标识了 DLX 处理器的五个流水段和浮点操作（加 / 减、乘和除）的单元。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_bphLLi5PTe.png" class="">
+<p>在运行指令时，将 Pipeline 窗口放大，即可看到当前与 Code 中所处的时刻相同的指令流水，可以清晰看到不同流水段执行的是哪条指令。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ar42V_rtMT.png" class="">
+<h4 id="Clock-Circle-Diagram时钟周期图窗口">Clock Circle Diagram 时钟周期图窗口</h4>
+<p>Clock Cycle Diagram 窗口主要显示了运行代码时流水线的时空图，时空图反映的是不同时隙内的运行情况。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_mC0USoVaqr.png" class="">
+<p>在非空转代码的时候，显示如下：</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_bYqORtx7CN.png" class="">
+<p>任意双击指令的一行，可以详细看到不同流水段的情况，如下图所示。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ijbidVFTvq.png" class="">
+<h4 id="Register寄存器窗口">Register 寄存器窗口</h4>
+<p>Register 窗口会显示各个寄存器中的内容。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_oSJhNz14hV.png" class="">
+<h4 id="Statistic统计数据窗口">Statistic 统计数据窗口</h4>
+<p>Statistics 窗口提供对运行程序中任何数据的分析，主要包括模拟器中硬件配置的情况。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ph76EvKYO5.png" class="">
+<p>这里包含：</p>
+<ol>
+<li>整体指令执行情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_RVWe28mDgc.png" class="">
+</li>
+<li>硬件配置情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_341IwOGYJ5.png" class="">
+</li>
+<li>暂停次数、百分比和原因分析<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_8KxD3jZ_MV.png" class="">
+</li>
+<li>分支次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_JHGpyQ6kXB.png" class="">
+</li>
+<li>Load/Store 指令执行情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_4o7Y5cy8hA.png" class="">
+</li>
+<li>浮点指令执行次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_di1vmW6RNZ.png" class="">
+</li>
+<li>trap 发生次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_A9oR1nMPWT.png" class="">
+</li>
+</ol>
+<h4 id="Breakpoints断点窗口">Breakpoints 断点窗口</h4>
+<p>该窗口主要用来观察代码运行的情况。使用前，需要打开 Breakpoints 窗口（首先需要激活 Breakpoints 小窗口才会出现 Breakpoints 菜单项）来设置 breakpoint，这个值代表了指令运行到流水线的哪个阶段就暂停运行。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_5qA1KGdijo.png" class=""></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_sM6iUTJGxM.png" class=""></div><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_cgfKBRYSZU.png" class="" title="从菜单中选择Set后，出现Set Breakpoint窗口"></div></div></div>
+<p>如果选择了 ID 阶段，在 Code 窗口相应行会出现 BID，表示程序执行到取指令 IF 结束译码 ID 开始的时候，程序将中止。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_XrK7jIlqPf.png" class="" title="此时，Breakpoints窗口的显示为地址、中止阶段和当前指令">
+<p>WinDLX 可以在多种配置下工作。可以改变流水线的结构和时间要求、存储器大小和其他几个控制模拟的参数。均在 Configuration 菜单中完成配置。</p>
+<h5 id="Floating-Point-Stages配置窗口">Floating Point Stages 配置窗口</h5>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_T_5pLEA9Z3.png" class="">
+<p>可以设置加法、乘法和触发的单元数目和延迟。</p>
+<h5 id="Memory-Size配置窗口">Memory Size 配置窗口</h5>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image__EPQPVWZ6k.png" class="">
+<p>可以设置存储空间的大小。</p>
+<h5 id="其他配置窗口">其他配置窗口</h5>
+<p>Configuration 菜单中的还有其他三种配置，它们是：Symbolic addresses、Absolute Cycle Count 和 Enable Forwarding。点击相应菜单项后，在它的旁边将显示一个小钩。</p>
 <ul>
-<li>这次的实验步骤不是很多，主要难点在于编程和对进程资源争用的理解上。</li>
-<li>掌握了 Linux 下进程管理相关的 C 语言 API。</li>
-<li>对于进程的并发执行有了更深层次的理解。</li>
+<li>最重要的配置项为 Enable Forwarding，指的是启用定向技术，定向技术是指将某个计算结果从其产生的地方直接送到其它指令需要它的地方，可以减少数据冲突引起的停顿。</li>
 </ul>
-<h2 id="实验思考">实验思考</h2>
-<p>子进程的结束和父进程的运行是一个异步过程，即父进程永远无法预测子进程到底什么时候结束。那么会不会因为父进程太忙来不及 <code>wait</code> 子进程，或者说不知道子进程什么时候结束，而丢失子进程结束时的状态信息呢？</p>
-<p>查阅资料得知：“不会。因为 Linux 提供了一种机制可以保证，只要父进程想知道子进程结束时的状态信息，就可以得到。这种机制就是：当子进程走完了自己的生命周期后，它会执行 <code>exit()</code> 系统调用，内核释放该进程所有的资源，包括打开的文件，占用的内存等。但是仍然为其保留一定的信息 (包括进程号、退出码、退出状态、运行时间等)，这些数据会一直保留到系统将它传递给它的父进程为止，直到父进程通过 <code>wait</code> / <code>waitpid</code> 来取时才释放。</p>
-<p>也就是说，当一个进程死亡时，它并不是完全的消失了。进程终止，它不再运行，但是还有一些残留的数据等待父进程收回。当父进程 <code>fork()</code> 一个子进程后，它必须用 <code>wait()</code> (或者 <code>waitpid()</code>) 等待子进程退出。正是这个 <code>wait()</code> 动作来让子进程的残留数据消失。”</p>
-<p>根据这个资料，我想到了一个问题：假如进程通信代码中去掉父进程的 <code>wait</code> 调用，<code>fork</code> 出来的两个子进程还能正确结束吗？</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/10/12/experiments/oskernel/process-management/5.png" class=""></div><div class="group-picture-column"><img data-src="/2019/10/12/experiments/oskernel/process-management/6.png" class=""></div></div></div>
-<p>仍然正确地结束了两个进程。出现这样的现象可能是因为 Linux 系统中有一些特殊的机制来保证 “僵尸进程” 被正确地接管 (具体来说，由 init 进程来接管，其 pid 为 1)。</p>
-<h3 id="Windows对应的API">Windows 对应的 API</h3>
-<div class="tabs" id="windowsapi"><ul class="nav-tabs"><li class="tab active"><a href="#windowsapi-1"><code>createProcess</code></a></li><li class="tab"><a href="#windowsapi-2"><code>WaitForSingleObject</code></a></li><li class="tab"><a href="#windowsapi-3"><code>ExitProcess</code></a></li><li class="tab"><a href="#windowsapi-4">信号机制</a></li><li class="tab"><a href="#windowsapi-5"><code>TerminateProcess</code></a></li></ul><div class="tab-content"><div class="tab-pane active" id="windowsapi-1"><p>对应于 Linux 的 <code>fork()</code>API</p>
-<figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line">BOOL <span class="title function_">CreateProcess</span><span class="params">(</span></span><br><span class="line"><span class="params">    LPCTSTR lpApplicationName,        <span class="comment">//指向一个NULL结尾的、用来指定可执行模块的字符串。</span></span></span><br><span class="line"><span class="params">    LPTSTR lpCommandLine,        <span class="comment">//指向一个以NULL结尾的字符串，该字符串指定要执行的命令行。</span></span></span><br><span class="line"><span class="params">    LPSECURITY_ATTRIBUTES lpProcessAttributes。<span class="comment">//指向一个SECURITY_ATTRIBUTES结构体，这个结构体决定是否返回的句柄可以被子进程继承。如果lpProcessAttributes参数为空（NULL），那么句柄不能被继承。</span></span></span><br><span class="line"><span class="params">    LPSECURITY_ATTRIBUTES lpThreadAttributes,        <span class="comment">//同lpProcessAttribute，不过这个参数决定的是线程是否被继承，通常置为NULL。</span></span></span><br><span class="line"><span class="params">    BOOL bInheritHandles,       <span class="comment">//指示新进程是否从调用进程处继承了句柄。</span></span></span><br><span class="line"><span class="params">    DWORD dwCreationFlags,  <span class="comment">//指定附加的、用来控制优先类和进程的创建的标志。</span></span></span><br><span class="line"><span class="params">    LPVOID lpEnvironment,        <span class="comment">//指向一个新进程的环境块。如果此参数为空，新进程使用调用进程的环境。</span></span></span><br><span class="line"><span class="params">    LPCTSTR lpCurrentDirectory,        <span class="comment">//指向一个以NULL结尾的字符串，这个字符串用来指定子进程的工作路径。</span></span></span><br><span class="line"><span class="params">    LPSTARTUPINFO lpStartupInfo,        <span class="comment">//指向一个用于决定新进程的主窗体如何显示的STARTUPINFO结构体。</span></span></span><br><span class="line"><span class="params">    LPPROCESS_INFORMATION lpProcessInformation  <span class="comment">//指向一个用来接收新进程的识别信息的PROCESS_INFORMATION结构体。</span></span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="windowsapi-2"><p>对应于 Linux 的 <code>waitpid()</code></p>
-<figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line">DWORD <span class="title function_">WaitForSingleObject</span><span class="params">(</span></span><br><span class="line"><span class="params">HANDLE hHandle,   <span class="comment">//线程的Handle</span></span></span><br><span class="line"><span class="params">DWORDdwMilliseconds  <span class="comment">// 相应的Timeout时间</span></span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="windowsapi-3"><p>对应于 <code>exit()</code></p>
-<figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">ExitProcess</span><span class="params">(UINT uExitCode)</span>;</span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="windowsapi-4"><p>Windows 也使用 <code>signal.h</code> 并也有 <code>signal</code> 函数作为信号控制函数。</p>
-<figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="type">void</span> __cdecl *<span class="title function_">signal</span><span class="params">(<span class="type">int</span> sig, <span class="type">int</span> (*func)(<span class="type">int</span>, <span class="type">int</span>))</span></span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="windowsapi-5"><p>有关进程终止，Windows 使用 <code>TerminateProcess</code> 函数</p>
-<figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line">BOOL <span class="title function_">TerminateProcess</span><span class="params">(</span></span><br><span class="line"><span class="params">HANDLE hProcess,  <span class="comment">//要终止(杀死)进程的句柄，需要有PROCESS_TERMINATE权限。</span></span></span><br><span class="line"><span class="params">UINT uExitCode  <span class="comment">//设置进程的退出值。可通过GetExitCodeProcess函数得到一个进程的退出值。</span></span></span><br><span class="line"><span class="params">)</span></span><br></pre></td></tr></tbody></table></figure></div></div></div>
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>技术</category>
-        <category>OS</category>
-        <category>操作系统内核</category>
-        <category>进程管理</category>
+        <category>计算机组成原理</category>
       </categories>
       <tags>
-        <tag>OS</tag>
-        <tag>进程管理</tag>
+        <tag>WinDLX</tag>
+        <tag>计算机组成原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>代码优化</title>
+    <url>/2022/10/24/experiments/jizu/optimize/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>学习简单编译优化方法，观察采用编译优化方法所带来的性能的提高。</p>
+<h2 id="实验原理">实验原理</h2>
+<p>采用静态调度方法重排指令序列，减少相关，优化程序。</p>
+<h2 id="实验步骤">实验步骤</h2>
+<h3 id="用静态调度算法手工优化代码">用静态调度算法手工优化代码</h3>
+<p>选择上一个实验的两双精度浮点一维向量的加法运算代码作为优化对象，优化后的代码如下所示：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">VecLen: .word 16</span><br><span class="line">Vector1: .double 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16</span><br><span class="line">; vec1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]</span><br><span class="line">Vector2: .double 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32</span><br><span class="line">; vec2=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]</span><br><span class="line">; 声明向量长度以及两个向量1、2</span><br><span class="line">Printf1: .asciiz "The result is\n"</span><br><span class="line">Printf2: .asciiz "%f\t"</span><br><span class="line"></span><br><span class="line">.align 2</span><br><span class="line"></span><br><span class="line">PrintfHead: .word Printf1</span><br><span class="line">PrintfValue: .word Printf2</span><br><span class="line">result: .space 8</span><br><span class="line">; 打印数据空间的申请</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">addi r14,r0,PrintfHead</span><br><span class="line">trap 5</span><br><span class="line">addi r2,r0,0</span><br><span class="line">lw r20,VecLen</span><br><span class="line">;addi r2,r0,0</span><br><span class="line"></span><br><span class="line">loop: ; 循环读入向量</span><br><span class="line">ld f0,Vector1(r2)</span><br><span class="line">ld f2,Vector2(r2)</span><br><span class="line">; 插入指令，避免f2的RAW</span><br><span class="line">addi r2,r2,8</span><br><span class="line">subi r20,r20,1</span><br><span class="line"></span><br><span class="line">addd f4,f0,f2</span><br><span class="line">; 主要的加法运算</span><br><span class="line">sd result,f4</span><br><span class="line">addi r14,r0,PrintfValue</span><br><span class="line">trap 5</span><br><span class="line">;addi r2,r2,8</span><br><span class="line">;subi r20,r20,1 提前到了前面</span><br><span class="line">bnez r20,loop</span><br><span class="line"></span><br><span class="line">trap 0</span><br><span class="line">; 系统中断，输出结果 "The result is 3.000000, 6.000000, ...."</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="分析已优化程序中出现的数据-控制-结构相关">分析已优化程序中出现的数据 / 控制 / 结构相关</h3>
+<div class="tabs" id="res1"><ul class="nav-tabs"><li class="tab active"><a href="#res1-1">优化前</a></li><li class="tab"><a href="#res1-2">优化后</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res1-1"><p><img data-src="image_czojEXSniG.png" alt="优化前程序" title="优化前程序"></p></div><div class="tab-pane" id="res1-2"><p><img data-src="image__c0vohBdpb.png" alt="优化后程序" title="优化后程序"></p></div></div></div>
+<p>优化后的程序的时钟周期从 267 个减少到了 235 个，RAW 相关也从 48 个大大减少到了 16 个，控制相关和结构相关的数量没有改变，由此可见本次所作代码优化对数据相关的改善最大。</p>
+<h3 id="考虑增加浮点运算部件对于性能的影响">考虑增加浮点运算部件对于性能的影响</h3>
+<div class="tabs" id="res2"><ul class="nav-tabs"><li class="tab active"><a href="#res2-1">1 个浮点部件</a></li><li class="tab"><a href="#res2-2">4 个浮点部件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res2-1"><p><img data-src="image_Da5MgPENTq.png" alt="1个浮点部件" title="1个浮点部件"></p>
+<p><img data-src="image_B7x4cW0ajI.png" alt="1个浮点部件（图2）" title="1个浮点部件（图2）"></p></div><div class="tab-pane" id="res2-2"><p><img data-src="image_G26kibZeDp.png" alt="4个浮点部件" title="4个浮点部件"></p>
+<p><img data-src="image_HpO1C90ynd.png" alt="4个浮点部件（图2）" title="4个浮点部件（图2）"></p></div></div></div>
+<p>同一段代码执行相同步，但是经过对比发现浮点运算部件的增减对于程序执行效率没有影响，可能是因为程序中不存在结构相关，所以并行度没有增加，系统性能没有提升。</p>
+<h3 id="考虑增加forward部件对性能的影响">考虑增加 forward 部件对性能的影响</h3>
+<div class="tabs" id="res3"><ul class="nav-tabs"><li class="tab active"><a href="#res3-1">使用 Forward 组件</a></li><li class="tab"><a href="#res3-2">不使用 Forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res3-1"><p><img data-src="image_ksxwWa7qjZ.png" alt="使用Forward组件" title="使用Forward组件"></p></div><div class="tab-pane" id="res3-2"><p><img data-src="image_9ROBHMR9xL.png" alt="禁用Forward组件" title="禁用Forward组件"></p></div></div></div>
+<p>使用 forward 组件后，执行的 cycles 比不适用 forward 组件要少，且产生的 RAW stalls 有明显减少，程序执行的效率提高了很多。在代码优化前，RAW 相关占 48 个 stalls，在优化后，RAW 现象大量减少，数据相关明显改善，提高了代码执行效率。</p>
+<h3 id="观察转移指令在转移成功和转移不成功时的流水线开销">观察转移指令在转移成功和转移不成功时的流水线开销</h3>
+<p><img data-src="image_55nB__dTOL.png" alt="Conditional Branches 输出" title="Conditional Branches 输出"></p>
+<p>本次实验中，转移成功的几率比较大。由于系统按照预测成功来执行指令，当判断转移不成功时，系统对 trap 指令进行的操作全部作废，转而去执行别的指令。这里代码优化对于转移指令没有影响。</p>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>计算机组成原理</category>
+      </categories>
+      <tags>
+        <tag>WinDLX</tag>
+        <tag>计算机组成原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DLX 处理器程序设计</title>
+    <url>/2022/10/24/experiments/jizu/programming/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>学习使用 DLX 汇编语言编程，进一步分析相关现象</p>
+<h2 id="实验原理">实验原理</h2>
+<p>掌握向量运算算法和编程方法。由于操作数为双精度，需要使用操作浮点双精度的指令。</p>
+<p>本次使用到的指令为</p>
+<ul>
+<li>ADDD 浮点加指令，其命令格式为 <code>rd,rs1,rs2</code>，rs1 和 rs2 将加到 rd 上。</li>
+<li>ADDI 立即数加指令，其命令格式为 <code>rd,rs1,immediate</code>，rs1 和一个立即数将加到 rd 上。</li>
+<li>SD 存储浮点数指令，其命令格式为 <code>offset(rs1),rd</code>，将 rs1 对应空间的数存储在 rd 上。</li>
+<li>LD 读取浮点数指令，其命令格式为 <code>rd,offset(rs1)</code>，将 rs1 对应空间的数取到 rd 上。</li>
+<li>BNEZ 判断指令，其命令格式为 <code>rs1,name</code>，如果 CPR 寄存器不为零，则继续执行 name 部分。</li>
+</ul>
+<h2 id="实验步骤">实验步骤</h2>
+<ol>
+<li>
+<p>自编一段汇编代码，完成两双精度浮点一维向量的加法（或乘除法）运算，并输出结果。向量长度 &gt;=16。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">VecLen: .word 16</span><br><span class="line">Vector1: .double 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16</span><br><span class="line">; vec1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]</span><br><span class="line">Vector2: .double 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32</span><br><span class="line">; vec2=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]</span><br><span class="line">; 声明向量长度以及两个向量1、2</span><br><span class="line">Printf1: .asciiz "The result is\n"</span><br><span class="line">Printf2: .asciiz "%f\t"</span><br><span class="line"></span><br><span class="line">.align 2</span><br><span class="line"></span><br><span class="line">PrintfHead: .word Printf1</span><br><span class="line">PrintfValue: .word Printf2</span><br><span class="line">result: .space 8</span><br><span class="line">; 打印数据空间的申请</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">addi r14,r0,PrintfHead</span><br><span class="line">trap 5</span><br><span class="line">lw r20,VecLen</span><br><span class="line">addi r2,r0,0</span><br><span class="line"></span><br><span class="line">loop: ; 循环读入向量</span><br><span class="line">ld f0,Vector1(r2)</span><br><span class="line">ld f2,Vector2(r2)</span><br><span class="line">addd f4,f0,f2</span><br><span class="line">; 主要的加法运算</span><br><span class="line">sd result,f4</span><br><span class="line">addi r14,r0,PrintfValue</span><br><span class="line">trap 5</span><br><span class="line">addi r2,r2,8</span><br><span class="line">subi r20,r20,1</span><br><span class="line">bnez r20,loop</span><br><span class="line"></span><br><span class="line">trap 0</span><br><span class="line">; 系统中断，输出结果 "The result is 3.000000, 6.000000, ...."</span><br></pre></td></tr></tbody></table></figure>
+<p>程序，运行结果为下图</p>
+<img data-src="/2022/10/24/experiments/jizu/programming/image_phympq_63F.png" class="">
+<p>数据统计为下窗口所示：</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_jmdoV6noOX.png" alt=""></div><div class="group-picture-column"><img data-src="image_nIrZXuh4OD.png" alt=""></div></div></div>
+</li>
+<li>
+<p>观察程序中出现的数据 / 控制 / 结构相关。</p>
+ <img data-src="/2022/10/24/experiments/jizu/programming/image_30Lxy8oMOz.png" class="">
+<p>数据相关：对当前指令的操作数寄存器进行操作（EX）的时候，前几条指令的运算结果还未写回（WB）结果寄存器，产生了数据相关。</p>
+<p>典型指令组合</p>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">subi r16,r16,0x1</span><br><span class="line">bnez r16,Loop</span><br></pre></td></tr></tbody></table></figure>
+<p>控制相关：由于系统按照预测成功来执行指令，所以执行 bnez 后会马上将其下一条指令 trap 读取进来</p>
+<p>典型指令组合：</p>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">bnez r20,Loop</span><br><span class="line">trap 0x0</span><br></pre></td></tr></tbody></table></figure>
+<p>程序中并没有出现结构相关。因为整体仅仅做了一次简单的加法。</p>
+</li>
+<li>
+<p>浮点运算部件带来的影响</p>
+<div class="tabs" id="floats"><ul class="nav-tabs"><li class="tab active"><a href="#floats-1">使用 1 个浮点加法器</a></li><li class="tab"><a href="#floats-2">使用 2 个浮点加法器</a></li></ul><div class="tab-content"><div class="tab-pane active" id="floats-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_CHQj5DasyE.png" class=""></div><div class="tab-pane" id="floats-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_mT6P512ORr.png" class=""></div></div></div>
+<p>增加浮点加法器的数量后，程序执行的性能并未得到提升。</p>
+</li>
+<li>
+<p>Forward 组件的影响</p>
+<div class="tabs" id="forwards"><ul class="nav-tabs"><li class="tab"><a href="#forwards-1">启用 Forward 组件</a></li><li class="tab active"><a href="#forwards-2">禁用 Forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane" id="forwards-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_uFBPKTACNp.png" class=""></div><div class="tab-pane active" id="forwards-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_4mnDTJDUV_.png" class=""></div></div></div>
+<p>关闭 Forward 后，运行时间由 267 个周期增加到 333 个周期，可计算 Forward 技术为该程序带来了 333/267=1.25 的加速比。且 Forward 技术明显减少了 RAW stalls，降低了数据相关的数量。</p>
+</li>
+<li>
+<p>转移指令的影响</p>
+<div class="tabs" id="transfer"><ul class="nav-tabs"><li class="tab"><a href="#transfer-1">转移成功</a></li><li class="tab"><a href="#transfer-2">转移失败</a></li></ul><div class="tab-content"><div class="tab-pane" id="transfer-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_OWjDOo_wJ6.png" class=""></div><div class="tab-pane" id="transfer-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_vaMruizC-Z.png" class=""></div></div></div>
+<p>成功时，已经进入取指阶段的指令会被放弃（aborted），转入转移的目标指令的取指操作，造成流水线断流；若转移失败，已经进入取指阶段的指令继续进入译码阶段，流水线不断流。</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>计算机组成原理</category>
+      </categories>
+      <tags>
+        <tag>WinDLX</tag>
+        <tag>计算机组成原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>指令流水线相关性分析</title>
+    <url>/2022/10/15/experiments/jizu/relation-analysis/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>通过使用 WINDLX 模拟器，对程序中的三种相关原理进行观察，并对使用专用通路，增加运算部件等技术对性能的影响进行考察，加深对流水线和 RISC 处理器的特点的理解。</p>
+<h2 id="实验原理">实验原理</h2>
+<p>指令流水线中主要有结构相关、数据相关、控制相关。相关影响流水线性能。</p>
+<h3 id="数据相关">数据相关</h3>
+<p>由于相邻的两条或多条指令使用了相同的数据地址而发生的关联。</p>
+<h3 id="结构相关">结构相关</h3>
+<p>结构相关是指因为程序的执行方向可能被改变而引起的相关。可能改变程序执行方向的指令通常有无条件转移、一般条件转移、复合条件转移、子程序调用、中断等。</p>
+<h3 id="控制相关">控制相关</h3>
+<p>控制相关是指由转移指令引发的相关。</p>
+<h2 id="实验步骤">实验步骤</h2>
+<div class="note info"><h4 id="实验准备">实验准备</h4>
+<p>将浮点运算的延时设为 4 个周期<br>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_aXqazps9yb.png" class=""></p>
+</div>
+<p>选择 File→Load Code or Data，将 input.s 文件和 fact.s 文件按下图顺序装入主存</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_6o0VQk_-Ji.png" class="">
+<p>使用 WinDLX 模拟器，对 Fact.s 做如下分析：</p>
+<h3 id="观察程序中出现的数据-控制-结构相关，指出程序中出现上述现象的指令组合">观察程序中出现的数据 / 控制 / 结构相关，指出程序中出现上述现象的指令组合</h3>
+<h4 id="数据相关及其组合">数据相关及其组合</h4>
+<p>5 个周期里，Clock Cycle Diagram 窗口的时空图和 Pipeline 窗口中的流图第一次出现了橘黄色的 R-Stall</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_nALPeNEB9z.png" class="">
+<p>点击 <code>seqi r5,r3,0xa</code>，出现的具体信息如下图</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_l4MCfQqj2b.png" class="">
+<p><code>lbu r3,0x0(r2)</code> 要在 WB 周期内写回 R3 的数据，而下一条指令 <code>seqi r5,r3,0xa</code> 要在 intEX 周期内读取 r3 的数据，发生了写后读 RAW，所以为了避免冲突，<code>seqi r5,r3,0xa</code> 的 <code>intEX</code> 指令延迟了一个周期进行。</p>
+<p>指令组合为</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">lbu r3,0x0(r2)</span><br><span class="line">seqi r5,r3,0xa</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="控制相关及其组合">控制相关及其组合</h4>
+<p>在第 4 个时钟周期，第一条命令处于 MEM 段，第二条命令处于 intEX 段，第四条命令处于 IF 段，而第三条命令显示为 aborted。</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_QGI1hfUiiE.png" class="">
+<p>发生 aborted 的原因为，<code>jal InputUnsigned</code> 是无条件分支指令，但只有在第三个时钟周期，<code>jal</code> 指令被译码后才知道。这时，下一条指令 <code>movei2fp</code> 已经取出，但需执行的下一条指令在另一个地址处，因此，<code>movi2fp</code> 的执行应该被取消，在流水线中留下气泡，此处为控制相关。</p>
+<p>指令组合为</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">addi r1,r0,0x1000</span><br><span class="line">jal InputUnsigned</span><br><span class="line">movi2fp,f10,r1</span><br><span class="line">sw SaveR2(r0),r2</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="结构相关及其组合">结构相关及其组合</h4>
+<p>从 Clock Cycle Diagram 中，可以看出指令 stall 了 4 个周期</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_JX5gYYzGzj.png" class="">
+<p><code>addi r2,r2,0x1</code> 与前面的一条指令 <code>add r1,r1,r3</code> 发生了结构相关。由于上一条指令数据相关需要停 4 个周期，在 ID 段停滞，不能进入 intEX 段，故 <code>addi r2,r2,0x1</code> 也不能进入 ID 段，译码部分被占用，故发生了结构相关。</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_Zwun2HbC43.png" class="">
+<p>相关指令组合</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">add r1,r1,r3</span><br><span class="line">addi r2,r2,0x1</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="考察增加浮点运算部件对性能的影响">考察增加浮点运算部件对性能的影响</h3>
+<div class="tabs" id="results"><ul class="nav-tabs"><li class="tab active"><a href="#results-1">count=1</a></li><li class="tab"><a href="#results-2">count=2</a></li></ul><div class="tab-content"><div class="tab-pane active" id="results-1"><p>浮点运算部件的 Count 均为 1</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_q0ciOGmpYn.png" alt=""></div><div class="group-picture-column"><img data-src="image_b9tWK4nJeR.png" alt=""></div></div></div></div><div class="tab-pane" id="results-2"><p>浮点运算部件的 Count 均为 2</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_9uzcYEaJhk.png" alt=""></div><div class="group-picture-column"><img data-src="image_jD1hxscOAo.png" alt=""></div></div></div></div></div></div>
+<p>比较各个数据，发现没有变化，无论怎么增加统计结果都一样，由此可见，在该程序中，浮点运算部件的增减对效率没有影响。原因在于，此程序浮点计算指令没有重叠，所以并行度没有增加，性能没有提高。</p>
+<h3 id="考察增加forward部件对性能的影响">考察增加 forward 部件对性能的影响</h3>
+<div class="tabs" id="results-2"><ul class="nav-tabs"><li class="tab"><a href="#results-2-1">不启用 forward 组件</a></li><li class="tab active"><a href="#results-2-2">使用 forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane" id="results-2-1"><p><img data-src="image_qREd2veXyT.png" alt=""></p></div><div class="tab-pane active" id="results-2-2"><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_aJF5rKvDFD.png" alt=""></div><div class="group-picture-column"><img data-src="image_5MH0T4ijzq.png" alt=""></div></div></div></div></div></div>
+<p>由以上截图可以发现：</p>
+<ul>
+<li>增加 forward 组件后所执行总的时钟周期相应有所减少</li>
+<li>增加 forward 组件使得 Stall 的总数有所下降，RAW 的总时钟周期从 29.09% 下降到了 13.64%</li>
+</ul>
+<p>总之，使用 forward 部件后，数据相关减少，性能得到一定的改善</p>
+<h3 id="观察转移指令在转移成功和转移不成功时候的流水线开销">观察转移指令在转移成功和转移不成功时候的流水线开销</h3>
+<p>floating 设置为 2，4，forward 启动时条件转移结果如下图：</p>
+<p><img data-src="image_IBeOkazciZ.png" alt=""></p>
+<p>转移指令一共 6 条，成功转移 2 条，不成功转移 4 条。</p>
+<p>若转移不成功，对流水线执行无影响，流水线吞吐率和效率没有降低。若转移成功，则要废弃预先读入的指令，重新从转移成功处读取指令，每执行一条条件转移指令，一条 x 段流水线就有 x-2 个流水线被浪费掉，执行效率降低，性能有一定损失。</p>
+<h2 id="实验总结">实验总结</h2>
+<p>流水线技术可以提高计算机执行效率，但也有很多不足，当发生一些相关的时候执行就需要延迟，这会影响到流水线的吞吐率，而要保证高效，就需要对代码进行优化处理，这是需要个人的努力的。</p>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>计算机组成原理</category>
+      </categories>
+      <tags>
+        <tag>WinDLX</tag>
+        <tag>计算机组成原理</tag>
       </tags>
   </entry>
   <entry>
@@ -3493,8 +3493,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>移动终端安全</category>
+        <category>漏洞</category>
         <category>Android</category>
       </categories>
       <tags>
@@ -3875,6 +3875,59 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
       </tags>
   </entry>
   <entry>
+    <title>基本漏洞利用</title>
+    <url>/2019/10/08/experiments/security/software/bufferOverflow/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
+<p>通过分析密码验证小程序，初步掌握缓冲区溢出漏洞的原理和应用</p>
+<span id="more"></span>
+<h2 id="测试步骤与结果">测试步骤与结果</h2>
+<p>实验的源码如下</p>
+<figure class="highlight c"><figcaption><span>password.c</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PASSWORD <span class="string">"1234567"</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">verify_password</span> <span class="params">(<span class="type">char</span> *password)</span></span><br><span class="line">{</span><br><span class="line">	<span class="type">int</span> authenticated;</span><br><span class="line">	authenticated=<span class="built_in">strcmp</span>(password,PASSWORD);</span><br><span class="line">	<span class="keyword">return</span> authenticated;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">{</span><br><span class="line">	<span class="type">int</span> valid_flag=<span class="number">0</span>;</span><br><span class="line">	<span class="type">char</span> password[<span class="number">1024</span>];</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">	{</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"please input password:       "</span>);</span><br><span class="line">		<span class="built_in">scanf</span>(<span class="string">"%s"</span>,password);</span><br><span class="line">		valid_flag = verify_password(password);</span><br><span class="line">		<span class="keyword">if</span>(valid_flag)</span><br><span class="line">		{</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"incorrect password!\n\n"</span>);</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		{</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"Congratulation! You have passed the verification!\n"</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<ol>
+<li>
+<p>简单阅读代码，发现程序检查了一个用户的输入，与内部存储的一个字符串进行比较，若相同，就返回验证成功。否则，显示验证失败并继续验证。 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/0.png" class=""></p>
+</li>
+<li>
+<p>打开 ollydbg，运行程序，在关键调用处（401030，401080 等地址）打上断点以便观察。 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/1.png" class=""></p>
+<div class="tabs" id="path"><ul class="nav-tabs"><li class="tab active"><a href="#path-1"><i class="fa fa-exclamation-circle"></i>Fail</a></li><li class="tab"><a href="#path-2"><i class="fa fa-check-circle"></i>Success</a></li></ul><div class="tab-content"><div class="tab-pane active" id="path-1"><p><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/2.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/3.png" class=""></p></div><div class="tab-pane" id="path-2"><p><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/4.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/5.png" class=""></p></div></div></div>
+<div class="note default"><p>这里，已经进入了密码验证函数中，传进来的参数 <code>s1</code> 与内部存储的 <code>s2</code>（<code>"1234567"</code>）进行了 <code>strcmp</code> 比较，<code>strcmp</code> 是一个 C 语言的比较函数，若两个字符串 <code>str1</code> 和 <code>str2</code> 相等，则返回 <code>0</code>，这里不相等，且 <code>str1&lt;str2</code>，所以 <code>strcmp</code> 返回值为 <code>-1</code>，<code>authenticated</code> 的值也为 <code>-1</code>，非零，验证失败。这里也可以看到，在 <code>4010E5</code> 处有一个关键的 <code>JE</code> 跳转，表示表达式为零即跳转，跳转不成功，就会执行打印 <code>"incorrect password!"</code>。若输入了正确密码，则跳转成功，转而执行输出 <code>"Congratulations"</code> 分支。</p>
+</div>
+</li>
+<li>
+<p>跳过验证的其中一个方法是修改关键部位的汇编语句。比如，把地址 <code>004010E5</code> 的 <code>JE</code> 改为 <code>JNZ</code>，具体方法是把 <code>opcode</code> 从 <code>74</code> 改成 <code>75</code>。这样修改的道理是取反逻辑，把原来的 “输入正确即通过验证” 改为 “输入不正确即可通过验证”，由于未知密码的概率相当大，这样修改相当于跳过了原有的验证过程（当然，假如经过修改后，作了一个 “错误输入” 程序反而崩溃退出了…… 就证明内部定义的密码被你蒙中了）。除此以外，这样的方法是不会对程序运行流程图有大的改变的。</p>
+<img data-src="/2019/10/08/experiments/security/software/bufferOverflow/6.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/7.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/8.png" class="" title="输错密码也能进">
+</li>
+<li>
+<p>修改汇编语句后，程序运行流程图表示。调试成功后，可以在 IDA 中静态修改相应位置的 opcode，然后 patch 回原来的程序中 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/9.png" class=""></p>
+</li>
+</ol>
+<h2 id="测试结论">测试结论</h2>
+<p>本次实验掌握了 ollydbg 的基本使用技巧和动态调试的快捷键：<kbd>F7</kbd>，<kbd>F8</kbd>，<kbd>F9</kbd>，同时也学会在调试中打断点，以便于观察栈运行情况。通过阅读一个模拟认证的代码，了解简单的认证流程，从安全角度试图对代码进行破解。</p>
+<h2 id="思考题">思考题</h2>
+<div class="tabs" id="thinking"><ul class="nav-tabs"><li class="tab active"><a href="#thinking-1">思路 1</a></li><li class="tab"><a href="#thinking-2">思路 2</a></li></ul><div class="tab-content"><div class="tab-pane active" id="thinking-1"><p>通过阅读代码并分析得知，只需要让 <code>004010F6</code> 处的代码得以执行，验证就可以通过。除了修改判断逻辑，我们也可以直接切断控制流，让代码不会执行到认证失败流中，从而通过验证。</p>
+<p>具体方法：将 <code>0x004010e5</code> 的 <code>jz</code> 改为 <code>jmp</code> 无条件跳转，然后抹掉 (<code>nop</code>)<code>0x004010f4</code> 的 <code>jmp</code> 语句，让验证成功语句得以输出。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/10.png" class=""></div><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/11.png" class=""></div></div></div>
+<p>根据修改之后的程序流图来看，这样改动直接孤立了验证失败流。用户的任何输入都可以一次成功通过验证流程，而不关 <code>verify_password</code> 的结果如何。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/12.png" class=""></div><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/13.png" class=""></div></div></div></div><div class="tab-pane" id="thinking-2"><div class="note warning"><p>没有成功做出来，只能先把思路留在这里了</p>
+</div> 
+<p>能不能用缓冲区溢出的方法来破解这个程序呢？</p>
+<p>重新阅读代码，发现其中的 <code>password</code> 变量是一个 <code>1024*2</code> 字节长的 <code>char</code> 数组，是有限长度的。而查阅资料知，<code>scanf</code> 是存在安全问题的。例如存在以下代码和运行结果：</p>
+<div class="tabs" id="code"><ul class="nav-tabs"><li class="tab active"><a href="#code-1"><i class="fa fa-code"></i>源码</a></li><li class="tab"><a href="#code-2"><i class="fa fa-terminal"></i>运行结果</a></li></ul><div class="tab-content"><div class="tab-pane active" id="code-1"><figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>{ </span><br><span class="line">   <span class="type">int</span> i=<span class="number">5</span>; </span><br><span class="line">   <span class="type">char</span> pass[<span class="number">6</span>]; </span><br><span class="line">   <span class="keyword">while</span>(<span class="number">1</span>){ </span><br><span class="line">      <span class="built_in">scanf</span>(<span class="string">"%s"</span>,pass); </span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,i); </span><br><span class="line">   } </span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="code-2"><figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">12345 5 </span><br><span class="line">123456 5 </span><br><span class="line">1234567 5 </span><br><span class="line">12345678 0 </span><br><span class="line">1234567890 12345 </span><br><span class="line">123456789 57 </span><br></pre></td></tr></tbody></table></figure></div></div></div>
+<p>由于 <code>scanf</code> 没有检验结束节点，当数组被溢出到一定程度时，就会覆盖整型变量 <code>i</code>，输出非预期值。我们可以借鉴这个思路，让输入的 <code>password</code> 强行将 <code>valid_flag</code> 置为 <code>0</code>，最好可以跳过检验密码函数，直接进入输出验证成功的函数中，以完成破解。</p></div></div></div>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>软件安全</category>
+        <category>漏洞</category>
+        <category>缓冲区溢出</category>
+        <category>二进制</category>
+      </categories>
+      <tags>
+        <tag>网络空间安全</tag>
+        <tag>软件安全</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>漏洞挖掘与模糊测试</title>
     <url>/2019/11/29/experiments/security/software/fuzzing/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
@@ -3980,62 +4033,9 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>软件安全</category>
+        <category>漏洞</category>
         <category>拒绝服务</category>
-      </categories>
-      <tags>
-        <tag>网络空间安全</tag>
-        <tag>软件安全</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>基本漏洞利用</title>
-    <url>/2019/10/08/experiments/security/software/bufferOverflow/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
-<p>通过分析密码验证小程序，初步掌握缓冲区溢出漏洞的原理和应用</p>
-<span id="more"></span>
-<h2 id="测试步骤与结果">测试步骤与结果</h2>
-<p>实验的源码如下</p>
-<figure class="highlight c"><figcaption><span>password.c</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PASSWORD <span class="string">"1234567"</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">verify_password</span> <span class="params">(<span class="type">char</span> *password)</span></span><br><span class="line">{</span><br><span class="line">	<span class="type">int</span> authenticated;</span><br><span class="line">	authenticated=<span class="built_in">strcmp</span>(password,PASSWORD);</span><br><span class="line">	<span class="keyword">return</span> authenticated;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">{</span><br><span class="line">	<span class="type">int</span> valid_flag=<span class="number">0</span>;</span><br><span class="line">	<span class="type">char</span> password[<span class="number">1024</span>];</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">	{</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"please input password:       "</span>);</span><br><span class="line">		<span class="built_in">scanf</span>(<span class="string">"%s"</span>,password);</span><br><span class="line">		valid_flag = verify_password(password);</span><br><span class="line">		<span class="keyword">if</span>(valid_flag)</span><br><span class="line">		{</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"incorrect password!\n\n"</span>);</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		{</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"Congratulation! You have passed the verification!\n"</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<ol>
-<li>
-<p>简单阅读代码，发现程序检查了一个用户的输入，与内部存储的一个字符串进行比较，若相同，就返回验证成功。否则，显示验证失败并继续验证。 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/0.png" class=""></p>
-</li>
-<li>
-<p>打开 ollydbg，运行程序，在关键调用处（401030，401080 等地址）打上断点以便观察。 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/1.png" class=""></p>
-<div class="tabs" id="path"><ul class="nav-tabs"><li class="tab active"><a href="#path-1"><i class="fa fa-exclamation-circle"></i>Fail</a></li><li class="tab"><a href="#path-2"><i class="fa fa-check-circle"></i>Success</a></li></ul><div class="tab-content"><div class="tab-pane active" id="path-1"><p><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/2.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/3.png" class=""></p></div><div class="tab-pane" id="path-2"><p><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/4.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/5.png" class=""></p></div></div></div>
-<div class="note default"><p>这里，已经进入了密码验证函数中，传进来的参数 <code>s1</code> 与内部存储的 <code>s2</code>（<code>"1234567"</code>）进行了 <code>strcmp</code> 比较，<code>strcmp</code> 是一个 C 语言的比较函数，若两个字符串 <code>str1</code> 和 <code>str2</code> 相等，则返回 <code>0</code>，这里不相等，且 <code>str1&lt;str2</code>，所以 <code>strcmp</code> 返回值为 <code>-1</code>，<code>authenticated</code> 的值也为 <code>-1</code>，非零，验证失败。这里也可以看到，在 <code>4010E5</code> 处有一个关键的 <code>JE</code> 跳转，表示表达式为零即跳转，跳转不成功，就会执行打印 <code>"incorrect password!"</code>。若输入了正确密码，则跳转成功，转而执行输出 <code>"Congratulations"</code> 分支。</p>
-</div>
-</li>
-<li>
-<p>跳过验证的其中一个方法是修改关键部位的汇编语句。比如，把地址 <code>004010E5</code> 的 <code>JE</code> 改为 <code>JNZ</code>，具体方法是把 <code>opcode</code> 从 <code>74</code> 改成 <code>75</code>。这样修改的道理是取反逻辑，把原来的 “输入正确即通过验证” 改为 “输入不正确即可通过验证”，由于未知密码的概率相当大，这样修改相当于跳过了原有的验证过程（当然，假如经过修改后，作了一个 “错误输入” 程序反而崩溃退出了…… 就证明内部定义的密码被你蒙中了）。除此以外，这样的方法是不会对程序运行流程图有大的改变的。</p>
-<img data-src="/2019/10/08/experiments/security/software/bufferOverflow/6.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/7.png" class=""> <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/8.png" class="" title="输错密码也能进">
-</li>
-<li>
-<p>修改汇编语句后，程序运行流程图表示。调试成功后，可以在 IDA 中静态修改相应位置的 opcode，然后 patch 回原来的程序中 <img data-src="/2019/10/08/experiments/security/software/bufferOverflow/9.png" class=""></p>
-</li>
-</ol>
-<h2 id="测试结论">测试结论</h2>
-<p>本次实验掌握了 ollydbg 的基本使用技巧和动态调试的快捷键：<kbd>F7</kbd>，<kbd>F8</kbd>，<kbd>F9</kbd>，同时也学会在调试中打断点，以便于观察栈运行情况。通过阅读一个模拟认证的代码，了解简单的认证流程，从安全角度试图对代码进行破解。</p>
-<h2 id="思考题">思考题</h2>
-<div class="tabs" id="thinking"><ul class="nav-tabs"><li class="tab active"><a href="#thinking-1">思路 1</a></li><li class="tab"><a href="#thinking-2">思路 2</a></li></ul><div class="tab-content"><div class="tab-pane active" id="thinking-1"><p>通过阅读代码并分析得知，只需要让 <code>004010F6</code> 处的代码得以执行，验证就可以通过。除了修改判断逻辑，我们也可以直接切断控制流，让代码不会执行到认证失败流中，从而通过验证。</p>
-<p>具体方法：将 <code>0x004010e5</code> 的 <code>jz</code> 改为 <code>jmp</code> 无条件跳转，然后抹掉 (<code>nop</code>)<code>0x004010f4</code> 的 <code>jmp</code> 语句，让验证成功语句得以输出。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/10.png" class=""></div><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/11.png" class=""></div></div></div>
-<p>根据修改之后的程序流图来看，这样改动直接孤立了验证失败流。用户的任何输入都可以一次成功通过验证流程，而不关 <code>verify_password</code> 的结果如何。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/12.png" class=""></div><div class="group-picture-column"><img data-src="/2019/10/08/experiments/security/software/bufferOverflow/13.png" class=""></div></div></div></div><div class="tab-pane" id="thinking-2"><div class="note warning"><p>没有成功做出来，只能先把思路留在这里了</p>
-</div> 
-<p>能不能用缓冲区溢出的方法来破解这个程序呢？</p>
-<p>重新阅读代码，发现其中的 <code>password</code> 变量是一个 <code>1024*2</code> 字节长的 <code>char</code> 数组，是有限长度的。而查阅资料知，<code>scanf</code> 是存在安全问题的。例如存在以下代码和运行结果：</p>
-<div class="tabs" id="code"><ul class="nav-tabs"><li class="tab active"><a href="#code-1"><i class="fa fa-code"></i>源码</a></li><li class="tab"><a href="#code-2"><i class="fa fa-terminal"></i>运行结果</a></li></ul><div class="tab-content"><div class="tab-pane active" id="code-1"><figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>{ </span><br><span class="line">   <span class="type">int</span> i=<span class="number">5</span>; </span><br><span class="line">   <span class="type">char</span> pass[<span class="number">6</span>]; </span><br><span class="line">   <span class="keyword">while</span>(<span class="number">1</span>){ </span><br><span class="line">      <span class="built_in">scanf</span>(<span class="string">"%s"</span>,pass); </span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,i); </span><br><span class="line">   } </span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure></div><div class="tab-pane" id="code-2"><figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">12345 5 </span><br><span class="line">123456 5 </span><br><span class="line">1234567 5 </span><br><span class="line">12345678 0 </span><br><span class="line">1234567890 12345 </span><br><span class="line">123456789 57 </span><br></pre></td></tr></tbody></table></figure></div></div></div>
-<p>由于 <code>scanf</code> 没有检验结束节点，当数组被溢出到一定程度时，就会覆盖整型变量 <code>i</code>，输出非预期值。我们可以借鉴这个思路，让输入的 <code>password</code> 强行将 <code>valid_flag</code> 置为 <code>0</code>，最好可以跳过检验密码函数，直接进入输出验证成功的函数中，以完成破解。</p></div></div></div>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>漏洞</category>
-        <category>软件安全</category>
-        <category>缓冲区溢出</category>
-        <category>二进制</category>
       </categories>
       <tags>
         <tag>网络空间安全</tag>
@@ -4149,8 +4149,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>软件安全</category>
+        <category>漏洞</category>
         <category>shellcode注入</category>
       </categories>
       <tags>
@@ -4294,8 +4294,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>软件安全</category>
+        <category>漏洞</category>
         <category>栈溢出</category>
       </categories>
       <tags>
@@ -4410,8 +4410,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>软件安全</category>
+        <category>漏洞</category>
         <category>格式化字符串</category>
       </categories>
       <tags>
@@ -4494,8 +4494,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>软件安全</category>
+        <category>漏洞</category>
         <category>SEH</category>
         <category>虚函数</category>
       </categories>
@@ -4655,8 +4655,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>信息系统</category>
+        <category>漏洞</category>
         <category>DDoS攻击</category>
       </categories>
       <tags>
@@ -4828,8 +4828,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>信息系统</category>
+        <category>漏洞</category>
         <category>Tomcat配置</category>
       </categories>
       <tags>
@@ -5004,8 +5004,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>信息系统</category>
+        <category>漏洞</category>
         <category>SQL注入</category>
       </categories>
       <tags>
@@ -5111,8 +5111,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>漏洞分析</category>
+        <category>漏洞</category>
         <category>双重释放</category>
         <category>堆溢出</category>
       </categories>
@@ -5222,8 +5222,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>漏洞分析</category>
+        <category>漏洞</category>
         <category>缓冲区溢出</category>
       </categories>
       <tags>
@@ -5380,8 +5380,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>漏洞分析</category>
+        <category>漏洞</category>
         <category>缓冲区溢出</category>
         <category>二进制</category>
       </categories>
@@ -5477,8 +5477,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>漏洞分析</category>
+        <category>漏洞</category>
         <category>格式化字符串</category>
       </categories>
       <tags>
@@ -5597,9 +5597,88 @@ ARP 协议没有认证机制，只要接收到的协议包是有效的，主机�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>网络安全</category>
+        <category>漏洞</category>
         <category>协议漏洞</category>
+      </categories>
+      <tags>
+        <tag>网络空间安全</tag>
+        <tag>网络安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DoS 拒绝服务攻击</title>
+    <url>/2019/10/27/experiments/security/web/dos/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
+<p>掌握 DoS 攻击的基本原理和应用，分析一次工具发出的 UDP Flood 攻击。尝试使用 WindowsXP 编程实现 SYN Flood 攻击。</p>
+<span id="more"></span>
+<div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p>
+</div>
+<h2 id="原理">原理</h2>
+<ul>
+<li>DoS 攻击，又叫做拒绝服务攻击，是能导致合法用户不能正常访问网络服务的行为。其升级版本为 DDoS（分布式拒绝服务攻击）。DoS 攻击分为很多种，本次实验用到的是 SYN Flood。</li>
+<li>正常 TCP 请求需要经过三次握手过程，请求端（A）发送包含 SYN 标识的 TCP 报文，请求与服务端建立连接→服务端（B）返回一个 SYN+ACK 报文，表示接受客户端连接请求→客户端（A）返回确认报文 ACK，双方确认连接建立。若请求端发送 SYN 包后，随即掉线，服务端会不停重试，再次尝试向 A 机发送 SYN+ACK 报文，等待一段时间后，丢弃连接，大量半开连接会消耗很多系统资源。</li>
+<li>SYN Flood 攻击通过虚假的数据包，造成目标保存大量半开 TCP 连接，消耗很多系统资源，正常的请求不能得到响应，造成拒绝服务攻击。</li>
+</ul>
+<h2 id="步骤和关键技术">步骤和关键技术</h2>
+<div class="note info"><p>所有实验的监测机均为运行着 win10 机器，ip 地址为 192.168.235.1，其运行着 wireshark</p>
+</div>
+<h3 id="攻击工具进行的UDP-flood攻击">攻击工具进行的 UDP flood 攻击</h3>
+<p>本部分实验中，攻击机为运行 winxp 的机器，ip 地址为 192.168.235.136。 被攻击机为运行 win2000 的机器，ip 地址为 192.168.235.133。 首先确立目标，在被攻击机上运行 <code>netstat -an</code>，在打开的 udp 端口列表中，选择 137 端口为目标。</p>
+<img data-src="/2019/10/27/experiments/security/web/dos/1.png" class="">
+<p>在攻击机上打开 udp flooder 软件，指定 ip 和 port，发送信息随便写一些内容，长度设为 30 秒，点击 Go 开始攻击，此过程中同时开启主机的 wireshark 软件开始抓包。</p>
+<img data-src="/2019/10/27/experiments/security/web/dos/2.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/3.png" class="">
+<div class="note info"><p>速度并没有设的很快。</p>
+</div>
+<h3 id="自己编程实现SYN-flood攻击">自己编程实现 SYN flood 攻击</h3>
+<div class="note info"><p>本次实验中，我选择了基于 socket 的实现。编程环境为 winxp，测试环境为 win2000。攻击机为运行 win2000 的机器，ip 地址为 192.168.235.141。被攻击机为运行 win2000 的机器，ip 地址为 192.168.235.133，开启了 21 号端口（ftp 服务）。源码见附件</p>
+</div>
+<h2 id="数据和分析">数据和分析</h2>
+<h3 id="分析攻击工具进行的UDP-Flood攻击">分析攻击工具进行的 UDP Flood 攻击</h3>
+<img data-src="/2019/10/27/experiments/security/web/dos/4.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/5.png" class="">
+<p>被攻击机把这个工具传输的数据包解析为 NBNS 协议。在攻击包中可以看到自己传输进去的信息，包的状态是被分割的且包是错误的形成的。可以看到，UDP Flood 主要是向目标机传送大量垃圾的错误协议包，从而打乱目标机的正常通信。</p>
+<img data-src="/2019/10/27/experiments/security/web/dos/6.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/7.png" class="">
+<h3 id="分析自己编程实现的SYN-Flood攻击">分析自己编程实现的 SYN Flood 攻击</h3>
+<p>在目标机上开启 FTP 服务。确认 21 号 tcp 端口开启。</p>
+<img data-src="/2019/10/27/experiments/security/web/dos/8.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/9.png" class="">
+<p>在攻击机上运行攻击程序，发现目标机的 cpu 使用率飙升至满值，操作上也变得很卡。本来很顺畅的 ping 过程也受到了影响，开始存在掉包现象。关掉攻击后，系统 cpu 回复正常，网络回复正常。</p>
+<img data-src="/2019/10/27/experiments/security/web/dos/10.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/11.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/12.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/13.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/14.png" class="">
+<p>观察 ftp 服务器的日志，可以看到有大量伪造 ip 源同本服务器建立了连接。</p>
+<img data-src="/2019/10/27/experiments/security/web/dos/15.png" class="">
+<p>下面分析 wireshark 抓包情况，可以看到，攻击机使用假地址 <code>10.168.150.*</code> 向目标机发送了大量 SYN 请求，每次都使用不同的端口。[后来源码改成了 <code>128.1.*.*</code>，本质不影响]</p>
+<img data-src="/2019/10/27/experiments/security/web/dos/16.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/17.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/18.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/19.png" class="">
+<p>其中一个包体如截图所示，这个包体的 SYN 标志位被置为 1。说明 270 号端口欲与服务器的 21 号端口建立连接。</p>
+<p>观察整个发包过程，发现一开始服务器还可以响应一些连接。RST 连接数目较少。后来（可能也触发了一些保护机制：发送窗口被设为 0 了），服务器开始重置连接，不停回应 RST+ACK（而不是 SYN flood 的现象 SYN+ACK）。</p>
+<img data-src="/2019/10/27/experiments/security/web/dos/20.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/21.png" class="">
+<p>很不容易发回了一个 SYN+ACK 包，还被自己 RST 掉了。</p>
+<img data-src="/2019/10/27/experiments/security/web/dos/22.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/23.png" class="">
+<p>SYN+ACK 包就是一个普通的三步握手中第二步的过程。</p>
+<p>后来发现，编程时随机端口范围指定太大了，导致服务器忙于 RST 其他的端口而不发动重试。将端口范围调整至 80~90 后，出现了重试包。但这不是服务端的…… 本来就不存在的 “伪造 IP” 端自己发动了一次重试？看来应该不是端口范围的问题……</p>
+<img data-src="/2019/10/27/experiments/security/web/dos/24.png" class="">
+<img data-src="/2019/10/27/experiments/security/web/dos/25.png" class="">
+<p>我个人也没有想到是编程源码的问题还是服务端 / 客户端防火墙设置问题……</p>
+<p>由于这个问题没能解决，也无法复现出服务端向客户端发送 SYN+ACK 包没有得到回应后，再次发动重试，从而建立了一个 “半连接” 的现象。因此，也无从再进一步分析。</p>
+<h2 id="收获">收获</h2>
+<p>了解了一些常见的拒绝服务攻击原理，使用 wireshark 分析其中的两种拒绝服务攻击，进一步理解 DoS 攻击。</p>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>网络安全</category>
+        <category>漏洞</category>
+        <category>DoS</category>
       </categories>
       <tags>
         <tag>网络空间安全</tag>
@@ -5680,85 +5759,6 @@ IP 地址为 49.235.250.44（现在已更换，所以不作打码处理咯～）
       <categories>
         <category>实验</category>
         <category>网络安全</category>
-      </categories>
-      <tags>
-        <tag>网络空间安全</tag>
-        <tag>网络安全</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>DoS 拒绝服务攻击</title>
-    <url>/2019/10/27/experiments/security/web/dos/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
-<p>掌握 DoS 攻击的基本原理和应用，分析一次工具发出的 UDP Flood 攻击。尝试使用 WindowsXP 编程实现 SYN Flood 攻击。</p>
-<span id="more"></span>
-<div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p>
-</div>
-<h2 id="原理">原理</h2>
-<ul>
-<li>DoS 攻击，又叫做拒绝服务攻击，是能导致合法用户不能正常访问网络服务的行为。其升级版本为 DDoS（分布式拒绝服务攻击）。DoS 攻击分为很多种，本次实验用到的是 SYN Flood。</li>
-<li>正常 TCP 请求需要经过三次握手过程，请求端（A）发送包含 SYN 标识的 TCP 报文，请求与服务端建立连接→服务端（B）返回一个 SYN+ACK 报文，表示接受客户端连接请求→客户端（A）返回确认报文 ACK，双方确认连接建立。若请求端发送 SYN 包后，随即掉线，服务端会不停重试，再次尝试向 A 机发送 SYN+ACK 报文，等待一段时间后，丢弃连接，大量半开连接会消耗很多系统资源。</li>
-<li>SYN Flood 攻击通过虚假的数据包，造成目标保存大量半开 TCP 连接，消耗很多系统资源，正常的请求不能得到响应，造成拒绝服务攻击。</li>
-</ul>
-<h2 id="步骤和关键技术">步骤和关键技术</h2>
-<div class="note info"><p>所有实验的监测机均为运行着 win10 机器，ip 地址为 192.168.235.1，其运行着 wireshark</p>
-</div>
-<h3 id="攻击工具进行的UDP-flood攻击">攻击工具进行的 UDP flood 攻击</h3>
-<p>本部分实验中，攻击机为运行 winxp 的机器，ip 地址为 192.168.235.136。 被攻击机为运行 win2000 的机器，ip 地址为 192.168.235.133。 首先确立目标，在被攻击机上运行 <code>netstat -an</code>，在打开的 udp 端口列表中，选择 137 端口为目标。</p>
-<img data-src="/2019/10/27/experiments/security/web/dos/1.png" class="">
-<p>在攻击机上打开 udp flooder 软件，指定 ip 和 port，发送信息随便写一些内容，长度设为 30 秒，点击 Go 开始攻击，此过程中同时开启主机的 wireshark 软件开始抓包。</p>
-<img data-src="/2019/10/27/experiments/security/web/dos/2.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/3.png" class="">
-<div class="note info"><p>速度并没有设的很快。</p>
-</div>
-<h3 id="自己编程实现SYN-flood攻击">自己编程实现 SYN flood 攻击</h3>
-<div class="note info"><p>本次实验中，我选择了基于 socket 的实现。编程环境为 winxp，测试环境为 win2000。攻击机为运行 win2000 的机器，ip 地址为 192.168.235.141。被攻击机为运行 win2000 的机器，ip 地址为 192.168.235.133，开启了 21 号端口（ftp 服务）。源码见附件</p>
-</div>
-<h2 id="数据和分析">数据和分析</h2>
-<h3 id="分析攻击工具进行的UDP-Flood攻击">分析攻击工具进行的 UDP Flood 攻击</h3>
-<img data-src="/2019/10/27/experiments/security/web/dos/4.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/5.png" class="">
-<p>被攻击机把这个工具传输的数据包解析为 NBNS 协议。在攻击包中可以看到自己传输进去的信息，包的状态是被分割的且包是错误的形成的。可以看到，UDP Flood 主要是向目标机传送大量垃圾的错误协议包，从而打乱目标机的正常通信。</p>
-<img data-src="/2019/10/27/experiments/security/web/dos/6.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/7.png" class="">
-<h3 id="分析自己编程实现的SYN-Flood攻击">分析自己编程实现的 SYN Flood 攻击</h3>
-<p>在目标机上开启 FTP 服务。确认 21 号 tcp 端口开启。</p>
-<img data-src="/2019/10/27/experiments/security/web/dos/8.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/9.png" class="">
-<p>在攻击机上运行攻击程序，发现目标机的 cpu 使用率飙升至满值，操作上也变得很卡。本来很顺畅的 ping 过程也受到了影响，开始存在掉包现象。关掉攻击后，系统 cpu 回复正常，网络回复正常。</p>
-<img data-src="/2019/10/27/experiments/security/web/dos/10.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/11.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/12.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/13.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/14.png" class="">
-<p>观察 ftp 服务器的日志，可以看到有大量伪造 ip 源同本服务器建立了连接。</p>
-<img data-src="/2019/10/27/experiments/security/web/dos/15.png" class="">
-<p>下面分析 wireshark 抓包情况，可以看到，攻击机使用假地址 <code>10.168.150.*</code> 向目标机发送了大量 SYN 请求，每次都使用不同的端口。[后来源码改成了 <code>128.1.*.*</code>，本质不影响]</p>
-<img data-src="/2019/10/27/experiments/security/web/dos/16.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/17.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/18.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/19.png" class="">
-<p>其中一个包体如截图所示，这个包体的 SYN 标志位被置为 1。说明 270 号端口欲与服务器的 21 号端口建立连接。</p>
-<p>观察整个发包过程，发现一开始服务器还可以响应一些连接。RST 连接数目较少。后来（可能也触发了一些保护机制：发送窗口被设为 0 了），服务器开始重置连接，不停回应 RST+ACK（而不是 SYN flood 的现象 SYN+ACK）。</p>
-<img data-src="/2019/10/27/experiments/security/web/dos/20.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/21.png" class="">
-<p>很不容易发回了一个 SYN+ACK 包，还被自己 RST 掉了。</p>
-<img data-src="/2019/10/27/experiments/security/web/dos/22.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/23.png" class="">
-<p>SYN+ACK 包就是一个普通的三步握手中第二步的过程。</p>
-<p>后来发现，编程时随机端口范围指定太大了，导致服务器忙于 RST 其他的端口而不发动重试。将端口范围调整至 80~90 后，出现了重试包。但这不是服务端的…… 本来就不存在的 “伪造 IP” 端自己发动了一次重试？看来应该不是端口范围的问题……</p>
-<img data-src="/2019/10/27/experiments/security/web/dos/24.png" class="">
-<img data-src="/2019/10/27/experiments/security/web/dos/25.png" class="">
-<p>我个人也没有想到是编程源码的问题还是服务端 / 客户端防火墙设置问题……</p>
-<p>由于这个问题没能解决，也无法复现出服务端向客户端发送 SYN+ACK 包没有得到回应后，再次发动重试，从而建立了一个 “半连接” 的现象。因此，也无从再进一步分析。</p>
-<h2 id="收获">收获</h2>
-<p>了解了一些常见的拒绝服务攻击原理，使用 wireshark 分析其中的两种拒绝服务攻击，进一步理解 DoS 攻击。</p>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>漏洞</category>
-        <category>网络安全</category>
-        <category>DoS</category>
       </categories>
       <tags>
         <tag>网络空间安全</tag>
@@ -5877,93 +5877,6 @@ IP 地址为 49.235.250.44（现在已更换，所以不作打码处理咯～）
 </li>
 <li>
 <p>此扫描还尝试利用 NETBIOS 登录来取得用户权限，以获取后续漏洞信息。 <img data-src="/2019/11/25/experiments/security/web/ids/27.png" class=""></p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>网络安全</category>
-      </categories>
-      <tags>
-        <tag>网络空间安全</tag>
-        <tag>网络安全</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>虚拟专用网实验</title>
-    <url>/2019/12/05/experiments/security/web/vpn/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
-<p>了解什么是虚拟专用网（VPN），知道 VPN 的原理和应用。通过实验理解 IPSec 和 VPN 的关系和必要性。</p>
-<span id="more"></span>
-<div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p>
-</div>
-<h2 id="原理">原理</h2>
-<h3 id="虚拟专用网-VPN-1">虚拟专用网 (VPN)[^1]</h3>
-<p>虚拟专用网（Virtual Private Network，VPN）是利用 Internet 等公共网络的基础设施，通过隧道技术，为用户提供的与专用网络具有相同通信功能的安全数据通道。“虚拟” 是指用户无需建立各自专用的物理线路，而利用 Internet 等公共网络资源和设备建立一条逻辑上的专用数据通道，并实现与专用数据通道相同的通信功能。“专用网络” 是指虚拟出来的网络并非任何连接在公共网络上的用户都能使用，只有经过授权的用户才可使用。</p>
-<p>该通道内传输数据经过加密和认证，可保证传输内容的完整性和机密性。</p>
-<h3 id="IPSec">IPSec</h3>
-<p>互联网安全协议（英语：Internet Protocol Security，缩写为 IPsec），是一个协议包，通过对 IP 协议的分组进行加密和认证来保护 IP 协议的网络传输协议族（一些相互关联的协议的集合）。由认证头（AH）、封装安全载荷（ESP）、安全关联（SA）组成。</p>
-<p>IPSec 被设计用来提供入口之间和端到端之间的通信安全，无论哪一种模式都可以用来构建虚拟专用网（VPN）。</p>
-<h2 id="步骤和关键技术">步骤和关键技术</h2>
-<h3 id="IPSec协议配置">IPSec 协议配置</h3>
-<div class="note info"><p>Windows XP 端的 IP 为 192.168.235.136，Windows 2000 端的 IP 为 192.168.235.141</p>
-</div>
-<ol>
-<li>
-<p>在 WindowsXP 下打开 “控制面板→管理工具→本地安全策略”，找到 “IP 安全策略，在本地计算机”。双击进入。然后右击 “安全服务器”，点击指派规则。<img data-src="/2019/12/05/experiments/security/web/vpn/1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/2.png" class=""></p>
-</li>
-<li>
-<p>双击 “安全服务器” 进入其设置，双击 “所有 ICMP 通讯量” 进入规则设置。<img data-src="/2019/12/05/experiments/security/web/vpn/3.png" class=""></p>
-</li>
-<li>
-<p>在 “筛选器操作” 选项卡中，选择 “需要安全”。<img data-src="/2019/12/05/experiments/security/web/vpn/4.png" class=""></p>
-</li>
-<li>
-<p>在 “身份验证方法” 选项卡中，添加一个共享密钥。记住此密钥，在另一端要做同样的设置。 <img data-src="/2019/12/05/experiments/security/web/vpn/5.png" class="" title="身份验证方法选项卡"></p>
- <div class="tabs" id="key"><ul class="nav-tabs"><li class="tab active"><a href="#key-1">XP 端</a></li><li class="tab"><a href="#key-2">2000 端</a></li></ul><div class="tab-content"><div class="tab-pane active" id="key-1"><img data-src="/2019/12/05/experiments/security/web/vpn/6.png" class="" title="设置共享密钥"></div><div class="tab-pane" id="key-2"><img data-src="/2019/12/05/experiments/security/web/vpn/7.png" class="" title="设置共享密钥"></div></div></div>
-</li>
-<li>
-<p>只在一端配置时，ping 端会直接显示 Request timed out。双端配置时，会显示 Negotiating IP Security。正确配置时，会先显示 Negotiating IP Security，然后才会显示 ping 的 reply，代表双端成功建立了连接。可以在 win2000 端的 IP 安全监视器中看到连过来的 xp 设备。</p>
- <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/8.png" class="" title="只配置了一边"></div><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/9.png" class="" title="双端配置"></div><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/10.png" class="" title="完全正确的配置"></div></div></div> 
- <img data-src="/2019/12/05/experiments/security/web/vpn/11.png" class="" title="查看链接的Windows XP设备">
- <div class="note info"><p>当然，也可以配置专用的 IPSec 安全策略，不使用系统默认值。过程类似，不再赘述。</p>
-</div>
-</li>
-</ol>
-<h3 id="OpenVPN配置">OpenVPN 配置</h3>
-<div class="note info"><p>本部分实验使用 WindowsXP 和 Windows2000 共同完成，WindowsXP 充当服务端，Windows2000 充当客户端。</p>
-</div>
-<div class="note warning"><p>事先下载安装好 openssl 库，否则会报 “命令不存在” 的错误。</p>
-</div>
-<ol>
-<li>
-<p>首先安装 OpenVPN。安装过程一路下一步即可。</p>
-</li>
-<li>
-<p>将安装目录 easy-rsa 下 <code>vars.bat.sample</code> 文件换成自己的信息，然后更名为 <code>vars.bat</code>。</p>
- <figure class="highlight shell"><figcaption><span>vars.bat</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">...</span><br><span class="line">set &lt;KEY&gt;=&lt;VALUE&gt;</span><br></pre></td></tr></tbody></table></figure>
- <img data-src="/2019/12/05/experiments/security/web/vpn/12.png" class="">
-</li>
-<li>
-<p>将 <code>openssl.cnf.sample</code> 更名为 <code>openssl.cnf</code>。 <img data-src="/2019/12/05/experiments/security/web/vpn/13.png" class=""></p>
-</li>
-<li>
-<p>在 easy-rsa 文件夹下，先后运行 <code>vars</code> 和 <code>clean-all.bat</code> 命令，以进行初始化。 <img data-src="/2019/12/05/experiments/security/web/vpn/14.png" class=""></p>
-</li>
-<li>
-<p>生成 CA 根证书。 <img data-src="/2019/12/05/experiments/security/web/vpn/15.png" class=""></p>
-</li>
-<li>
-<p>生成密钥交换协议算法参数。 <img data-src="/2019/12/05/experiments/security/web/vpn/16.png" class=""></p>
-</li>
-<li>
-<p>生成服务端和客户端证书并签发十年有效期。</p>
- <div class="tabs" id="certificate"><ul class="nav-tabs"><li class="tab active"><a href="#certificate-1">server</a></li><li class="tab"><a href="#certificate-2">client</a></li></ul><div class="tab-content"><div class="tab-pane active" id="certificate-1"><figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">build-server-key.bat server</span><br></pre></td></tr></tbody></table></figure>
-<p><img data-src="/2019/12/05/experiments/security/web/vpn/17-1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/17-2.png" class=""></p></div><div class="tab-pane" id="certificate-2"><figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">build-key.bat client</span><br></pre></td></tr></tbody></table></figure>
-<p><img data-src="/2019/12/05/experiments/security/web/vpn/18-1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/18-2.png" class=""></p></div></div></div>
-</li>
-<li>
-<p>生成 ta key</p>
 </li>
 </ol>
 ]]></content>
@@ -6169,6 +6082,93 @@ set payload "payload_name"可以设定使用的payload，show options可以查�
 <li>
 <p>中间服务探测的过程与 intense 扫描基本一致，后期 vulners 检测工具与它自己的服务器进行了交互，可能是为了将特征与自己的数据库比对。</p>
  <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/ex5.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/ex6.png" class=""></div></div></div>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>网络安全</category>
+      </categories>
+      <tags>
+        <tag>网络空间安全</tag>
+        <tag>网络安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>虚拟专用网实验</title>
+    <url>/2019/12/05/experiments/security/web/vpn/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
+<p>了解什么是虚拟专用网（VPN），知道 VPN 的原理和应用。通过实验理解 IPSec 和 VPN 的关系和必要性。</p>
+<span id="more"></span>
+<div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p>
+</div>
+<h2 id="原理">原理</h2>
+<h3 id="虚拟专用网-VPN-1">虚拟专用网 (VPN)[^1]</h3>
+<p>虚拟专用网（Virtual Private Network，VPN）是利用 Internet 等公共网络的基础设施，通过隧道技术，为用户提供的与专用网络具有相同通信功能的安全数据通道。“虚拟” 是指用户无需建立各自专用的物理线路，而利用 Internet 等公共网络资源和设备建立一条逻辑上的专用数据通道，并实现与专用数据通道相同的通信功能。“专用网络” 是指虚拟出来的网络并非任何连接在公共网络上的用户都能使用，只有经过授权的用户才可使用。</p>
+<p>该通道内传输数据经过加密和认证，可保证传输内容的完整性和机密性。</p>
+<h3 id="IPSec">IPSec</h3>
+<p>互联网安全协议（英语：Internet Protocol Security，缩写为 IPsec），是一个协议包，通过对 IP 协议的分组进行加密和认证来保护 IP 协议的网络传输协议族（一些相互关联的协议的集合）。由认证头（AH）、封装安全载荷（ESP）、安全关联（SA）组成。</p>
+<p>IPSec 被设计用来提供入口之间和端到端之间的通信安全，无论哪一种模式都可以用来构建虚拟专用网（VPN）。</p>
+<h2 id="步骤和关键技术">步骤和关键技术</h2>
+<h3 id="IPSec协议配置">IPSec 协议配置</h3>
+<div class="note info"><p>Windows XP 端的 IP 为 192.168.235.136，Windows 2000 端的 IP 为 192.168.235.141</p>
+</div>
+<ol>
+<li>
+<p>在 WindowsXP 下打开 “控制面板→管理工具→本地安全策略”，找到 “IP 安全策略，在本地计算机”。双击进入。然后右击 “安全服务器”，点击指派规则。<img data-src="/2019/12/05/experiments/security/web/vpn/1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/2.png" class=""></p>
+</li>
+<li>
+<p>双击 “安全服务器” 进入其设置，双击 “所有 ICMP 通讯量” 进入规则设置。<img data-src="/2019/12/05/experiments/security/web/vpn/3.png" class=""></p>
+</li>
+<li>
+<p>在 “筛选器操作” 选项卡中，选择 “需要安全”。<img data-src="/2019/12/05/experiments/security/web/vpn/4.png" class=""></p>
+</li>
+<li>
+<p>在 “身份验证方法” 选项卡中，添加一个共享密钥。记住此密钥，在另一端要做同样的设置。 <img data-src="/2019/12/05/experiments/security/web/vpn/5.png" class="" title="身份验证方法选项卡"></p>
+ <div class="tabs" id="key"><ul class="nav-tabs"><li class="tab active"><a href="#key-1">XP 端</a></li><li class="tab"><a href="#key-2">2000 端</a></li></ul><div class="tab-content"><div class="tab-pane active" id="key-1"><img data-src="/2019/12/05/experiments/security/web/vpn/6.png" class="" title="设置共享密钥"></div><div class="tab-pane" id="key-2"><img data-src="/2019/12/05/experiments/security/web/vpn/7.png" class="" title="设置共享密钥"></div></div></div>
+</li>
+<li>
+<p>只在一端配置时，ping 端会直接显示 Request timed out。双端配置时，会显示 Negotiating IP Security。正确配置时，会先显示 Negotiating IP Security，然后才会显示 ping 的 reply，代表双端成功建立了连接。可以在 win2000 端的 IP 安全监视器中看到连过来的 xp 设备。</p>
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/8.png" class="" title="只配置了一边"></div><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/9.png" class="" title="双端配置"></div><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/10.png" class="" title="完全正确的配置"></div></div></div> 
+ <img data-src="/2019/12/05/experiments/security/web/vpn/11.png" class="" title="查看链接的Windows XP设备">
+ <div class="note info"><p>当然，也可以配置专用的 IPSec 安全策略，不使用系统默认值。过程类似，不再赘述。</p>
+</div>
+</li>
+</ol>
+<h3 id="OpenVPN配置">OpenVPN 配置</h3>
+<div class="note info"><p>本部分实验使用 WindowsXP 和 Windows2000 共同完成，WindowsXP 充当服务端，Windows2000 充当客户端。</p>
+</div>
+<div class="note warning"><p>事先下载安装好 openssl 库，否则会报 “命令不存在” 的错误。</p>
+</div>
+<ol>
+<li>
+<p>首先安装 OpenVPN。安装过程一路下一步即可。</p>
+</li>
+<li>
+<p>将安装目录 easy-rsa 下 <code>vars.bat.sample</code> 文件换成自己的信息，然后更名为 <code>vars.bat</code>。</p>
+ <figure class="highlight shell"><figcaption><span>vars.bat</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">...</span><br><span class="line">set &lt;KEY&gt;=&lt;VALUE&gt;</span><br></pre></td></tr></tbody></table></figure>
+ <img data-src="/2019/12/05/experiments/security/web/vpn/12.png" class="">
+</li>
+<li>
+<p>将 <code>openssl.cnf.sample</code> 更名为 <code>openssl.cnf</code>。 <img data-src="/2019/12/05/experiments/security/web/vpn/13.png" class=""></p>
+</li>
+<li>
+<p>在 easy-rsa 文件夹下，先后运行 <code>vars</code> 和 <code>clean-all.bat</code> 命令，以进行初始化。 <img data-src="/2019/12/05/experiments/security/web/vpn/14.png" class=""></p>
+</li>
+<li>
+<p>生成 CA 根证书。 <img data-src="/2019/12/05/experiments/security/web/vpn/15.png" class=""></p>
+</li>
+<li>
+<p>生成密钥交换协议算法参数。 <img data-src="/2019/12/05/experiments/security/web/vpn/16.png" class=""></p>
+</li>
+<li>
+<p>生成服务端和客户端证书并签发十年有效期。</p>
+ <div class="tabs" id="certificate"><ul class="nav-tabs"><li class="tab active"><a href="#certificate-1">server</a></li><li class="tab"><a href="#certificate-2">client</a></li></ul><div class="tab-content"><div class="tab-pane active" id="certificate-1"><figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">build-server-key.bat server</span><br></pre></td></tr></tbody></table></figure>
+<p><img data-src="/2019/12/05/experiments/security/web/vpn/17-1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/17-2.png" class=""></p></div><div class="tab-pane" id="certificate-2"><figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">build-key.bat client</span><br></pre></td></tr></tbody></table></figure>
+<p><img data-src="/2019/12/05/experiments/security/web/vpn/18-1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/18-2.png" class=""></p></div></div></div>
+</li>
+<li>
+<p>生成 ta key</p>
 </li>
 </ol>
 ]]></content>
