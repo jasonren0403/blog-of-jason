@@ -12,15 +12,15 @@
 
 <link rel="stylesheet" href="/css/main.css">
 
-<link rel="stylesheet" href="https://fonts.geekzu.org/css?family=Tahoma:300,300italic,400,400italic,700,700italic%7COpen+Sans:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&amp;display=swap&amp;subset=latin,latin-ext">
+<link rel="stylesheet" href="https://fonts.geekzu.org/css2?family=Tahoma:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;family=Open+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;display=swap&amp;subset=latin,latin-ext">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
 
     <meta name="description" content="实验目的 理解操作系统中的几种页面调度算法，尝试用 C++ 语言实现它们。">
 <meta property="og:type" content="article">
@@ -31,7 +31,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/run.png">
 <meta property="article:published_time" content="2019-10-27T14:43:11.000Z">
-<meta property="article:modified_time" content="2024-11-11T08:50:57.241Z">
+<meta property="article:modified_time" content="2025-01-02T03:07:46.410Z">
 <meta property="article:author" content="Jason Ren">
 <meta property="article:tag" content="OS">
 <meta property="article:tag" content="页面调度">
@@ -40,7 +40,6 @@
 
 
 <link rel="canonical" href="https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.jason0743.space/2019/10/27/experiments/oskernel/page-management/","path":"2019/10/27/experiments/oskernel/page-management/","title":"页面调度算法实现"}</script>
@@ -107,23 +106,23 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -263,7 +262,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-11-11 16:50:57" itemprop="dateModified" datetime="2024-11-11T16:50:57+08:00">2024-11-11</time>
+      <time title="修改时间：2025-01-02 11:07:46" itemprop="dateModified" datetime="2025-01-02T11:07:46+08:00">2025-01-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -352,7 +351,8 @@
 <li>将用到的 <code>pagecontrol</code> 置入使用队列（这里的队列当然是一种先进先出的数据结构），返回 2；</li>
 <li>显示命中率，算法完成。</li>
 </ol>
-<pre class="mermaid">graph TD
+<pre><code class="mermaid">
+graph TD
 A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; |Y|B E --&gt; |N|F["diseffect++"]
@@ -360,6 +360,7 @@ F --&gt; G{Pagecontrol是否占满} G --&gt; |Y|H["将最先进入的单元清�
 G --&gt; |N|I["建立page和pagecontrol的关系"]
 H --&gt; I I --&gt; J["用到的Pagecontrol置入使用队列"]
 J --&gt; B
+</code>
 </pre>
 <figure class="highlight c++"><figcaption><span>FIFO 算法 </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::FIFO</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span>{</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	CPageControl *p;</span><br><span class="line">	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">	_pBusypf_head=_pBusypf_tail=<span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++) {</span><br><span class="line">	<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">		_nDiseffect+=<span class="number">1</span>;</span><br><span class="line">    	<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>){  <span class="comment">// 无空闲页面</span></span><br><span class="line">	  		p=_pBusypf_head-&gt;m_pNext;</span><br><span class="line">	  		_vDiscPages[_pBusypf_head-&gt;m_nPageNumber].m_nPageFaceNumber=INVALID;</span><br><span class="line">	  		_pFreepf_head=_pBusypf_head;</span><br><span class="line">	  		_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">	  		_pBusypf_head=p;</span><br><span class="line">		}</span><br><span class="line">		p=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">		_pFreepf_head-&gt;m_nPageNumber=_vPage[i];</span><br><span class="line">		_vDiscPages[_vPage[i]].m_nPageFaceNumber =_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">		<span class="keyword">if</span>(_pBusypf_tail==<span class="literal">NULL</span>)</span><br><span class="line">			_pBusypf_head=_pBusypf_tail=_pFreepf_head;</span><br><span class="line">		<span class="keyword">else</span>{</span><br><span class="line">	  		_pBusypf_tail-&gt;m_pNext=_pFreepf_head;</span><br><span class="line">	  		_pBusypf_tail=_pFreepf_head;</span><br><span class="line">		}</span><br><span class="line"> 		_pFreepf_head=p;</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"FIFO: "</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <div class="note success"><p>易于实现</p>
@@ -373,7 +374,8 @@ J --&gt; B
 <li>在需要处理的 <code>page[]</code> 与 4 中得到的 <code>pagecontrol[]</code> 建立关系，同时让对应的 <code>page[]</code> 单元保存 “最新使用” 的信息，返回 2；</li>
 <li>如果序列处理完成，就输出命中率，算法结束。</li>
 </ol>
-<pre class="mermaid">graph TD
+<pre><code class="mermaid">
+graph TD
  A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; |Y|E_1["修改页面属性，使它保留“最近使用”的信息"]
@@ -382,6 +384,7 @@ F --&gt; G{是否有空闲页面} G --&gt; |Y|H["返回该页面指针"]
 G --&gt; |N|I["在内存页面中找出最长时间没有使用到的页面,将其清理"]
 I --&gt; H H --&gt; J[内存页面和待处理的进程页面建立关系,对应单元保存最新使用信息]
 J --&gt; B 
+</code>
 </pre>
 <figure class="highlight c++"><figcaption><span>LRU 算法 </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::LRU</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span>{</span><br><span class="line">	<span class="type">int</span> i,j,nMin,minj,<span class="built_in">nPresentTime</span>(<span class="number">0</span>);</span><br><span class="line"> 	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++){</span><br><span class="line">  		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">  			_nDiseffect++;</span><br><span class="line">  			<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>){</span><br><span class="line">      			nMin=<span class="number">32767</span>;</span><br><span class="line">      			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">                <span class="comment">// 得到最近最少使用的页面的页号</span></span><br><span class="line">                <span class="comment">// 循环结束后,iMin表示最近最少使用页面的访问次数;minj表示需要换出的页号</span></span><br><span class="line">					<span class="keyword">if</span>(nMin&gt;_vDiscPages[j].m_nTime&amp;&amp;_vDiscPages[j].m_nPageFaceNumber!=INVALID){</span><br><span class="line">						nMin=_vDiscPages[j].m_nTime;</span><br><span class="line">	    				minj=j;</span><br><span class="line">					}</span><br><span class="line"></span><br><span class="line">				_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[minj].m_nPageFaceNumber];</span><br><span class="line">				_vDiscPages[minj].m_nPageFaceNumber=INVALID;</span><br><span class="line">				_vDiscPages[minj].m_nTime=<span class="number">-1</span>;</span><br><span class="line">				_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">   			}</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nTime=nPresentTime;</span><br><span class="line">			_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			_vDiscPages[_vPage[i]].m_nTime=nPresentTime;</span><br><span class="line">		nPresentTime++;</span><br><span class="line">	}</span><br><span class="line">  	cout&lt;&lt;<span class="string">"LRU: "</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <div class="note success"><p>页面利用率有显著提升</p>
@@ -397,7 +400,8 @@ J --&gt; B
 <li>返回 2。</li>
 <li>如果 CPU 所有处理工作完成，就返回命中率的结果，算法结束。</li>
 </ol>
-<pre class="mermaid">graph TD
+<pre><code class="mermaid">
+graph TD
  A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; B E --&gt; |N|F["diseffect++"]
@@ -406,6 +410,7 @@ G --&gt; |N|I["在所有没有被访问且位于内存中的页面中按任意�
 I --&gt; H H --&gt; J[内存页面和待处理的进程页面建立关系,标注页面被访问]
 J --&gt; K{"CPU已经处理了CLEAR_PERIOD个页面"} K --&gt; |N|B K --&gt; |Y|B'["将所有页面设置为'未访问'"]
 B'--&gt; B 
+</code>
 </pre>
 <figure class="highlight c++"><figcaption><span>NRU 算法 </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::NRU</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span>   </span>{</span><br><span class="line">	<span class="type">int</span> i,j,nDiscPage,nOld_DiscPage;</span><br><span class="line"> 	<span class="type">bool</span> bCont_flag;</span><br><span class="line">  	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">  	nDiscPage=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++)     {</span><br><span class="line">		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID)  	{</span><br><span class="line">  			_nDiseffect++;</span><br><span class="line">  			<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>)	    {</span><br><span class="line">      			bCont_flag=<span class="literal">true</span>;</span><br><span class="line">      			nOld_DiscPage=nDiscPage;</span><br><span class="line">      			<span class="keyword">while</span>(bCont_flag)		{</span><br><span class="line">					<span class="keyword">if</span>(_vDiscPages[nDiscPage].m_nCounter==<span class="number">0</span>&amp;&amp;_vDiscPages[nDiscPage].m_nPageFaceNumber!=INVALID)</span><br><span class="line">	    					bCont_flag=<span class="literal">false</span>;</span><br><span class="line">					<span class="keyword">else</span> {</span><br><span class="line">  						nDiscPage++;</span><br><span class="line">  						<span class="keyword">if</span>(nDiscPage==TOTAL_VP) nDiscPage=<span class="number">0</span>;</span><br><span class="line">  						<span class="keyword">if</span>(nDiscPage==nOld_DiscPage)</span><br><span class="line">  						<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">	  						_vDiscPages[j].m_nCounter=<span class="number">0</span>;</span><br><span class="line">	   				}</span><br><span class="line">				}</span><br><span class="line">				_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[nDiscPage].m_nPageFaceNumber];</span><br><span class="line">				_vDiscPages[nDiscPage].m_nPageFaceNumber=INVALID;</span><br><span class="line">      			_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">    			}</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">  			_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">  			_vDiscPages[_vPage[i]].m_nCounter=<span class="number">1</span>;</span><br><span class="line">    		<span class="keyword">if</span>(i%CLEAR_PERIOD==<span class="number">0</span>)</span><br><span class="line">				<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">					_vDiscPages[j].m_nCounter=<span class="number">0</span>;</span><br><span class="line">    }</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"NRU:"</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <div class="note success"><p>易于理解，容易实现。</p>
@@ -420,7 +425,8 @@ B'--&gt; B
 </ol>
 <div class="note info"><p>从以上算法描述中，可以看出，OPT 是一种理想化的算法，因为操作系统中页面处理顺序是不一定的，所以页面将在哪一步被处理是不可预测的。但是，可以以此为标准来评价其他页面置换算法。</p>
 </div>
-<pre class="mermaid">graph TD
+<pre><code class="mermaid">
+graph TD
 A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; |Y|B E --&gt; |N|F["diseffect++"]
@@ -430,6 +436,7 @@ I --&gt; J{"存在位于内存中的页面，而以后CPU不再处理"} J --&gt;
 J --&gt; |N|L[找出CPU最晚处理到的页面]
 L --&gt; K K --&gt; H H --&gt; M[内存页面和待处理的进程页面建立关系]
 M --&gt; B
+</code>
 </pre>
 <figure class="highlight c++"><figcaption><span>OPT 算法 </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::OPT</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span></span><br><span class="line"><span class="function"></span>{</span><br><span class="line"> 	<span class="type">int</span> i,j,max,maxpage,nDistance,vDistance[TOTAL_VP];</span><br><span class="line">  	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">  	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++)    {</span><br><span class="line">    		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">			_nDiseffect++;</span><br><span class="line">	  		<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>)	    {</span><br><span class="line">	     			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">           				<span class="keyword">if</span>(_vDiscPages[j].m_nPageFaceNumber!=INVALID)</span><br><span class="line">						vDistance[j]=<span class="number">32767</span>;</span><br><span class="line">					<span class="keyword">else</span></span><br><span class="line">		      			vDistance[j]=<span class="number">0</span>;</span><br><span class="line">				nDistance=<span class="number">1</span>;</span><br><span class="line">  				<span class="keyword">for</span>(j=i+<span class="number">1</span>;j&lt;TOTAL_INSTRUCTION;j++)		{</span><br><span class="line">      				<span class="keyword">if</span>((_vDiscPages[_vPage[j]].m_nPageFaceNumber!=INVALID)&amp;&amp;(vDistance[_vPage[j]]==<span class="number">32767</span>))</span><br><span class="line">        				vDistance[_vPage[j]]=nDistance;</span><br><span class="line">     				nDistance++;</span><br><span class="line">				}</span><br><span class="line">    			max=<span class="number">-1</span>;</span><br><span class="line">    			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">				<span class="keyword">if</span>(max&lt;vDistance[j]){</span><br><span class="line">    					max=vDistance[j];</span><br><span class="line">    					maxpage=j;</span><br><span class="line">				}</span><br><span class="line">			_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[maxpage].m_nPageFaceNumber];</span><br><span class="line">    			_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">    			_vDiscPages[maxpage].m_nPageFaceNumber=INVALID;</span><br><span class="line">  			}</span><br><span class="line">		_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">	  	_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">   	}</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"OPT:"</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div></div></div>
 <h2 id="实验关键里程碑数据与结果">实验关键里程碑数据与结果</h2>
@@ -592,7 +599,7 @@ M --&gt; B
 
   <div class="copyright">
     © 2020 – 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -664,7 +671,7 @@ M --&gt; B
 
 
 
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js","integrity":"sha256-stuqcu2FrjYCXDOytWFA5SoUE/r3nkp6gTglzNSlavU="}}</script>
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.min.js","integrity":"sha256-G8ouPAnw4zzMbnAenHnVz6h9XpKbNdOkrqTh7AadyHs="}}</script>
   
 
 

