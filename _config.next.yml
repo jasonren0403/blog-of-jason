@@ -617,6 +617,10 @@ addtoany:
 # See: https://theme-next.org/docs/third-party-services/statistics-and-analytics
 # ---------------------------------------------------------------
 
+# Microsoft Clarity Analytics
+# See: https://clarity.microsoft.com/
+clarity_analytics: qz9y2k3mzl
+
 # Google Analytics
 google_analytics:
   tracking_id: # <app_id>
