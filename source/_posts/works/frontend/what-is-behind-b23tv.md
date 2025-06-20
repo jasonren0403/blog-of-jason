@@ -101,17 +101,16 @@ print(res.headers)
 
 `Location` 响应头的地址与不忽略重定向时的地址相同，这时候我们大致可以描绘出整个请求的过程了。
 
-```mermaid
-graph LR
-  A["访问短链接b23.tv/xxx"] --> B["取Location进行302跳转"] --> C["带一堆URL参数的bilibili.com/BVxxxxxx视频页链接"]
-```
+{% mermaid graph LR %}
+A["访问短链接b23.tv/xxx"] --> B["取Location进行302跳转"] --> C["带一堆URL参数的bilibili.com/BVxxxxxx视频页链接"]
+{% endmermaid %}
 
 {% note warning %}
 看见没，已经有一堆追踪参数了，为了这里演示方便以及不泄露隐私，这里用占位符 `{}` 替换掉了所有可能引起追踪的地方。
 {% endnote %}
 
 可以看到在进行302跳转时，服务器给出的 `Location` 响应头已经携带了参数。这些参数中，有一些是与用户相关的，比如 
-* `mid` 用户ID，在2023年4月2日测试时，mid已经变成了一堆字母和数字，不知道有没有作加密
+* `mid` 用户ID，在2023年4月2日测试时，mid已经变成了一堆字母和数字
 * `buvid` 用户设备ID
 * `plat_id` 用户平台ID
 * `share_session_id` 分享会话ID，其格式为UUID

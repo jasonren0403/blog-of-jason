@@ -364,6 +364,7 @@ codeblock:
   fold:
     enable: true
     threshold: 500
+  language: true
 
 back2top:
   enable: true
