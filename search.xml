@@ -195,198 +195,6 @@
       </tags>
   </entry>
   <entry>
-    <title>借助 ANTLR 分析代码中的漏洞</title>
-    <url>/2019/06/09/experiments/antlr-2/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>通过分析特定漏洞代码特点，借助 ANTLR 分析代码中的特定漏洞。</p>
-<span id="more"></span>
-<h2 id="实验条件">实验条件</h2>
-<ol>
-<li>Windows 10 专业版</li>
-<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
-<li>ANTLR 环境 ——ANTLR 4</li>
-</ol>
-<h2 id="实验内容">实验内容</h2>
-<h3 id="漏洞描述">漏洞描述</h3>
-<ul>
-<li>
-<p>Double Free，多次释放漏洞，是对指向同一个地址的指针进行两次及以上的操作，可能会造成任意代码执行或其他非预期危害。虽然一般把它叫做 double free。其实只要是 <code>free</code> 一个指向堆内存的指针都有可能产生可以利用的漏洞。</p>
-</li>
-<li>
-<p>一段简单的漏洞代码示例如下所示，其中对 <code>char* buf2R1</code> 所指向的内存进行了两次释放操作</p>
-  <figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE1 512</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE2 ((BUFSIZE1/2) - 8) <span class="comment">//248</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> { </span><br><span class="line">	<span class="type">char</span> *buf1R1; </span><br><span class="line">	<span class="type">char</span> *buf2R1; </span><br><span class="line">	<span class="type">char</span> *buf1R2; </span><br><span class="line">	buf1R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	buf2R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	<span class="built_in">free</span>(buf1R1); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	buf1R2 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE1); </span><br><span class="line">	<span class="built_in">strncpy</span>(buf1R2, argv[<span class="number">1</span>], BUFSIZE1<span class="number">-1</span>); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	<span class="built_in">free</span>(buf1R2); </span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>double free 的原理其实和堆溢出的原理差不多，都是通过 unlink 这个双向链表删除的宏来利用的。只是 double free 需要由自己来伪造整个 chunk 并且欺骗操作系统。</p>
-</li>
-</ul>
-<h3 id="语法识别">语法识别</h3>
-<div class="note info"><p>利用 ANTLR4 的 C++ 语言语法规则文件，对漏洞代码进行分析。</p>
-</div>
-<ol>
-<li>
-<p>右键点击 g4 中的 translationunit，选择 test rule，将那个有漏洞的 C 代码制作成 expr 文件后，作为输入。</p>
-</li>
-<li>
-<p>然后在输出位置就可以看到好大一棵 parseTree 了！右键另存为一张图。</p>
- <img data-src="/2019/06/09/experiments/antlr-2/parseTree-full.png" class="" width="500" height="500">
-</li>
-<li>
-<p>ParseTree 全貌，其中左边的一小撮是函数头定义，右边的一大撮才是函数体定义。</p>
-<ul>
-<li>首先定义了三个字符指针型变量 <code>buf1R1</code>、<code>buf2R1</code>、<code>buf1R2</code><img data-src="/2019/06/09/experiments/antlr-2/1.png" class="">
-</li>
-<li>然后为 <code>buf1R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间，为 <code>buf2R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间 <img data-src="/2019/06/09/experiments/antlr-2/3.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/4.png" class=""></li>
-</ul>
-</li>
-<li>
-<p>紧接着 <code>free</code> 掉它们 <img data-src="/2019/06/09/experiments/antlr-2/5.png" class=""></p>
-</li>
-<li>
-<p>为 <code>buf1R2</code> 分配空间，大小为 <code>bufsize1</code></p>
-<img data-src="/2019/06/09/experiments/antlr-2/6.png" class="">
-</li>
-<li>
-<p>把 <code>argv[1]</code> 中的内容复制到 <code>buf1R2</code> 所指空间中 <img data-src="/2019/06/09/experiments/antlr-2/7.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/8.png" class=""></p>
-</li>
-<li>
-<p>最后的两个 <code>free</code> 语句都在语法分析树的右侧 <img data-src="/2019/06/09/experiments/antlr-2/9.png" class=""></p>
-</li>
-</ol>
-<div class="note primary"><p>从语法分析树中看不出任何问题，因为这个存在漏洞的代码是语法正确的，而且也符合 C 语言语法结构。所以我们在编写相关代码时，要自行检查指针的使用情况，最好在释放指针所指向的空间后，将其置为 <code>NULL</code>。</p>
-</div>
-<h2 id="实验总结">实验总结</h2>
-<p>本实验中通过学习带有漏洞的 C 语言代码，了解到一些常见的二进制相关漏洞，借助到 C 语言的语法规则文件，对漏洞代码进行分解研究，了解到了我们所写的程序通过语法树展开后的样子，并试着提取其规则，编写漏洞描述 xml 文件。</p>
-<p>中途遇到了 IntelliJ IDEA 无法解析规则，找不到 start rule 的问题，后来通过在 cpp14.g4 文件中右击 translationunit 规则，点击 test translationunit rule 找到了语法树的生成点，从而成功在 ANTLR Output 中看到了所生成的语法树。</p>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>编译原理</category>
-        <category>漏洞</category>
-        <category>双重释放</category>
-      </categories>
-      <tags>
-        <tag>ANTLR</tag>
-        <tag>编译原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ANTLR 语言识别工具</title>
-    <url>/2019/05/20/experiments/antlr/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<ol>
-<li>了解 ANTLR 语言识别工具，安装 ANTLR 环境，熟悉 ANTLR 的使用。</li>
-<li>掌握使用 ANTLR 构建的语法分析器和树解析器分析语言，通过 ANTLR 实现语法分析过程。</li>
-</ol>
-<span id="more"></span>
-<h2 id="实验条件">实验条件</h2>
-<ol>
-<li>Windows 10 专业版</li>
-<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
-<li>ANTLR 环境 ——ANTLR 4</li>
-</ol>
-<h2 id="实验内容">实验内容</h2>
-<h3 id="安装ANTLR">安装 ANTLR</h3>
-<p>个人所用的集成开发环境中提供 ANTLR 插件的安装，故可直接进入插件下载功能中下载该插件。运行时环境配置过程和安装过程不再赘述。</p>
-<img data-src="/2019/05/20/experiments/antlr/1.png" class=""> 
-<p>安装以后，下方工具栏会多出两个窗口：ANTLR Preview 和 Tool Output。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/2.png" class="" title="ANTLR Preivew窗口"></div><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/3.png" class="" title="Tool Output窗口"></div></div></div> 
-<p>Preview 中可以显示 Parse tree，从而省去了在控制台中输入 <code>-gui</code> 命令的麻烦。</p>
-<h3 id="使用ANTLR实现实数的四则运算">使用 ANTLR 实现实数的四则运算</h3>
-<div class="note info"><h4 id="要求">要求</h4>
-<p>创建 ANTLR 语法文件 <code>expr.g4</code>，解析如赋值语句 <code>a = 5.5</code> 和表达式 <code>a+4*3÷2-1</code> 这样的语句。</p>
-<ul>
-<li>要验证所编写的文法是否正确，可使用 TestRig 测试语法，在 CMD 中输入 <code>-gui</code> 可直观展示其语法分析树。</li>
-<li>创建 expr 文件（如 test.expr，输入一个表达式）检验程序是否能够正确运行和计算四则算式。</li>
-</ul>
-</div>
-<ol>
-<li>
-<p>文法设计</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">E -&gt; E OP E|VAR = E|E'; E'-&gt; D; OP: [+|-|*|/]; D:[0-9]+; VAR:[a-zA-Z]+; </span><br></pre></td></tr></tbody></table></figure>
-<p>由此编写的 <code>expr.g4</code> 文件如下：（还考虑了一些换行及空格因素）</p>
-<figure class="highlight plaintext"><figcaption><span>expr.g4</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">grammar expr; </span><br><span class="line">exprs : setExpr | calcExpr ; </span><br><span class="line">setExpr : id=ID '=' num=NUMBER ; </span><br><span class="line">calcExpr: calcExpr op=(MUL | DIV) calcExpr | calcExpr op=(ADD | SUB) calcExpr | factor ; </span><br><span class="line">factor: (sign=(ADD | SUB))? num=NUMBER // 计算因子可以是一个正数或负数 </span><br><span class="line">                           | id=ID // 计算因子可以是一个变量 ; </span><br><span class="line">WS : [ \t\n\r]+ -&gt; skip ; </span><br><span class="line">ID : [a-zA-Z]+ ; </span><br><span class="line">NUMBER : [0-9]+('.'([0-9]+)?)? ; </span><br><span class="line">ADD : '+' ; </span><br><span class="line">SUB : '-' ; </span><br><span class="line">MUL : '*' ; </span><br><span class="line">DIV : '/' ; </span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>运行结果</p>
-</li>
-</ol>
-<div class="tabs" id="results"><ul class="nav-tabs"><li class="tab active"><a href="#results-1">赋值语句</a></li><li class="tab"><a href="#results-2">不完整的式子</a></li><li class="tab"><a href="#results-3">一个正常的运算式</a></li><li class="tab"><a href="#results-4">异常处理</a></li></ul><div class="tab-content"><div class="tab-pane active" id="results-1"><p>控制台工具显示如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res1-1.png" class=""></p>
-<p>Main 函数如下</p>
-<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a=5.5"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
-<p>运行结果如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res1-2.png" class="" title="在visitSetExpr时触发了其中的打印操作，外层返回值为null"></p></div><div class="tab-pane" id="results-2"><div class="note "><p>本次测试的式子为 <code>a+4*3/2-1</code></p>
-</div>
-<p>控制台工具显示如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res2-1.png" class=""></p>
-<p>Main 函数如下</p>
-<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a+4*3/2-1"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
-<img data-src="/2019/05/20/experiments/antlr/res2-2.png" class="" title="为了方便，在每个函数的visit函数外层加了一个控制台打印输出"> 
-从输出来看，对语法树的遍历过程几乎遍及了句子的每一个结点。由于最后得到的句型是一个类似于 <code>a + &lt;数字&gt;</code> 的格式，所以它输出 <code>NaN</code>，与预期一致。
-<div class="note warning"><p><code>a</code> 是与前一个赋值语句分开输入的，所以它并没有被定义值</p>
-</div></div><div class="tab-pane" id="results-3"><div class="note "><p>本次测试的式子为 <code>1+4.5*2-3/3</code></p>
-</div>
-<p>Main 函数代码类似，控制台工具显示如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res3-1.png" class="" title="分析树的结构与预期一致"></p>
-<p>代码输出结果如下<br>
-<img data-src="/2019/05/20/experiments/antlr/res3-2.png" class=""><br>
-得到了正确的输出结果，证明我们写的语法解析是正确的。</p></div><div class="tab-pane" id="results-4"><ol>
-<li>针对除 0 错误，程序可以顺利显示出 <code>Infinity</code>，没有中断程序<br>
-<img data-src="/2019/05/20/experiments/antlr/res4-1.png" class=""></li>
-<li>输入过长也不会中断程序<br>
-<img data-src="/2019/05/20/experiments/antlr/res4-2.png" class=""></li>
-<li>符号错误需要单独处理<br>
-<img data-src="/2019/05/20/experiments/antlr/res4-3.png" class="" title="报错：不被识别的字符（本例输入了分号），需要一个ID，NUMBER，加号或减号"></li>
-</ol>
-<div class="note warning"><p>这说明符号错误需要单独处理，java 中可以使用 try-catch 来完成这项工作。除此之外，也可从前端角度考虑，提前检验用户输入。</p>
-</div></div></div></div>
-<h2 id="总结">总结</h2>
-<p>这个解析过程是怎么实现的呢？</p>
-<ul>
-<li>在生成 ANTLR 识别文件时，实际上生成了很多个 java 和 token 源文件。</li>
-</ul>
-<img data-src="/2019/05/20/experiments/antlr/end1.png" class="">
-<img data-src="/2019/05/20/experiments/antlr/end2.png" class="">
-<ul>
-<li>
-<p>有两个 tokens 文件和六个 java 文件，<code>Listener</code> 和 <code>Visitor</code> 是两个接口，<code>Listener</code> 中定义了一些退出或进入一个表达式中所进行的语法动作，<code>Visitor</code> 中定义了遍历语法树中项目的返回动作，一个语法项对应一个 <code>visit</code> 函数。具体由 <code>xxBaseListener</code> 或 <code>xxBaseVisitor</code> 来实现。默认状态下，所有的实现都是空的，我们可以扩展 <code>xxBase[Listener|Visitor]</code> 类，自己定义语法动作。本实验中，只需要实现 <code>Visitor</code> 的内容即可，不过由于上下文的关系，我们需要自建一个 <code>Context</code> 类，负责上下文内容的保存和识别。</p>
-</li>
-<li>
-<p>重写 <code>visit</code> 函数：</p>
-  <figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;你需要的返回值&gt; visit&lt;A&gt;(xxParser.&lt;A&gt;Context ctx)</span><br></pre></td></tr></tbody></table></figure>
-</li>
-<li>
-<p>.tokens 文件中将语法常量对应了一个整数数值，方便常量的建立。.interp 文件则记录了字面值。</p>
-</li>
-<li>
-<p>Parser 中，对每一个语法变量，生成了很多上下文相关的方法（xxContext）。其中的某些常量在前面所述的.tokens 文件中可以找到。</p>
-</li>
-<li>
-<p>Lexer 中，则存储了字面量及其相关方法，某些内容可在.interp 文件中找到。</p>
-</li>
-<li>
-<p>而所有开头的 xx 来自于语法文件第一行的 grammar xx，即为语法名。</p>
-</li>
-<li>
-<p><code>Visitor</code> 实现完成后，在主函数中建立 <code>visitor</code> 对象，调用 <code>visit</code> 语法树方法，将用户输入作为参数传入，其返回值即为语法分析结果。</p>
-</li>
-</ul>
-<figure class="highlight java"><figcaption><span>visitor.java</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Visitor</span> <span class="keyword">extends</span> <span class="title class_">exprBaseVisitor</span>&lt;Double&gt;{</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitExprs</span><span class="params">(exprParser.ExprsContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit exprs"); </span></span><br><span class="line">		<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>)); </span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitSetExpr</span><span class="params">(exprParser.SetExprContext ctx)</span>{</span><br><span class="line">		Context.getInstance().setContext(ctx.id.getText(), ctx.num.getText());</span><br><span class="line">		System.out.println(<span class="string">"Assign operation in current line:"</span> + ctx.id.getText() + <span class="string">" = "</span> + ctx.num.getText());</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitCalcExpr</span><span class="params">(exprParser.CalcExprContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit calc expr "); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">switch</span> (ctx.op.getType()) { </span><br><span class="line">				<span class="keyword">case</span> exprParser.ADD:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) + visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.SUB:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) - visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.MUL:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) * visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.DIV:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) / visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">			}</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>)</span><br><span class="line">		{</span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>));</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitFactor</span><span class="params">(exprParser.FactorContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit factor"); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">1</span>)); </span><br><span class="line">		} <span class="keyword">else</span> <span class="keyword">if</span> (cc == <span class="number">2</span>) { </span><br><span class="line">			<span class="keyword">if</span> (ctx.sign.getType() == exprParser.ADD)</span><br><span class="line">				<span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.sign.getType() == exprParser.SUB) </span><br><span class="line">				<span class="keyword">return</span> -<span class="number">1</span> * Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>){</span><br><span class="line">			<span class="keyword">if</span>(ctx.num != <span class="literal">null</span>) <span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">0</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.id != <span class="literal">null</span>) <span class="keyword">return</span> Context.getInstance().getValue(ctx.id.getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<ul>
-<li>目前实现的版本中，可以正确地进行运算，但还没有实现连续赋值功能，也没有考虑到多语句的分隔及分开解析，例如输入 <code>"a=1 a+1"</code> 后不能得到 <code>2</code>，可能需要修改 <code>Context</code> 类和 <code>Visitor</code> 类中的代码，使其可以记录上下文信息，将 <code>a</code> 的值存入暂存区。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>编译原理</category>
-      </categories>
-      <tags>
-        <tag>ANTLR</tag>
-        <tag>编译原理</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>北邮小日记 —— 第一期</title>
     <url>/2017/10/11/diarys/bupt-1/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>大家好，我是任子恒，好久不见，你们也有很长时间没有看到我在这个公众号上更新文字了。进北邮也有一个月了，一直忙于其他琐碎事情，没有来得及停一下，用文字记录下多彩的大学生活。</p>
@@ -725,34 +533,6 @@
       </tags>
   </entry>
   <entry>
-    <title>北邮小日记 —— 第三期</title>
-    <url>/2017/11/12/diarys/bupt-3/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>第三期，姗姗来迟～</p>
-<p>这几周一直在忙着推别的东西，导致这个系列文章从周更差点变成月更。唉，我真不是懒 ヾ (。￣□￣)ﾂ゜゜゜</p>
-<span id="more"></span>
-<p>最近在学 c 语言，前一周进行了第一次上机考试，略紧张……5 道题中也只过了两个……（啊，其实本来能过 3-4 道的 QuQ，有一个条件判断写错了格式……）</p>
-<img data-src="/2017/11/12/diarys/bupt-3/4.jpg" class="" title="oj">
-<p>这次有只需要半小时就把题全部解完的，图片，唉…… 这差距，还是要多多练习啊</p>
-<p>（这一波上机考试只有约 40 人参加，所以我排名比较靠前，如果整个院的人都同时参加上机考试的话……）</p>
-<p>时间过得好快啊，马上就要到期中考试的时间了。正好前几年的复习资料也送过来了，看了看感觉很懵逼。怎么办好紧张，我还什么都不会…（几近绝望.jpg）</p>
-<img data-src="/2017/11/12/diarys/bupt-3/5.png" class="" title="安排">
-<p>对了，等期中考过后，一定回高中看一眼～</p>
-<p>最近开始疯狂的水活动挣德育分，我又像开学时那样各种跑讲座，参加活动。不过令我印象最深刻的是几个没有德育分的体育比赛。当时我参加了乒乓球和羽毛球比赛，本想凭借我的一些技术闯一闯 “天下”，结果均遭遇一轮游…… 比分甚至大到让我有些怀疑人生。</p>
-<p>不过这次宝贵的切磋机会也让我找到了技术的薄弱点，让我接下来的练习有了方向。总之，还是很感谢这次经历吧。</p>
-<p>马上就将迎来大学英语四级口试，大概看了一眼它的内容，感觉还是可以的，难度完全在可以接受的范围内。加油吧！</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2017/11/12/diarys/bupt-3/1.jpg" class=""></div><div class="group-picture-column"><img data-src="/2017/11/12/diarys/bupt-3/2.jpg" class=""></div><div class="group-picture-column"><img data-src="/2017/11/12/diarys/bupt-3/3.jpg" class=""></div></div></div>
-]]></content>
-      <categories>
-        <category>北邮小日记</category>
-        <category>Life</category>
-        <category>life-in-bupt</category>
-      </categories>
-      <tags>
-        <tag>北邮小日记</tag>
-        <tag>life-in-bupt</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>北邮小日记 —— 第四期</title>
     <url>/2017/11/26/diarys/bupt-4/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>各位，又到了我随便写一些东西的时候了，先从乐队开始讲起吧。</p>
@@ -785,17 +565,22 @@
       </tags>
   </entry>
   <entry>
-    <title>北邮小日记 —— 第五期</title>
-    <url>/2017/12/10/diarys/bupt-5/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>期中考试终于都结束了！！有时间写东西啦～</p>
+    <title>北邮小日记 —— 第三期</title>
+    <url>/2017/11/12/diarys/bupt-3/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>第三期，姗姗来迟～</p>
+<p>这几周一直在忙着推别的东西，导致这个系列文章从周更差点变成月更。唉，我真不是懒 ヾ (。￣□￣)ﾂ゜゜゜</p>
 <span id="more"></span>
-
-    <div id="aplayer-CXwZJnsh" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
-<p>分数都还可以，至少都及格了，当然还可以做到更好，这得靠接下来的努力了～</p>
-<p>不过，我这些同学，还得往上带一带…… 毕竟作为学委的我还是见识到了不少让人抓狂的情况的…… 跟这里我吐槽一下，作业交得晚、借作业去抄… 都是常事。当然，也有很努力在学习的同学，他们会找我问题，我也会很乐意给出解答，这给我一次运用知识的机会，也增强了我和同学们的交流。对了，借这个当学委的机会我也几乎把全班同学认全了，哦耶！</p>
-<p>上周五听说要搬宿舍了，据说原因是另一个校区一整个院的同学都搬了过来，需要腾出一个楼来给其中的女生住，调整方案是说我现在所在楼 - 5 楼的同学要搬到 3 楼去，而 3 楼的女生要搬过来和要住进来的女生并一个楼。如果不出意外的话，这就是我的坐标处于 S5-535 的最后几天了，没想到我之前曾经说过要去 S3 看一看的愿望竟然这么快就实现了 hhh，但是我这么多东西该怎么搬啊……</p>
-<p>时间过得也太快了点，6 天以后就是大学英语四级考试了，怎么办，我翻译题还一道都没看过呢……</p>
-<p>游园会等多收点照片以后再写～嘿嘿嘿那可是十分有趣的活动啊～</p>
+<p>最近在学 c 语言，前一周进行了第一次上机考试，略紧张……5 道题中也只过了两个……（啊，其实本来能过 3-4 道的 QuQ，有一个条件判断写错了格式……）</p>
+<img data-src="/2017/11/12/diarys/bupt-3/4.jpg" class="" title="oj">
+<p>这次有只需要半小时就把题全部解完的，图片，唉…… 这差距，还是要多多练习啊</p>
+<p>（这一波上机考试只有约 40 人参加，所以我排名比较靠前，如果整个院的人都同时参加上机考试的话……）</p>
+<p>时间过得好快啊，马上就要到期中考试的时间了。正好前几年的复习资料也送过来了，看了看感觉很懵逼。怎么办好紧张，我还什么都不会…（几近绝望.jpg）</p>
+<img data-src="/2017/11/12/diarys/bupt-3/5.png" class="" title="安排">
+<p>对了，等期中考过后，一定回高中看一眼～</p>
+<p>最近开始疯狂的水活动挣德育分，我又像开学时那样各种跑讲座，参加活动。不过令我印象最深刻的是几个没有德育分的体育比赛。当时我参加了乒乓球和羽毛球比赛，本想凭借我的一些技术闯一闯 “天下”，结果均遭遇一轮游…… 比分甚至大到让我有些怀疑人生。</p>
+<p>不过这次宝贵的切磋机会也让我找到了技术的薄弱点，让我接下来的练习有了方向。总之，还是很感谢这次经历吧。</p>
+<p>马上就将迎来大学英语四级口试，大概看了一眼它的内容，感觉还是可以的，难度完全在可以接受的范围内。加油吧！</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2017/11/12/diarys/bupt-3/1.jpg" class=""></div><div class="group-picture-column"><img data-src="/2017/11/12/diarys/bupt-3/2.jpg" class=""></div><div class="group-picture-column"><img data-src="/2017/11/12/diarys/bupt-3/3.jpg" class=""></div></div></div>
 ]]></content>
       <categories>
         <category>北邮小日记</category>
@@ -832,6 +617,29 @@
         <tag>北邮小日记</tag>
         <tag>life-in-bupt</tag>
         <tag>special</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>北邮小日记 —— 第五期</title>
+    <url>/2017/12/10/diarys/bupt-5/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><p>期中考试终于都结束了！！有时间写东西啦～</p>
+<span id="more"></span>
+
+    <div id="aplayer-vCwPhSZR" class="aplayer aplayer-tag-marker meting-tag-marker" data-id="002X3RjI43O8qj" data-server="tencent" data-type="song" data-mode="circulation" data-autoplay="false" data-mutex="true" data-listmaxheight="340px" data-preload="auto" data-theme="#ad7a86"></div>
+<p>分数都还可以，至少都及格了，当然还可以做到更好，这得靠接下来的努力了～</p>
+<p>不过，我这些同学，还得往上带一带…… 毕竟作为学委的我还是见识到了不少让人抓狂的情况的…… 跟这里我吐槽一下，作业交得晚、借作业去抄… 都是常事。当然，也有很努力在学习的同学，他们会找我问题，我也会很乐意给出解答，这给我一次运用知识的机会，也增强了我和同学们的交流。对了，借这个当学委的机会我也几乎把全班同学认全了，哦耶！</p>
+<p>上周五听说要搬宿舍了，据说原因是另一个校区一整个院的同学都搬了过来，需要腾出一个楼来给其中的女生住，调整方案是说我现在所在楼 - 5 楼的同学要搬到 3 楼去，而 3 楼的女生要搬过来和要住进来的女生并一个楼。如果不出意外的话，这就是我的坐标处于 S5-535 的最后几天了，没想到我之前曾经说过要去 S3 看一看的愿望竟然这么快就实现了 hhh，但是我这么多东西该怎么搬啊……</p>
+<p>时间过得也太快了点，6 天以后就是大学英语四级考试了，怎么办，我翻译题还一道都没看过呢……</p>
+<p>游园会等多收点照片以后再写～嘿嘿嘿那可是十分有趣的活动啊～</p>
+]]></content>
+      <categories>
+        <category>北邮小日记</category>
+        <category>Life</category>
+        <category>life-in-bupt</category>
+      </categories>
+      <tags>
+        <tag>北邮小日记</tag>
+        <tag>life-in-bupt</tag>
       </tags>
   </entry>
   <entry>
@@ -913,6 +721,198 @@
         <tag>北邮小日记</tag>
         <tag>life-in-bupt</tag>
         <tag>special</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>借助 ANTLR 分析代码中的漏洞</title>
+    <url>/2019/06/09/experiments/antlr-2/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>通过分析特定漏洞代码特点，借助 ANTLR 分析代码中的特定漏洞。</p>
+<span id="more"></span>
+<h2 id="实验条件">实验条件</h2>
+<ol>
+<li>Windows 10 专业版</li>
+<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
+<li>ANTLR 环境 ——ANTLR 4</li>
+</ol>
+<h2 id="实验内容">实验内容</h2>
+<h3 id="漏洞描述">漏洞描述</h3>
+<ul>
+<li>
+<p>Double Free，多次释放漏洞，是对指向同一个地址的指针进行两次及以上的操作，可能会造成任意代码执行或其他非预期危害。虽然一般把它叫做 double free。其实只要是 <code>free</code> 一个指向堆内存的指针都有可能产生可以利用的漏洞。</p>
+</li>
+<li>
+<p>一段简单的漏洞代码示例如下所示，其中对 <code>char* buf2R1</code> 所指向的内存进行了两次释放操作</p>
+  <figure class="highlight c"><table><tbody><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE1 512</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUFSIZE2 ((BUFSIZE1/2) - 8) <span class="comment">//248</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> { </span><br><span class="line">	<span class="type">char</span> *buf1R1; </span><br><span class="line">	<span class="type">char</span> *buf2R1; </span><br><span class="line">	<span class="type">char</span> *buf1R2; </span><br><span class="line">	buf1R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	buf2R1 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE2); </span><br><span class="line">	<span class="built_in">free</span>(buf1R1); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	buf1R2 = (<span class="type">char</span> *) <span class="built_in">malloc</span>(BUFSIZE1); </span><br><span class="line">	<span class="built_in">strncpy</span>(buf1R2, argv[<span class="number">1</span>], BUFSIZE1<span class="number">-1</span>); </span><br><span class="line">	<span class="built_in">free</span>(buf2R1); </span><br><span class="line">	<span class="built_in">free</span>(buf1R2); </span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>double free 的原理其实和堆溢出的原理差不多，都是通过 unlink 这个双向链表删除的宏来利用的。只是 double free 需要由自己来伪造整个 chunk 并且欺骗操作系统。</p>
+</li>
+</ul>
+<h3 id="语法识别">语法识别</h3>
+<div class="note info"><p>利用 ANTLR4 的 C++ 语言语法规则文件，对漏洞代码进行分析。</p>
+</div>
+<ol>
+<li>
+<p>右键点击 g4 中的 translationunit，选择 test rule，将那个有漏洞的 C 代码制作成 expr 文件后，作为输入。</p>
+</li>
+<li>
+<p>然后在输出位置就可以看到好大一棵 parseTree 了！右键另存为一张图。</p>
+ <img data-src="/2019/06/09/experiments/antlr-2/parseTree-full.png" class="" width="500" height="500">
+</li>
+<li>
+<p>ParseTree 全貌，其中左边的一小撮是函数头定义，右边的一大撮才是函数体定义。</p>
+<ul>
+<li>首先定义了三个字符指针型变量 <code>buf1R1</code>、<code>buf2R1</code>、<code>buf1R2</code><img data-src="/2019/06/09/experiments/antlr-2/1.png" class="">
+</li>
+<li>然后为 <code>buf1R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间，为 <code>buf2R1</code> 分配了 <code>BUFSIZE2</code> 大小的空间 <img data-src="/2019/06/09/experiments/antlr-2/3.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/4.png" class=""></li>
+</ul>
+</li>
+<li>
+<p>紧接着 <code>free</code> 掉它们 <img data-src="/2019/06/09/experiments/antlr-2/5.png" class=""></p>
+</li>
+<li>
+<p>为 <code>buf1R2</code> 分配空间，大小为 <code>bufsize1</code></p>
+<img data-src="/2019/06/09/experiments/antlr-2/6.png" class="">
+</li>
+<li>
+<p>把 <code>argv[1]</code> 中的内容复制到 <code>buf1R2</code> 所指空间中 <img data-src="/2019/06/09/experiments/antlr-2/7.png" class=""> <img data-src="/2019/06/09/experiments/antlr-2/8.png" class=""></p>
+</li>
+<li>
+<p>最后的两个 <code>free</code> 语句都在语法分析树的右侧 <img data-src="/2019/06/09/experiments/antlr-2/9.png" class=""></p>
+</li>
+</ol>
+<div class="note primary"><p>从语法分析树中看不出任何问题，因为这个存在漏洞的代码是语法正确的，而且也符合 C 语言语法结构。所以我们在编写相关代码时，要自行检查指针的使用情况，最好在释放指针所指向的空间后，将其置为 <code>NULL</code>。</p>
+</div>
+<h2 id="实验总结">实验总结</h2>
+<p>本实验中通过学习带有漏洞的 C 语言代码，了解到一些常见的二进制相关漏洞，借助到 C 语言的语法规则文件，对漏洞代码进行分解研究，了解到了我们所写的程序通过语法树展开后的样子，并试着提取其规则，编写漏洞描述 xml 文件。</p>
+<p>中途遇到了 IntelliJ IDEA 无法解析规则，找不到 start rule 的问题，后来通过在 cpp14.g4 文件中右击 translationunit 规则，点击 test translationunit rule 找到了语法树的生成点，从而成功在 ANTLR Output 中看到了所生成的语法树。</p>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>编译原理</category>
+        <category>漏洞</category>
+        <category>双重释放</category>
+      </categories>
+      <tags>
+        <tag>ANTLR</tag>
+        <tag>编译原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ANTLR 语言识别工具</title>
+    <url>/2019/05/20/experiments/antlr/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<ol>
+<li>了解 ANTLR 语言识别工具，安装 ANTLR 环境，熟悉 ANTLR 的使用。</li>
+<li>掌握使用 ANTLR 构建的语法分析器和树解析器分析语言，通过 ANTLR 实现语法分析过程。</li>
+</ol>
+<span id="more"></span>
+<h2 id="实验条件">实验条件</h2>
+<ol>
+<li>Windows 10 专业版</li>
+<li> JDK 1.8 版本（64 位，版本号为 1.8.0_202）</li>
+<li>ANTLR 环境 ——ANTLR 4</li>
+</ol>
+<h2 id="实验内容">实验内容</h2>
+<h3 id="安装ANTLR">安装 ANTLR</h3>
+<p>个人所用的集成开发环境中提供 ANTLR 插件的安装，故可直接进入插件下载功能中下载该插件。运行时环境配置过程和安装过程不再赘述。</p>
+<img data-src="/2019/05/20/experiments/antlr/1.png" class=""> 
+<p>安装以后，下方工具栏会多出两个窗口：ANTLR Preview 和 Tool Output。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/2.png" class="" title="ANTLR Preivew窗口"></div><div class="group-picture-column"><img data-src="/2019/05/20/experiments/antlr/3.png" class="" title="Tool Output窗口"></div></div></div> 
+<p>Preview 中可以显示 Parse tree，从而省去了在控制台中输入 <code>-gui</code> 命令的麻烦。</p>
+<h3 id="使用ANTLR实现实数的四则运算">使用 ANTLR 实现实数的四则运算</h3>
+<div class="note info"><h4 id="要求">要求</h4>
+<p>创建 ANTLR 语法文件 <code>expr.g4</code>，解析如赋值语句 <code>a = 5.5</code> 和表达式 <code>a+4*3÷2-1</code> 这样的语句。</p>
+<ul>
+<li>要验证所编写的文法是否正确，可使用 TestRig 测试语法，在 CMD 中输入 <code>-gui</code> 可直观展示其语法分析树。</li>
+<li>创建 expr 文件（如 test.expr，输入一个表达式）检验程序是否能够正确运行和计算四则算式。</li>
+</ul>
+</div>
+<ol>
+<li>
+<p>文法设计</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">E -&gt; E OP E|VAR = E|E'; E'-&gt; D; OP: [+|-|*|/]; D:[0-9]+; VAR:[a-zA-Z]+; </span><br></pre></td></tr></tbody></table></figure>
+<p>由此编写的 <code>expr.g4</code> 文件如下：（还考虑了一些换行及空格因素）</p>
+<figure class="highlight plaintext"><figcaption><span>expr.g4</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line">grammar expr; </span><br><span class="line">exprs : setExpr | calcExpr ; </span><br><span class="line">setExpr : id=ID '=' num=NUMBER ; </span><br><span class="line">calcExpr: calcExpr op=(MUL | DIV) calcExpr | calcExpr op=(ADD | SUB) calcExpr | factor ; </span><br><span class="line">factor: (sign=(ADD | SUB))? num=NUMBER // 计算因子可以是一个正数或负数 </span><br><span class="line">                           | id=ID // 计算因子可以是一个变量 ; </span><br><span class="line">WS : [ \t\n\r]+ -&gt; skip ; </span><br><span class="line">ID : [a-zA-Z]+ ; </span><br><span class="line">NUMBER : [0-9]+('.'([0-9]+)?)? ; </span><br><span class="line">ADD : '+' ; </span><br><span class="line">SUB : '-' ; </span><br><span class="line">MUL : '*' ; </span><br><span class="line">DIV : '/' ; </span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>运行结果</p>
+</li>
+</ol>
+<div class="tabs" id="results"><ul class="nav-tabs"><li class="tab active"><a href="#results-1">赋值语句</a></li><li class="tab"><a href="#results-2">不完整的式子</a></li><li class="tab"><a href="#results-3">一个正常的运算式</a></li><li class="tab"><a href="#results-4">异常处理</a></li></ul><div class="tab-content"><div class="tab-pane active" id="results-1"><p>控制台工具显示如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res1-1.png" class=""></p>
+<p>Main 函数如下</p>
+<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a=5.5"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
+<p>运行结果如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res1-2.png" class="" title="在visitSetExpr时触发了其中的打印操作，外层返回值为null"></p></div><div class="tab-pane" id="results-2"><div class="note "><p>本次测试的式子为 <code>a+4*3/2-1</code></p>
+</div>
+<p>控制台工具显示如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res2-1.png" class=""></p>
+<p>Main 函数如下</p>
+<figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"> </span><br><span class="line marked"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>{ </span><br><span class="line">	<span class="type">String</span> <span class="variable">input_string</span> <span class="operator">=</span> <span class="string">"a+4*3/2-1"</span>;</span><br><span class="line">	<span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> System.in; </span><br><span class="line">	<span class="keyword">try</span>{ </span><br><span class="line">		<span class="type">ANTLRInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ANTLRInputStream</span>(input_string); </span><br><span class="line">		<span class="type">exprLexer</span> <span class="variable">lexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprLexer</span>(input); </span><br><span class="line">		<span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(lexer); </span><br><span class="line">		<span class="type">exprParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">exprParser</span>(tokens);</span><br><span class="line">		<span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> parser.exprs(); </span><br><span class="line">		<span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>(); </span><br><span class="line">		System.out.println(visitor.visit(tree)); </span><br><span class="line">	} <span class="keyword">catch</span>(IOException ioe){ </span><br><span class="line">		ioe.printStackTrace(); </span><br><span class="line">	} </span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
+<img data-src="/2019/05/20/experiments/antlr/res2-2.png" class="" title="为了方便，在每个函数的visit函数外层加了一个控制台打印输出"> 
+从输出来看，对语法树的遍历过程几乎遍及了句子的每一个结点。由于最后得到的句型是一个类似于 <code>a + &lt;数字&gt;</code> 的格式，所以它输出 <code>NaN</code>，与预期一致。
+<div class="note warning"><p><code>a</code> 是与前一个赋值语句分开输入的，所以它并没有被定义值</p>
+</div></div><div class="tab-pane" id="results-3"><div class="note "><p>本次测试的式子为 <code>1+4.5*2-3/3</code></p>
+</div>
+<p>Main 函数代码类似，控制台工具显示如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res3-1.png" class="" title="分析树的结构与预期一致"></p>
+<p>代码输出结果如下<br>
+<img data-src="/2019/05/20/experiments/antlr/res3-2.png" class=""><br>
+得到了正确的输出结果，证明我们写的语法解析是正确的。</p></div><div class="tab-pane" id="results-4"><ol>
+<li>针对除 0 错误，程序可以顺利显示出 <code>Infinity</code>，没有中断程序<br>
+<img data-src="/2019/05/20/experiments/antlr/res4-1.png" class=""></li>
+<li>输入过长也不会中断程序<br>
+<img data-src="/2019/05/20/experiments/antlr/res4-2.png" class=""></li>
+<li>符号错误需要单独处理<br>
+<img data-src="/2019/05/20/experiments/antlr/res4-3.png" class="" title="报错：不被识别的字符（本例输入了分号），需要一个ID，NUMBER，加号或减号"></li>
+</ol>
+<div class="note warning"><p>这说明符号错误需要单独处理，java 中可以使用 try-catch 来完成这项工作。除此之外，也可从前端角度考虑，提前检验用户输入。</p>
+</div></div></div></div>
+<h2 id="总结">总结</h2>
+<p>这个解析过程是怎么实现的呢？</p>
+<ul>
+<li>在生成 ANTLR 识别文件时，实际上生成了很多个 java 和 token 源文件。</li>
+</ul>
+<img data-src="/2019/05/20/experiments/antlr/end1.png" class="">
+<img data-src="/2019/05/20/experiments/antlr/end2.png" class="">
+<ul>
+<li>
+<p>有两个 tokens 文件和六个 java 文件，<code>Listener</code> 和 <code>Visitor</code> 是两个接口，<code>Listener</code> 中定义了一些退出或进入一个表达式中所进行的语法动作，<code>Visitor</code> 中定义了遍历语法树中项目的返回动作，一个语法项对应一个 <code>visit</code> 函数。具体由 <code>xxBaseListener</code> 或 <code>xxBaseVisitor</code> 来实现。默认状态下，所有的实现都是空的，我们可以扩展 <code>xxBase[Listener|Visitor]</code> 类，自己定义语法动作。本实验中，只需要实现 <code>Visitor</code> 的内容即可，不过由于上下文的关系，我们需要自建一个 <code>Context</code> 类，负责上下文内容的保存和识别。</p>
+</li>
+<li>
+<p>重写 <code>visit</code> 函数：</p>
+  <figure class="highlight java"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;你需要的返回值&gt; visit&lt;A&gt;(xxParser.&lt;A&gt;Context ctx)</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li>
+<p>.tokens 文件中将语法常量对应了一个整数数值，方便常量的建立。.interp 文件则记录了字面值。</p>
+</li>
+<li>
+<p>Parser 中，对每一个语法变量，生成了很多上下文相关的方法（xxContext）。其中的某些常量在前面所述的.tokens 文件中可以找到。</p>
+</li>
+<li>
+<p>Lexer 中，则存储了字面量及其相关方法，某些内容可在.interp 文件中找到。</p>
+</li>
+<li>
+<p>而所有开头的 xx 来自于语法文件第一行的 grammar xx，即为语法名。</p>
+</li>
+<li>
+<p><code>Visitor</code> 实现完成后，在主函数中建立 <code>visitor</code> 对象，调用 <code>visit</code> 语法树方法，将用户输入作为参数传入，其返回值即为语法分析结果。</p>
+</li>
+</ul>
+<figure class="highlight java"><figcaption><span>visitor.java</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Visitor</span> <span class="keyword">extends</span> <span class="title class_">exprBaseVisitor</span>&lt;Double&gt;{</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitExprs</span><span class="params">(exprParser.ExprsContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit exprs"); </span></span><br><span class="line">		<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>)); </span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitSetExpr</span><span class="params">(exprParser.SetExprContext ctx)</span>{</span><br><span class="line">		Context.getInstance().setContext(ctx.id.getText(), ctx.num.getText());</span><br><span class="line">		System.out.println(<span class="string">"Assign operation in current line:"</span> + ctx.id.getText() + <span class="string">" = "</span> + ctx.num.getText());</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitCalcExpr</span><span class="params">(exprParser.CalcExprContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit calc expr "); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">switch</span> (ctx.op.getType()) { </span><br><span class="line">				<span class="keyword">case</span> exprParser.ADD:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) + visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.SUB:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) - visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.MUL:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) * visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">				<span class="keyword">case</span> exprParser.DIV:</span><br><span class="line">					<span class="keyword">return</span> visit(ctx.calcExpr(<span class="number">0</span>)) / visit(ctx.calcExpr(<span class="number">1</span>));</span><br><span class="line">			}</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>)</span><br><span class="line">		{</span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">0</span>));</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">	<span class="keyword">public</span> Double <span class="title function_">visitFactor</span><span class="params">(exprParser.FactorContext ctx)</span>{ </span><br><span class="line">		<span class="comment">//System.out.println("visit factor"); </span></span><br><span class="line">		<span class="type">int</span> <span class="variable">cc</span> <span class="operator">=</span> ctx.getChildCount(); </span><br><span class="line">		<span class="keyword">if</span> (cc == <span class="number">3</span>) { </span><br><span class="line">			<span class="keyword">return</span> visit(ctx.getChild(<span class="number">1</span>)); </span><br><span class="line">		} <span class="keyword">else</span> <span class="keyword">if</span> (cc == <span class="number">2</span>) { </span><br><span class="line">			<span class="keyword">if</span> (ctx.sign.getType() == exprParser.ADD)</span><br><span class="line">				<span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.sign.getType() == exprParser.SUB) </span><br><span class="line">				<span class="keyword">return</span> -<span class="number">1</span> * Double.valueOf(ctx.getChild(<span class="number">1</span>).getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cc == <span class="number">1</span>){</span><br><span class="line">			<span class="keyword">if</span>(ctx.num != <span class="literal">null</span>) <span class="keyword">return</span> Double.valueOf(ctx.getChild(<span class="number">0</span>).getText());</span><br><span class="line">			<span class="keyword">if</span>(ctx.id != <span class="literal">null</span>) <span class="keyword">return</span> Context.getInstance().getValue(ctx.id.getText());</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>();</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>目前实现的版本中，可以正确地进行运算，但还没有实现连续赋值功能，也没有考虑到多语句的分隔及分开解析，例如输入 <code>"a=1 a+1"</code> 后不能得到 <code>2</code>，可能需要修改 <code>Context</code> 类和 <code>Visitor</code> 类中的代码，使其可以记录上下文信息，将 <code>a</code> 的值存入暂存区。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>编译原理</category>
+      </categories>
+      <tags>
+        <tag>ANTLR</tag>
+        <tag>编译原理</tag>
       </tags>
   </entry>
   <entry>
@@ -3501,8 +3501,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>移动终端安全</category>
+        <category>漏洞</category>
         <category>Android</category>
       </categories>
       <tags>
@@ -3717,13 +3717,16 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 <p>最后的 <code>url</code> 地址与初始请求地址不同，显然经过了 30x 的重定向，强制忽略重定向再来一遍：</p>
 <figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="comment"># 别忘了把short-id换成另外一个合法链接自己测试</span></span><br><span class="line">res = requests.get(<span class="string">"https://b23.tv/&lt;short-id&gt;"</span>, allow_redirects=<span class="literal">False</span>)</span><br><span class="line"><span class="comment"># &lt;Response [302]&gt;</span></span><br><span class="line"><span class="built_in">print</span>(res.headers)</span><br><span class="line"><span class="comment"># {'Date': 'Fri, 17 Feb 2023 03:55:30 GMT', 'Content-Type': 'text/html; charset=utf-8', 'Content-Length': '420', 'Connection': 'keep-alive', 'Bili-Trace-Id': '{trace-id}', 'Location': 'https://www.bilibili.com/video/BV{xxxxxxxxx}?{search-params}', 'X-Bili-Trace-Id': '{trace-id}', 'Expires': 'Fri, 17 Feb 2023 03:55:29 GMT', 'Cache-Control': 'no-cache', 'X-Cache-Webcdn': 'BYPASS from blzone06'}</span></span><br></pre></td></tr></tbody></table></figure>
 <p><code>Location</code> 响应头的地址与不忽略重定向时的地址相同，这时候我们大致可以描绘出整个请求的过程了。</p>
-<pre class="mermaid">graph LR
-  A["访问短链接b23.tv/xxx"] --&gt; B["取Location进行302跳转"] --&gt; C["带一堆URL参数的bilibili.com/BVxxxxxx视频页链接"]</pre>
+<pre><code class="mermaid">
+graph LR
+A["访问短链接b23.tv/xxx"] --&gt; B["取Location进行302跳转"] --&gt; C["带一堆URL参数的bilibili.com/BVxxxxxx视频页链接"]
+</code>
+</pre>
 <div class="note warning"><p>看见没，已经有一堆追踪参数了，为了这里演示方便以及不泄露隐私，这里用占位符 <code>{}</code> 替换掉了所有可能引起追踪的地方。</p>
 </div>
 <p>可以看到在进行 302 跳转时，服务器给出的 <code>Location</code> 响应头已经携带了参数。这些参数中，有一些是与用户相关的，比如</p>
 <ul>
-<li><code>mid</code> 用户 ID，在 2023 年 4 月 2 日测试时，mid 已经变成了一堆字母和数字，不知道有没有作加密</li>
+<li><code>mid</code> 用户 ID，在 2023 年 4 月 2 日测试时，mid 已经变成了一堆字母和数字</li>
 <li><code>buvid</code> 用户设备 ID</li>
 <li><code>plat_id</code> 用户平台 ID</li>
 <li><code>share_session_id</code> 分享会话 ID，其格式为 UUID</li>
@@ -3925,8 +3928,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>软件安全</category>
+        <category>漏洞</category>
         <category>缓冲区溢出</category>
         <category>二进制</category>
       </categories>
@@ -4041,8 +4044,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>软件安全</category>
+        <category>漏洞</category>
         <category>拒绝服务</category>
       </categories>
       <tags>
@@ -4157,8 +4160,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>软件安全</category>
+        <category>漏洞</category>
         <category>shellcode注入</category>
       </categories>
       <tags>
@@ -4302,8 +4305,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>软件安全</category>
+        <category>漏洞</category>
         <category>栈溢出</category>
       </categories>
       <tags>
@@ -4418,8 +4421,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>软件安全</category>
+        <category>漏洞</category>
         <category>格式化字符串</category>
       </categories>
       <tags>
@@ -4502,8 +4505,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>软件安全</category>
+        <category>漏洞</category>
         <category>SEH</category>
         <category>虚函数</category>
       </categories>
@@ -4663,8 +4666,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>信息系统</category>
+        <category>漏洞</category>
         <category>DDoS攻击</category>
       </categories>
       <tags>
@@ -4836,13 +4839,121 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>信息系统</category>
+        <category>漏洞</category>
         <category>Tomcat配置</category>
       </categories>
       <tags>
         <tag>网络空间安全</tag>
         <tag>信息系统安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>堆溢出漏洞</title>
+    <url>/2019/11/30/experiments/security/vulnerability_analysis/heap/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
+<p>根据一个重复释放漏洞利用例子，调试利用程序（<code>exp.py</code>），理解堆溢出的原理和利用过程中堆的变化。</p>
+<span id="more"></span>
+<h2 id="步骤">步骤</h2>
+<h3 id="程序运行">程序运行</h3>
+<p>程序运行后大致显示了如下结果。 <img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0.png" class=""></p>
+<h3 id="静态分析">静态分析</h3>
+<p>把程序拖入 IDA 中进行分析，发现主要的逻辑还是比较简单的。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-1.png" class="" title="主函数"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-2.png" class="" title="write选项"></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-3.png" class="" title="delete选项"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-4.png" class="" title="new选项"></div></div></div>
+<p>左上图为主要的程序逻辑，用户输入的选择数字对应了不同的子程序，其中输入 1 将进入 <code>sub_400909</code>，对应了 new 操作，从中可以得到，我们最多可以分配 10 个 chunk，每一块最多 96 字节大小。输入 2 将进入 <code>sub_4009f9</code>，对应了 write 操作，它也经历了严格的边界检查，利用基本上不可能。输入 3 将进入 <code>sub_400aef</code>，对应了 delete 操作，其中第 18 行将指针 <code>ptr[v1]</code> free 掉，在第 19 行把其中内容置空了，却没有把指向它的指针置空，留下了双重释放的漏洞。</p>
+<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/vulnerable.png" class="">
+<p>事实上，尝试连续释放两次相同的 chunk，的确会引发系统的 core dump。如图。</p>
+<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-5.png" class="" title="两次释放0号chunk，会引发core dump">
+<h3 id="动态分析-gdb调试">动态分析 (gdb 调试)</h3>
+<ol>
+<li>
+<p>当程序执行到第一个断点时，<code>exp.py</code> 做了这些事情：</p>
+<ol>
+<li>新建了两个 0x60 大小的 “chunk”（恰好为边界值）</li>
+<li>释放第一个堆块，释放第二个堆块，再释放第一个堆块（触发 Double Free），完成 fastbin attack。此时 heap 和 fastbin 的情况如图所示。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/1-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/1-heap.png" class="" title="heap情况"></div></div></div>
+从中可以推断，堆的当前情况是：
+<ol>
+<li>堆的头部为 <code>0x1a740e0</code>。</li>
+<li>有两个大小为 0x71（属于 0x70 类）的 fastbin 已被分配，它们目前处于首尾相连状态。因为从截图可以得知，<code>0x1a74000</code> 的前向指针指向了 <code>0x1a74070</code>，<code>0x1a74070</code> 的前向指针指向了 <code>0x1a74000</code>，刚好是一个闭环。</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>当程序执行到第二个断点时，<code>exp.py</code> 做了这些事情：</p>
+<ol>
+<li>
+<p>分配了第三个堆块，大小为 0x60。</p>
+</li>
+<li>
+<p>向其中写入地址 <code>0x60208d</code>。</p>
+<ul>
+<li>值得注意的是在每次分配堆块后，有一个全局变量的数字均自增了 1，这个全局变量在每次分配堆块前均和 9 检查，证明一共最多只能进行 10 次分配操作，10 次分配，在 <code>ptmalloc</code> 分配方式中只有 fastbin 中有 10 个堆块满足我们的要求，这也是采用 fastbin attack 的原因。</li>
+<li>下图显示堆块 <code>0x1a74000</code> 的前向指针 <code>fd</code> 被篡改为了我们所写的地址 <code>0x60208d</code> 上，而 <code>0x1a74010000000</code>，一个内存地址正在指向它。回环结构已被破坏。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-heap.png" class="" title="heap情况"></div></div></div>
+</li>
+</ul>
+ <div class="note info"><h4 id="为什么是-code-0x60208d-code-？">为什么是 <code>0x60208d</code>？</h4>
+<p>我们需要一个大小属于 0x70 类的空闲块来满足 <code>malloc</code> 安全分配的需求（程序中要求最大分配 0x60 的 chunk），观察内存，可以发现 <code>0x60208d</code> 为满足要求的内存块之一。</p>
+</div>
+ <img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-0.png" class="">
+ <div class="note info"><p>由于小端显示原因，此图显示实际上对应于内存中的顺序为：第二列 - 第一列 - 第四列 - 第三列，与 gdb-peda 的显示不太相同。</p>
+</div>
+</li>
+</ol>
+ <div class="note primary"><p>这次分配第三个堆块的意义是将所找到可以利用的内存地址推入 FASTBIN 链中，后续可以方便直接对内存中此处内容进行改写。</p>
+</div>
+</li>
+<li>
+<p>当程序执行到第三个断点时，<code>exp.py</code> 做了如下事情：</p>
+<ol>
+<li>分配了大小为 0x60 的第四、第五、第六块 chunk。</li>
+<li>向第五块 chunk 写入字符串 <code>/bin/sh\x00</code>。</li>
+<li>向第六块 chunk 写入 got 表中 <code>free</code> 的地址。
+<ul>
+<li>
+<p>这时 fastbin 中只剩下一个大小为 <code>0x70</code> 的块：<code>0x1a74010000000</code>，原来的 <code>0x1a74000</code> 已经指向了一个内存地址中。</p>
+</li>
+<li>
+<p>查看现在 <code>0x602080</code> 的内容，发现已经被我们所写入的 got 中 free 表地址所覆盖。哦，原来 <code>0x00602018</code> 是 got 表中 <code>free</code> 的地址啊！</p>
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-heap.png" class="" title="heap情况"></div></div></div>
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-0.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-1.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-2.png" class=""></div></div></div>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>当程序执行到第四个断点时，<code>exp.py</code> 做了如下事情：</p>
+<ul>
+<li>向第三块 chunk 中写入 plt 表中 <code>system</code> 的地址（第三块没有被 <code>free</code> 过，现在实际上在覆盖写）。</li>
+<li>Bin 和 heap 相较上一步没什么变化。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/4-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/4-heap.png" class="" title="heap情况"></div></div></div>
+</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>最终，我们释放了含有 <code>/bin/sh</code> 字符串的第五块 chunk，由于 <code>free</code> 的 got 表地址已经被改写成了 <code>system</code> 的 plt 表地址，再调用 <code>free</code> 就相当于调用了 <code>system</code>，而被释放的块中含有 <code>/bin/sh</code> 字符串，所以就相当于执行了 <code>system("/bin/sh")</code>，成功获取 shell。</li>
+</ul>
+<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/exploit-ok.png" class="">
+<h2 id="实验难点与收获">实验难点与收获</h2>
+<p>堆的结构比较复杂，需要的前置知识非常多，理解起来也会非常难。通过学习这次的利用程序，我掌握了大概的利用思路。</p>
+<p>其实应该再加一个断点，来观察一下 <code>free</code> 后 bin 和 heap 的情况，不过多半因为程序控制权转移而看不到这里的现象。</p>
+<p>实际上，所有的利用办法，最终都是要想办法执行 <code>system("/bin/sh")</code> 的，但是利用的路线是不相同的。</p>
+<h2 id="实验思考">实验思考</h2>
+<p>为什么可以在 <code>0x602018</code> 处发现符合要求的地址，大概是因为有一个在 <code>dword_6020f0</code> 的关键全局变量，所以可以推断可供利用的内存地址、全局变量等数据都会在其附近？（然后逐渐缩小查找范围……）</p>
+<h2 id="附录-exp-py源文件">附录:<code>exp.py</code> 源文件</h2>
+<script src="//gist.github.com/134b491e83d6b05966ebbae5bff15853.js?file=heap-exp.py"></script>
+]]></content>
+      <categories>
+        <category>实验</category>
+        <category>漏洞分析</category>
+        <category>漏洞</category>
+        <category>双重释放</category>
+        <category>堆溢出</category>
+      </categories>
+      <tags>
+        <tag>网络空间安全</tag>
+        <tag>软件安全</tag>
       </tags>
   </entry>
   <entry>
@@ -5012,121 +5123,13 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>信息系统</category>
+        <category>漏洞</category>
         <category>SQL注入</category>
       </categories>
       <tags>
         <tag>网络空间安全</tag>
         <tag>信息系统安全</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>堆溢出漏洞</title>
-    <url>/2019/11/30/experiments/security/vulnerability_analysis/heap/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="https://cdn.jsdelivr.net/npm/meting/dist/Meting.min.js"></script><h2 id="实验目的">实验目的</h2>
-<p>根据一个重复释放漏洞利用例子，调试利用程序（<code>exp.py</code>），理解堆溢出的原理和利用过程中堆的变化。</p>
-<span id="more"></span>
-<h2 id="步骤">步骤</h2>
-<h3 id="程序运行">程序运行</h3>
-<p>程序运行后大致显示了如下结果。 <img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0.png" class=""></p>
-<h3 id="静态分析">静态分析</h3>
-<p>把程序拖入 IDA 中进行分析，发现主要的逻辑还是比较简单的。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-1.png" class="" title="主函数"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-2.png" class="" title="write选项"></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-3.png" class="" title="delete选项"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-4.png" class="" title="new选项"></div></div></div>
-<p>左上图为主要的程序逻辑，用户输入的选择数字对应了不同的子程序，其中输入 1 将进入 <code>sub_400909</code>，对应了 new 操作，从中可以得到，我们最多可以分配 10 个 chunk，每一块最多 96 字节大小。输入 2 将进入 <code>sub_4009f9</code>，对应了 write 操作，它也经历了严格的边界检查，利用基本上不可能。输入 3 将进入 <code>sub_400aef</code>，对应了 delete 操作，其中第 18 行将指针 <code>ptr[v1]</code> free 掉，在第 19 行把其中内容置空了，却没有把指向它的指针置空，留下了双重释放的漏洞。</p>
-<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/vulnerable.png" class="">
-<p>事实上，尝试连续释放两次相同的 chunk，的确会引发系统的 core dump。如图。</p>
-<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/0-5.png" class="" title="两次释放0号chunk，会引发core dump">
-<h3 id="动态分析-gdb调试">动态分析 (gdb 调试)</h3>
-<ol>
-<li>
-<p>当程序执行到第一个断点时，<code>exp.py</code> 做了这些事情：</p>
-<ol>
-<li>新建了两个 0x60 大小的 “chunk”（恰好为边界值）</li>
-<li>释放第一个堆块，释放第二个堆块，再释放第一个堆块（触发 Double Free），完成 fastbin attack。此时 heap 和 fastbin 的情况如图所示。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/1-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/1-heap.png" class="" title="heap情况"></div></div></div>
-从中可以推断，堆的当前情况是：
-<ol>
-<li>堆的头部为 <code>0x1a740e0</code>。</li>
-<li>有两个大小为 0x71（属于 0x70 类）的 fastbin 已被分配，它们目前处于首尾相连状态。因为从截图可以得知，<code>0x1a74000</code> 的前向指针指向了 <code>0x1a74070</code>，<code>0x1a74070</code> 的前向指针指向了 <code>0x1a74000</code>，刚好是一个闭环。</li>
-</ol>
-</li>
-</ol>
-</li>
-<li>
-<p>当程序执行到第二个断点时，<code>exp.py</code> 做了这些事情：</p>
-<ol>
-<li>
-<p>分配了第三个堆块，大小为 0x60。</p>
-</li>
-<li>
-<p>向其中写入地址 <code>0x60208d</code>。</p>
-<ul>
-<li>值得注意的是在每次分配堆块后，有一个全局变量的数字均自增了 1，这个全局变量在每次分配堆块前均和 9 检查，证明一共最多只能进行 10 次分配操作，10 次分配，在 <code>ptmalloc</code> 分配方式中只有 fastbin 中有 10 个堆块满足我们的要求，这也是采用 fastbin attack 的原因。</li>
-<li>下图显示堆块 <code>0x1a74000</code> 的前向指针 <code>fd</code> 被篡改为了我们所写的地址 <code>0x60208d</code> 上，而 <code>0x1a74010000000</code>，一个内存地址正在指向它。回环结构已被破坏。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-heap.png" class="" title="heap情况"></div></div></div>
-</li>
-</ul>
- <div class="note info"><h4 id="为什么是-code-0x60208d-code-？">为什么是 <code>0x60208d</code>？</h4>
-<p>我们需要一个大小属于 0x70 类的空闲块来满足 <code>malloc</code> 安全分配的需求（程序中要求最大分配 0x60 的 chunk），观察内存，可以发现 <code>0x60208d</code> 为满足要求的内存块之一。</p>
-</div>
- <img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/2-0.png" class="">
- <div class="note info"><p>由于小端显示原因，此图显示实际上对应于内存中的顺序为：第二列 - 第一列 - 第四列 - 第三列，与 gdb-peda 的显示不太相同。</p>
-</div>
-</li>
-</ol>
- <div class="note primary"><p>这次分配第三个堆块的意义是将所找到可以利用的内存地址推入 FASTBIN 链中，后续可以方便直接对内存中此处内容进行改写。</p>
-</div>
-</li>
-<li>
-<p>当程序执行到第三个断点时，<code>exp.py</code> 做了如下事情：</p>
-<ol>
-<li>分配了大小为 0x60 的第四、第五、第六块 chunk。</li>
-<li>向第五块 chunk 写入字符串 <code>/bin/sh\x00</code>。</li>
-<li>向第六块 chunk 写入 got 表中 <code>free</code> 的地址。
-<ul>
-<li>
-<p>这时 fastbin 中只剩下一个大小为 <code>0x70</code> 的块：<code>0x1a74010000000</code>，原来的 <code>0x1a74000</code> 已经指向了一个内存地址中。</p>
-</li>
-<li>
-<p>查看现在 <code>0x602080</code> 的内容，发现已经被我们所写入的 got 中 free 表地址所覆盖。哦，原来 <code>0x00602018</code> 是 got 表中 <code>free</code> 的地址啊！</p>
- <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-heap.png" class="" title="heap情况"></div></div></div>
- <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-0.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-1.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/3-2.png" class=""></div></div></div>
-</li>
-</ul>
-</li>
-</ol>
-</li>
-<li>
-<p>当程序执行到第四个断点时，<code>exp.py</code> 做了如下事情：</p>
-<ul>
-<li>向第三块 chunk 中写入 plt 表中 <code>system</code> 的地址（第三块没有被 <code>free</code> 过，现在实际上在覆盖写）。</li>
-<li>Bin 和 heap 相较上一步没什么变化。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/4-bin.png" class="" title="fastbin情况"></div><div class="group-picture-column"><img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/4-heap.png" class="" title="heap情况"></div></div></div>
-</li>
-</ul>
-</li>
-</ol>
-<ul>
-<li>最终，我们释放了含有 <code>/bin/sh</code> 字符串的第五块 chunk，由于 <code>free</code> 的 got 表地址已经被改写成了 <code>system</code> 的 plt 表地址，再调用 <code>free</code> 就相当于调用了 <code>system</code>，而被释放的块中含有 <code>/bin/sh</code> 字符串，所以就相当于执行了 <code>system("/bin/sh")</code>，成功获取 shell。</li>
-</ul>
-<img data-src="/2019/11/30/experiments/security/vulnerability_analysis/heap/exploit-ok.png" class="">
-<h2 id="实验难点与收获">实验难点与收获</h2>
-<p>堆的结构比较复杂，需要的前置知识非常多，理解起来也会非常难。通过学习这次的利用程序，我掌握了大概的利用思路。</p>
-<p>其实应该再加一个断点，来观察一下 <code>free</code> 后 bin 和 heap 的情况，不过多半因为程序控制权转移而看不到这里的现象。</p>
-<p>实际上，所有的利用办法，最终都是要想办法执行 <code>system("/bin/sh")</code> 的，但是利用的路线是不相同的。</p>
-<h2 id="实验思考">实验思考</h2>
-<p>为什么可以在 <code>0x602018</code> 处发现符合要求的地址，大概是因为有一个在 <code>dword_6020f0</code> 的关键全局变量，所以可以推断可供利用的内存地址、全局变量等数据都会在其附近？（然后逐渐缩小查找范围……）</p>
-<h2 id="附录-exp-py源文件">附录:<code>exp.py</code> 源文件</h2>
-<script src="//gist.github.com/134b491e83d6b05966ebbae5bff15853.js?file=heap-exp.py"></script>
-]]></content>
-      <categories>
-        <category>实验</category>
-        <category>漏洞</category>
-        <category>漏洞分析</category>
-        <category>双重释放</category>
-        <category>堆溢出</category>
-      </categories>
-      <tags>
-        <tag>网络空间安全</tag>
-        <tag>软件安全</tag>
       </tags>
   </entry>
   <entry>
@@ -5230,8 +5233,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>漏洞分析</category>
+        <category>漏洞</category>
         <category>缓冲区溢出</category>
       </categories>
       <tags>
@@ -5388,8 +5391,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>漏洞分析</category>
+        <category>漏洞</category>
         <category>缓冲区溢出</category>
         <category>二进制</category>
       </categories>
@@ -5485,8 +5488,8 @@ cp 命令一般用于复制文件或目录。mv 命令一般用于剪切文件�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>漏洞分析</category>
+        <category>漏洞</category>
         <category>格式化字符串</category>
       </categories>
       <tags>
@@ -5605,8 +5608,8 @@ ARP 协议没有认证机制，只要接收到的协议包是有效的，主机�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>网络安全</category>
+        <category>漏洞</category>
         <category>协议漏洞</category>
       </categories>
       <tags>
@@ -5684,8 +5687,8 @@ ARP 协议没有认证机制，只要接收到的协议包是有效的，主机�
 ]]></content>
       <categories>
         <category>实验</category>
-        <category>漏洞</category>
         <category>网络安全</category>
+        <category>漏洞</category>
         <category>DoS</category>
       </categories>
       <tags>
