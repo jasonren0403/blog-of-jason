@@ -269,28 +269,11 @@ follow_me:
   RSS: /atom.xml || fa fa-rss
   知乎: https://www.zhihu.com/people/bu-zhi-dao-gai-jiao-shi-yao-hao-51 || fab fa-zhihu
 
-# Related popular posts
-# Dependencies: https://github.com/sergeyzwezdin/hexo-related-posts
-#related_posts:
-#  enabled: false
-#  enable_env_name: prod
-#  filter_threshold: 0.3
-#  related_count: 3
-#  weight:
-#    title: 0.05
-#    description: 0.05
-#    keywords: 0.01
-#    tags: 0.005
-#    categories: 0.005
-#    text: 1
-#  stemmers:
-#    - en
-#    - jp
-    # reserved:
-    # - asp.net
-    # - vs.net
-    # - ado.net
-    # - .net
+# Dependencies: https://github.com/next-theme/hexo-posts-embedding
+# Or: https://github.com/sergeyzwezdin/hexo-related-posts
+related_posts:
+  enable: true
+  icon: fa fa-signs-post
 
 # Post edit
 # Easily browse and edit blog source code online.
@@ -533,13 +516,13 @@ comments:
   # Available values: tabs | buttons
   style: tabs
   # Choose a comment system to be displayed by default.
-  # Available values: changyan | disqus | disqusjs | gitalk | livere | valine
+  # Available values: disqus | disqusjs | livere | gitalk | utterances | isso
   active:
   # Setting `true` means remembering the comment system selected by the visitor.
   storage: true
   # Lazyload all comment systems.
   lazyload: false
-  # Modify texts or order for any navs, here are some examples.
+  # Modify texts or order for any naves, here are some examples.
   nav:
   #disqus:
   #  text: Load Disqus
