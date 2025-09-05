@@ -14,13 +14,13 @@
 
 <link rel="stylesheet" href="https://fonts.geekzu.org/css2?family=Tahoma:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;family=Open+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;display=swap&amp;subset=latin,latin-ext">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.36/fancybox/fancybox.css" integrity="sha256-zM8WXtG4eUn7dKKNMTuoWZub++VnSfaOpA/8PJfvTBo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer=""></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.23.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
 
     <meta name="description" content="实验目的  熟悉通过 SQL 对数据库进行数据控制，包括安全性和完整性。 熟悉数据库的备份与恢复操作。">
 <meta property="og:type" content="article">
@@ -84,7 +84,7 @@
 <meta property="og:image" content="https://blog.jason0743.space/2018/12/03/experiments/database/data-control/backup_11.png">
 <meta property="og:image" content="https://blog.jason0743.space/2018/12/03/experiments/database/data-control/backup_12.png">
 <meta property="article:published_time" content="2018-12-03T01:44:22.000Z">
-<meta property="article:modified_time" content="2025-08-07T03:41:47.143Z">
+<meta property="article:modified_time" content="2025-09-05T15:57:13.708Z">
 <meta property="article:author" content="Jason Ren">
 <meta property="article:tag" content="数据库">
 <meta property="article:tag" content="MySQL">
@@ -117,16 +117,16 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.36/fancybox/fancybox.umd.js" integrity="sha256-hiUEBwFEpLF6DlB8sGXlKo4kPZ46Ui4qGpd0vrVkOm4=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer=""></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer=""></script>
 
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer=""></script>
 
 
 
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.5.0/mermaid.min.js","integrity":"sha256-2obLuIPcceEhkE3G09G33hBdmE55ivVcZUlcKcGNHjU="}}</script>
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
   
 
 
@@ -304,6 +304,30 @@
         </ul>
       </div>
     </div>
+        <div class="sidebar-inner sidebar-post-related">
+          <div class="animated">
+              <div class="links-of-blogroll-title"><i class="fa fa-signs-post fa-fw"></i>
+    相关文章
+  </div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2018/11/17/experiments/database/interactive-sql/" rel="bookmark">
+        <time class="popular-posts-time">2018-11-17</time>
+        <br>
+      交互式 SQL
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2021/12/01/experiments/database/snapshot/" rel="bookmark">
+        <time class="popular-posts-time">2021-12-01</time>
+        <br>
+      快照
+      </a>
+    </li>
+  </ul>
+
+          </div>
+        </div>
   </aside>
 
 
@@ -356,7 +380,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-07 11:41:47" itemprop="dateModified" datetime="2025-08-07T11:41:47+08:00">2025-08-07</time>
+      <time title="修改时间：2025-09-05 23:57:13" itemprop="dateModified" datetime="2025-09-05T23:57:13+08:00">2025-09-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -434,16 +458,16 @@
  <img data-src="/2018/12/03/experiments/database/data-control/preparation_create_user.png" class="">
 </li>
 <li>
-<p>在左侧管理栏中点击 <code>Administration</code>，然后点击 <code>Users and privileges</code>，在其中添加用户。</p>
+<p>在左侧管理栏中点击<code>Administration</code>，然后点击<code>Users and privileges</code>，在其中添加用户。</p>
  <img data-src="/2018/12/03/experiments/database/data-control/preparation_create_user_2.png" class="">
-<p>或者在命令行输入 <code>create user</code> 命令创建用户。</p>
+<p>或者在命令行输入<code>create user</code>命令创建用户。</p>
  <img data-src="/2018/12/03/experiments/database/data-control/preparation_create_user_3.png" class="">
 </li>
 </ol>
 <div class="note info"><h4 id="将创建以下用户">将创建以下用户</h4>
 <ul>
 <li>2017522133（root + 所有权限）</li>
-<li>U1~U7（创建用户时默认对其赋予 <code>Connect</code> 权限）</li>
+<li>U1~U7（创建用户时默认对其赋予<code>Connect</code>权限）</li>
 </ul>
 </div>
 <h3 id="数据的安全性">数据的安全性</h3>
@@ -462,11 +486,11 @@
 </li>
 </ul>
 </li>
-<li>U5 将他获得的 <code>INSERT</code> 权限转给 U6。
+<li>U5 将他获得的<code>INSERT</code>权限转给 U6。
 <ol>
 <li>以 U5 身份登录数据库。 <img data-src="/2018/12/03/experiments/database/data-control/grant_4.png" class="">
 </li>
-<li>命令窗口中输入 <code>grant insert on table Product to U6;</code>。 <img data-src="/2018/12/03/experiments/database/data-control/grant_5.png" class="">
+<li>命令窗口中输入<code>grant insert on table Product to U6;</code>。 <img data-src="/2018/12/03/experiments/database/data-control/grant_5.png" class="">
 </li>
 </ol>
 </li>
@@ -474,26 +498,26 @@
 <ol>
 <li>以 U6 身份登录数据库。 <img data-src="/2018/12/03/experiments/database/data-control/grant_6.png" class="">
 </li>
-<li>命令窗口中输入 <code>grant insert on table Product to U7;</code>。 <img data-src="/2018/12/03/experiments/database/data-control/grant_7.png" class="">
+<li>命令窗口中输入<code>grant insert on table Product to U7;</code>。 <img data-src="/2018/12/03/experiments/database/data-control/grant_7.png" class="">
 </li>
-<li>运行失败，出现 1142 错误。其意义为：”U6 不可使用 <code>GRANT</code> 命令传播 product 表的 <code>INSERT</code> 权限”。 <img data-src="/2018/12/03/experiments/database/data-control/grant_8.png" class="">
+<li>运行失败，出现 1142 错误。其意义为：” U6 不可使用<code>GRANT</code>命令传播 product 表的<code>INSERT</code>权限”。 <img data-src="/2018/12/03/experiments/database/data-control/grant_8.png" class="">
 </li>
 </ol>
 </li>
 <li>收回用户 U3 对于 PC 表的查询权限。
 <ol>
-<li>以 2017522133 用户身份登录数据库，输入 <code>revoke select on table PC from U3;</code>。 <img data-src="/2018/12/03/experiments/database/data-control/revoke_1.png" class="">
+<li>以 2017522133 用户身份登录数据库，输入<code>revoke select on table PC from U3;</code>。 <img data-src="/2018/12/03/experiments/database/data-control/revoke_1.png" class="">
 </li>
-<li>以 U3 用户身份登录，试图在 PC 表中进行 <code>SELECT</code> 操作。 <img data-src="/2018/12/03/experiments/database/data-control/revoke_2.png" class="">
+<li>以 U3 用户身份登录，试图在 PC 表中进行<code>SELECT</code>操作。 <img data-src="/2018/12/03/experiments/database/data-control/revoke_2.png" class="">
 </li>
-<li>操作失败，显示 1142 错误 “U3 对于 PC 表的 <code>SELECT</code> 操作被禁止”。 <img data-src="/2018/12/03/experiments/database/data-control/revoke_3.png" class="">
+<li>操作失败，显示 1142 错误 “U3 对于 PC 表的<code>SELECT</code>操作被禁止”。 <img data-src="/2018/12/03/experiments/database/data-control/revoke_3.png" class="">
 </li>
 </ol>
 </li>
-<li>收回用户 U5 对于 Product 表的 <code>INSERT</code> 权限。
+<li>收回用户 U5 对于 Product 表的<code>INSERT</code>权限。
 <ol>
 <li>
-<p>以 root 身份登录，输入 <code>revoke insert on table Product from U5;</code>。</p>
+<p>以 root 身份登录，输入<code>revoke insert on table Product from U5;</code>。</p>
  <img data-src="/2018/12/03/experiments/database/data-control/revoke_4.png" class="">
 </li>
 <li>
@@ -502,7 +526,7 @@
  <img data-src="/2018/12/03/experiments/database/data-control/revoke_6.png" class="">
 </li>
 <li>
-<p>以 U6 身份登录，试图进行插入操作，结果操作成功。说明 MySQL 对于 <code>REVOKE</code> 语句的默认值为 <code>RESTRICT</code>。</p>
+<p>以 U6 身份登录，试图进行插入操作，结果操作成功。说明 MySQL 对于<code>REVOKE</code>语句的默认值为<code>RESTRICT</code>。</p>
  <img data-src="/2018/12/03/experiments/database/data-control/revoke_7.png" class="">
 <p>注意 U6 没有查询权限！需要登录 root 用户才能查询到下图数据。</p>
  <img data-src="/2018/12/03/experiments/database/data-control/revoke_8.png" class="">
@@ -523,7 +547,7 @@
 </div>
 然后试图添加数据，失败。错误信息与前述相同。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2018/12/03/experiments/database/data-control/5.1.2.png" class=""></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2018/12/03/experiments/database/data-control/5.1.2result.png" class=""></div></div></div>
 </li>
-<li>[参照完整性 I] 试图从 product 表中删除数据或在 laptop 表中插入数据，参照完整性定义为 <code>RESTRICT</code>。 <img data-src="/2018/12/03/experiments/database/data-control/laptop.png" class="">
+<li>[参照完整性 I] 试图从 product 表中删除数据或在 laptop 表中插入数据，参照完整性定义为<code>RESTRICT</code>。 <img data-src="/2018/12/03/experiments/database/data-control/laptop.png" class="">
  <div class="tabs" id="product-laptop"><ul class="nav-tabs"><li class="tab active"><a href="#product-laptop-1">子表插入数据</a></li><li class="tab"><a href="#product-laptop-2">父表删除数据</a></li></ul><div class="tab-content"><div class="tab-pane active" id="product-laptop-1"><img data-src="/2018/12/03/experiments/database/data-control/ref_1.png" class="">
 <img data-src="/2018/12/03/experiments/database/data-control/ref_1_error.png" class="">
 插入操作错误信息：
@@ -532,7 +556,7 @@
 删除操作错误信息：
 <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error Code: 1451. Cannot delete or update a parent row: a foreign key constraint fails (`computer_products`.`laptop`, CONSTRAINT `laptop_ibfk_1` FOREIGN KEY (`model`) REFERENCES `product` (`model`))</span><br></pre></td></tr></tbody></table></figure></div></div></div>
 </li>
-<li>[参照完整性 II] 试图从 product 表中删除数据或在 pc 表中插入数据，参照完整性定义为 <code>CASCADE</code>。 <img data-src="/2018/12/03/experiments/database/data-control/pc.png" class="">
+<li>[参照完整性 II] 试图从 product 表中删除数据或在 pc 表中插入数据，参照完整性定义为<code>CASCADE</code>。 <img data-src="/2018/12/03/experiments/database/data-control/pc.png" class="">
  <div class="tabs" id="product-pc"><ul class="nav-tabs"><li class="tab active"><a href="#product-pc-1">子表插入数据</a></li><li class="tab"><a href="#product-pc-2">父表删除数据</a></li></ul><div class="tab-content"><div class="tab-pane active" id="product-pc-1"><img data-src="/2018/12/03/experiments/database/data-control/ref_3.png" class="">
 <img data-src="/2018/12/03/experiments/database/data-control/ref_3_error.png" class="">
 插入操作错误信息：
@@ -540,7 +564,7 @@
 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2018/12/03/experiments/database/data-control/ref_4_result1.png" class=""></div><div class="group-picture-column"><img data-src="/2018/12/03/experiments/database/data-control/ref_4_result2.png" class=""></div></div></div>
 可以删除，且 pc 表中的相关数据也被直接删除。</div></div></div>
 </li>
-<li>[参照完整性 III] 试图从 product 表中删除数据或在 laptop 表中插入数据，参照完整性定义为 <code>SET NULL</code>。
+<li>[参照完整性 III] 试图从 product 表中删除数据或在 laptop 表中插入数据，参照完整性定义为<code>SET NULL</code>。
 <ul>
 <li>本例无法完成，因为 product 表的主码和 laptop 表的主码一致且不能为空。</li>
 </ul>
@@ -553,7 +577,7 @@
  <img data-src="/2018/12/03/experiments/database/data-control/ref_5_error.png" class="">
 </li>
 <li>
-<p>(<code>CHECK</code> 短语) 临时表 Computers 定义如下</p>
+<p>(<code>CHECK</code>短语) 临时表 Computers 定义如下</p>
  <figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">create</span> <span class="keyword">table</span> Computers</span><br><span class="line">(maker <span class="type">char</span>(<span class="number">2</span>) <span class="keyword">check</span>(maker <span class="keyword">in</span>(<span class="string">'A'</span>,<span class="string">'B'</span>,<span class="string">'C'</span>)), <span class="operator">/</span><span class="operator">/</span>厂商只有A、B、C三家</span><br><span class="line">model <span class="type">int</span>(<span class="number">4</span>),</span><br><span class="line">price <span class="type">int</span>(<span class="number">5</span>) <span class="keyword">check</span>(price<span class="operator">&gt;=</span><span class="number">1000</span> <span class="keyword">and</span> price<span class="operator">&lt;=</span><span class="number">10000</span>), <span class="operator">/</span><span class="operator">/</span>所有电脑的价格在<span class="number">1000</span>元到<span class="number">10000</span>元之间</span><br><span class="line"><span class="keyword">primary</span> key(model),</span><br><span class="line"><span class="keyword">check</span> (maker<span class="operator">=</span><span class="string">'B'</span> <span class="keyword">or</span> price<span class="operator">&lt;=</span><span class="number">5000</span>)   <span class="operator">/</span><span class="operator">/</span>A、C两厂家的电脑价格都在<span class="number">5000</span>元以下</span><br><span class="line">);</span><br></pre></td></tr></tbody></table></figure>
 <p>试图进行插入操作。</p>
  <img data-src="/2018/12/03/experiments/database/data-control/ref_6_0.png" class="">
@@ -561,7 +585,7 @@
  <img data-src="/2018/12/03/experiments/database/data-control/ref_6_1.png" class="">
 </li>
 <li>
-<p>(<code>CONSTRAINT</code> 短语) 临时表 Computers 重新定义如下</p>
+<p>(<code>CONSTRAINT</code>短语) 临时表 Computers 重新定义如下</p>
  <img data-src="/2018/12/03/experiments/database/data-control/ref_7_0.png" class="">
 <p>代码无法通过编译，应该是 MySQL 的语法与 SQL 语言标准不同的原因导致不能完全按课本示例来创建。</p>
 </li>
@@ -574,7 +598,7 @@
 </div>
 <ol>
 <li>
-<p>创建备份设备，本例利用 <code>mysqldump</code> 命令将 computer_products 数据库放在了 E 盘根目录中。此操作需要输入密码。</p>
+<p>创建备份设备，本例利用<code>mysqldump</code>命令将 computer_products 数据库放在了 E 盘根目录中。此操作需要输入密码。</p>
  <figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump <span class="operator">-</span>u <span class="number">2017522133</span> <span class="operator">-</span>p computer_products<span class="operator">&gt;</span>E:\computer_products.sql</span><br></pre></td></tr></tbody></table></figure>
  <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2018/12/03/experiments/database/data-control/backup_1.png" class=""></div><div class="group-picture-column"><img data-src="/2018/12/03/experiments/database/data-control/backup_2.png" class=""></div></div></div>
  <div class="note info"><p>这个 SQL 文件可以用 MySQL 图形界面打开，内容大概如下。<br>
@@ -586,20 +610,20 @@
  <img data-src="/2018/12/03/experiments/database/data-control/backup_4.png" class="">
 </li>
 <li>
-<p>先执行 <code>show master status</code>，然后执行 <code>flush logs</code>，将 <code>master status</code> 显示的文件复制到其他地方。执行 <code>flush logs</code> 意义在于切换为新的日志文件，将问题段集中在一个日志文件中。</p>
+<p>先执行<code>show master status</code>，然后执行<code>flush logs</code>，将<code>master status</code>显示的文件复制到其他地方。执行<code>flush logs</code>意义在于切换为新的日志文件，将问题段集中在一个日志文件中。</p>
  <img data-src="/2018/12/03/experiments/database/data-control/backup_5.png" class="">
-<p>binlog.000011 文件内容如下，可以看到，从 pos=4 到 pos=795 经历了两次 commit 操作，分别为两条数据的新建操作，经分析，若要恢复数据新建的状态，只需恢复这个 log 即可。</p>
+<p>binlog.000011 文件内容如下，可以看到，从 pos = 4 到 pos = 795 经历了两次 commit 操作，分别为两条数据的新建操作，经分析，若要恢复数据新建的状态，只需恢复这个 log 即可。</p>
  <img data-src="/2018/12/03/experiments/database/data-control/backup_6.png" class="">
 </li>
 <li>
-<p>执行 <code>source E:/computer_products.sql</code>。经过一段操作后，登录数据库，查看表格。</p>
+<p>执行<code>source E:/computer_products.sql</code>。经过一段操作后，登录数据库，查看表格。</p>
  <img data-src="/2018/12/03/experiments/database/data-control/backup_7.png" class="">
 <p>下图表明数据库成功恢复到了数据插入前的状态。</p>
  <img data-src="/2018/12/03/experiments/database/data-control/backup_8.png" class="">
  <img data-src="/2018/12/03/experiments/database/data-control/backup_9(4.5).png" class="">
 </li>
 <li>
-<p>接下来使用 <code>mysqlbinlog</code> 命令恢复插入两条数据后的状态，此命令需要在 Windows cmd 命令行下进行。</p>
+<p>接下来使用<code>mysqlbinlog</code>命令恢复插入两条数据后的状态，此命令需要在 Windows cmd 命令行下进行。</p>
  <figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlbinlog E:<span class="operator">/</span>back_binlog<span class="number">.000011</span> <span class="operator">|</span> mysql <span class="operator">-</span>u <span class="operator">&lt;</span>我的用户名<span class="operator">&gt;</span> <span class="operator">-</span>p <span class="operator">&lt;</span>我的密码<span class="operator">&gt;</span> <span class="comment">--database=computer_products</span></span><br></pre></td></tr></tbody></table></figure>
 <p>根据提示输入管理员密码。</p>
  <img data-src="/2018/12/03/experiments/database/data-control/backup_10.png" class="">
@@ -613,26 +637,26 @@
 <ol>
 <li>
 <p>授权出错，显示 <code>You are not allowed to create a user with GRANT</code>。</p>
-<p>原因：在网上有很多教程说当出现 <code>The user specified as a definer ('root'@'%') does not exist</code> 时表示 <code>root</code> 用户权限不足，只需要执行 <code>GRANT ALL ON *.* TO 'root'@'%';</code> 就可以了，但是往往又会出现 <code>You are not allowed to create a user with GRANT</code> 的错误提示。这是因为 <code>GRANT ALL ON *.* TO 'root'@'%';</code> 这条语句中 <code>@'%'</code> 中的百分号其实是 root 用户对应 host 的名称，很多人并没有注意到他的 root 用户对应的其实是 localhost，直接就执行了上面的语句，所以才会报错。</p>
-<p>解决方案：只要将 <code>GRANT ALL ON *.* TO 'root'@'%';</code> 中的 <code>%</code> 改为对应的 <code>host</code> 名称即可，最后还要刷新一下权限 <code>FLUSH PRIVILEGES;</code>。</p>
+<p>原因：在网上有很多教程说当出现<code>The user specified as a definer ('root'@'%') does not exist</code>时表示<code>root</code>用户权限不足，只需要执行<code>GRANT ALL ON *.* TO 'root'@'%';</code>就可以了，但是往往又会出现<code>You are not allowed to create a user with GRANT</code>的错误提示。这是因为<code>GRANT ALL ON *.* TO 'root'@'%';</code>这条语句中<code>@'%'</code>中的百分号其实是 root 用户对应 host 的名称，很多人并没有注意到他的 root 用户对应的其实是 localhost，直接就执行了上面的语句，所以才会报错。</p>
+<p>解决方案：只要将<code>GRANT ALL ON *.* TO 'root'@'%';</code>中的<code>%</code>改为对应的<code>host</code>名称即可，最后还要刷新一下权限<code>FLUSH PRIVILEGES;</code>。</p>
 </li>
 <li>
 <p>MySQL 中的角色（Roles）概念？不是没有角色吗？</p>
 <p>在 MySQL8.0 版本后，有了 Roles 概念的引入。MySQL 的官方文本对此作了介绍。其中明确提出 ——</p>
  <blockquote><ol>
-<li>可以用 <code>CREATE ROLE</code> 命令建立角色；</li>
-<li>可以用 <code>GRANT</code> 命令授予这些角色以权限；</li>
-<li>可以用 <code>SHOW GRANTS FOR</code> 命令检查某用户拥有的权限；</li>
-<li>可以用 <code>REVOKE</code> 命令收回用户的权限；</li>
-<li>可以用 <code>DROP ROLE</code> 命令删除角色。</li>
+<li>可以用<code>CREATE ROLE</code>命令建立角色；</li>
+<li>可以用<code>GRANT</code>命令授予这些角色以权限；</li>
+<li>可以用<code>SHOW GRANTS FOR</code>命令检查某用户拥有的权限；</li>
+<li>可以用<code>REVOKE</code>命令收回用户的权限；</li>
+<li>可以用<code>DROP ROLE</code>命令删除角色。</li>
 </ol>
 <footer><strong>MySQL Dev Doc</strong><cite><a target="_blank" rel="noopener external nofollow noreferrer" href="https://dev.mysql.com/doc/refman/8.0/en/roles.html#roles-creating-granting">dev.mysql.com/doc/refman/8.0/en/roles.html#roles-creating-granting</a></cite></footer></blockquote>
 </li>
 <li>
 <p>MySQL 开启 binlog 的方法。</p>
 <ul>
-<li>打开 MySQL 配置文件 <code>my.cnf</code>，在 [mysqld] 下面增加 <code>log-bin=mysql-bin</code>（UNIX）</li>
-<li>修改 MySQL 配置文件 <code>my.ini</code> ，添加配置：<code>log-bin=log-bin=&lt;日志存储实际路径&gt;</code>（Windows）</li>
+<li>打开 MySQL 配置文件<code>my.cnf</code>，在 [mysqld] 下面增加<code>log-bin=mysql-bin</code>（UNIX）</li>
+<li>修改 MySQL 配置文件<code>my.ini</code> ，添加配置：<code>log-bin=log-bin=&lt;日志存储实际路径&gt;</code>（Windows）</li>
 <li>把前面的<code>#</code>去掉。</li>
 </ul>
 </li>
@@ -664,7 +688,7 @@
 <li>
 <p>刷新 log 日志，自此刻开始产生一个新编号的 binlog 日志文件</p>
  <figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> flush logs;</span><br></pre></td></tr></tbody></table></figure>
-<div class="note warning"><p>每当 mysqld 服务重启时，会自动执行此命令，刷新 binlog 日志；在 <code>mysqldump</code> 备份数据时加 <code>-F</code> 选项也会刷新 binlog 日志。</p>
+<div class="note warning"><p>每当 mysqld 服务重启时，会自动执行此命令，刷新 binlog 日志；在<code>mysqldump</code>备份数据时加 <code>-F</code> 选项也会刷新 binlog 日志。</p>
 </div>
 </li>
 <li>

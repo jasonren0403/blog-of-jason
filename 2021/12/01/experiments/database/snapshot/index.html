@@ -14,13 +14,13 @@
 
 <link rel="stylesheet" href="https://fonts.geekzu.org/css2?family=Tahoma:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;family=Open+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;display=swap&amp;subset=latin,latin-ext">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.36/fancybox/fancybox.css" integrity="sha256-zM8WXtG4eUn7dKKNMTuoWZub++VnSfaOpA/8PJfvTBo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer=""></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.23.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
 
     <meta name="description" content="快照 数据库快照是 SQL Server 数据库（源数据库）的只读静态视图。自创建快照那刻起，数据库快照在事务上与源数据库一致。数据库快照始终与其源数据库位于同一服务器实例上。虽然数据库快照提供与创建快照时处于相同状态的数据的只读视图，但快照文件的大小随着对源数据库的更改而增大。给定源数据库中可以存在多个快照。在数据库所有者显式删除每个数据库快照之前，该快照将一直保留。">
 <meta property="og:type" content="article">
@@ -38,7 +38,7 @@
 <meta property="og:image" content="https://blog.jason0743.space/2021/12/01/experiments/database/snapshot/Untitled_9CG69t-fgQ.png">
 <meta property="og:image" content="https://blog.jason0743.space/2021/12/01/experiments/database/snapshot/Untitled__wrwW68RzR.png">
 <meta property="article:published_time" content="2021-12-01T02:08:06.000Z">
-<meta property="article:modified_time" content="2025-08-07T03:41:47.153Z">
+<meta property="article:modified_time" content="2025-09-05T15:57:13.718Z">
 <meta property="article:author" content="Jason Ren">
 <meta property="article:tag" content="数据库">
 <meta property="article:tag" content="SQL Server">
@@ -73,16 +73,16 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.36/fancybox/fancybox.umd.js" integrity="sha256-hiUEBwFEpLF6DlB8sGXlKo4kPZ46Ui4qGpd0vrVkOm4=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer=""></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer=""></script>
 
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer=""></script>
 
 
 
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.5.0/mermaid.min.js","integrity":"sha256-2obLuIPcceEhkE3G09G33hBdmE55ivVcZUlcKcGNHjU="}}</script>
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
   
 
 
@@ -260,6 +260,37 @@
         </ul>
       </div>
     </div>
+        <div class="sidebar-inner sidebar-post-related">
+          <div class="animated">
+              <div class="links-of-blogroll-title"><i class="fa fa-signs-post fa-fw"></i>
+    相关文章
+  </div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2021/09/30/hello-world/" rel="bookmark">
+        <time class="popular-posts-time">2021-09-30</time>
+        <br>
+      Hexo 用法备忘录
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2018/11/17/experiments/database/interactive-sql/" rel="bookmark">
+        <time class="popular-posts-time">2018-11-17</time>
+        <br>
+      交互式 SQL
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2018/12/03/experiments/database/data-control/" rel="bookmark">
+        <time class="popular-posts-time">2018-12-03</time>
+        <br>
+      数据控制
+      </a>
+    </li>
+  </ul>
+
+          </div>
+        </div>
   </aside>
 
 
@@ -312,7 +343,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-07 11:41:47" itemprop="dateModified" datetime="2025-08-07T11:41:47+08:00">2025-08-07</time>
+      <time title="修改时间：2025-09-05 23:57:13" itemprop="dateModified" datetime="2025-09-05T23:57:13+08:00">2025-09-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -381,7 +412,7 @@
 <p>以下实验均采用此数据表结构</p>
 	<figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> restoreOne (</span><br><span class="line">  id <span class="type">INT</span> <span class="keyword">not</span> <span class="keyword">null</span> <span class="keyword">identity</span>(<span class="number">1</span>,<span class="number">1</span>) <span class="keyword">primary</span> key,</span><br><span class="line">  content <span class="type">VARCHAR</span>(<span class="number">64</span>) <span class="keyword">not</span> <span class="keyword">null</span>,</span><br><span class="line">  insert_time DATETIME <span class="keyword">default</span> GETDATE()</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> some_contents(</span><br><span class="line">  id <span class="type">INT</span>,</span><br><span class="line">  content <span class="type">VARCHAR</span>(<span class="number">45</span>)</span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
 </blockquote>
-<div class="note "><p>所有的实验在 <code>restore_test</code> 数据库下完成，结构如下图所示：</p>
+<div class="note "><p>所有的实验在<code>restore_test</code>数据库下完成，结构如下图所示：</p>
 <img data-src="/2021/12/01/experiments/database/snapshot/Untitled_X347edOcoc.png" class="">
 <p>插入一些初始数据后，表中数据如下所示：</p>
 <div class="tabs" id="tables"><ul class="nav-tabs"><li class="tab active"><a href="#tables-1"><code>dbo.restoreOne</code> 数据表</a></li><li class="tab"><a href="#tables-2"><code>dbo.some_contents</code> 数据表</a></li></ul><div class="tab-content"><div class="tab-pane active" id="tables-1"><table>
@@ -446,9 +477,9 @@
 <p>其中，<code>source_database_name</code> 是源数据库，<code>logical_file_name</code> 是引用该文件时在 SQL Server 中使用的逻辑名称，其与源数据库数据文件应该使用相同名称。</p>
 <img data-src="/2021/12/01/experiments/database/snapshot/Untitled_3s5J4vm6P4.png" class="">
 <p><code>os_file_name</code> 是创建该文件时操作系统使用的路径和文件名，<code>database_snapshot_name</code> 是将数据库恢复到的快照的名称。</p>
-<p>对前述 <code>restore_test</code> 数据库创建九点钟的快照，使用如下语句：</p>
+<p>对前述<code>restore_test</code>数据库创建九点钟的快照，使用如下语句：</p>
 <figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> database restoreTest202112010900 <span class="keyword">on</span></span><br><span class="line">(</span><br><span class="line">  name<span class="operator">=</span><span class="string">'restore_test'</span>,</span><br><span class="line">  filename<span class="operator">=</span><span class="string">'f:\restoreTest.mdf'</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">as</span> snapshot <span class="keyword">of</span> restore_test</span><br></pre></td></tr></tbody></table></figure>
-<div class="note info"><p>由 T-SQL 语句可得知，快照的本质也是数据库</p>
+<div class="note info"><p>由 T - SQL 语句可得知，快照的本质也是数据库</p>
 </div>
 <p>会在数据库列表里看到一个新数据库：</p>
 <img data-src="/2021/12/01/experiments/database/snapshot/Untitled_tSg2Qi_eCZ.png" class="">
@@ -457,7 +488,7 @@
 <h3 id="查询">查询</h3>
 <p>使用 Transact-SQL 语句查询当前数据库快照的方法是：</p>
 <figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> name,database_id,source_database_id <span class="keyword">from</span> sys.databases</span><br></pre></td></tr></tbody></table></figure>
-<p>其中查询出的 <code>name</code> 是数据库名称，<code>database_id</code> 是数据库唯一编号，<code>source_database_id</code> 指向一个快照的源数据库 ID，当此数据库不是快照时，此列值为 <code>NULL</code></p>
+<p>其中查询出的<code>name</code>是数据库名称，<code>database_id</code>是数据库唯一编号，<code>source_database_id</code>指向一个快照的源数据库 ID，当此数据库不是快照时，此列值为<code>NULL</code></p>
 <p>在本机上执行该语句，返回的结果如下</p>
 <table>
 <thead>
@@ -513,13 +544,13 @@
 </tr>
 </tbody>
 </table>
-<p>这表明 <code>id</code> 为 7 的数据库是 <code>id</code> 为 6 的数据库快照，与第一步创建快照的表现一致。</p>
+<p>这表明<code>id</code>为 7 的数据库是<code>id</code>为 6 的数据库快照，与第一步创建快照的表现一致。</p>
 <img data-src="/2021/12/01/experiments/database/snapshot/Untitled_FCLwQvDD6k.png" class="" title="在SQL Server Management Studio中，也可以通过数据库-数据库快照展开看到当前数据库的快照">
 <div class="note success"><p>现在如果我们立刻对快照中的数据进行查询，会发现与原来的表数据一致</p>
 </div>
 <p><img data-src="snapshot/Untitled_v3gTK3-mHj.png" alt=""></p>
 <h3 id="恢复到快照">恢复到快照</h3>
-<div class="note info"><p>以下实验只针对 <code>restoreTest</code> 表作修改，另一个表不作改动。</p>
+<div class="note info"><p>以下实验只针对<code>restoreTest</code>表作修改，另一个表不作改动。</p>
 </div>
 <p>首先对源数据库作变更</p>
 <figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> restore_test.dbo.restoreOne <span class="keyword">set</span> content<span class="operator">=</span><span class="string">'I am changed'</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">2</span>;</span><br></pre></td></tr></tbody></table></figure>
@@ -542,7 +573,7 @@
 </table>
 <p>此时再对快照进行查询</p>
 <figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> restoreTest202112010900.dbo.restoreOne <span class="keyword">where</span> id<span class="operator">=</span><span class="number">2</span>;</span><br></pre></td></tr></tbody></table></figure>
-<p>会发现快照中的 <code>content</code> 值并没有变化</p>
+<p>会发现快照中的<code>content</code>值并没有变化</p>
 <table>
 <thead>
 <tr>
@@ -559,10 +590,10 @@
 </tr>
 </tbody>
 </table>
-<p>假设刚才的修改是错误的，我们需要通过数据库快照还原回原始状态。需要运行下述 T-SQL 语句：</p>
+<p>假设刚才的修改是错误的，我们需要通过数据库快照还原回原始状态。需要运行下述 T - SQL 语句：</p>
 <figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- use master; &lt;-- execute this in master connection</span></span><br><span class="line">RESTORE DATABASE database_name <span class="keyword">FROM</span> DATABASE_SNAPSHOT <span class="operator">=</span> database_snapshot_name ;</span><br></pre></td></tr></tbody></table></figure>
-<p>其中 <code>database_name</code> 是源数据库的名称，本实验取值为 restore_test；<code>database_snapshot_name</code> 是要将数据库恢复到的快照的名称，本实验取值为 restoreTest202112010900。</p>
-<div class="note info"><p>在运行之前，需要保证数据库只能存在一个快照（可能需要删除最早的快照），且不能有其他用户使用数据库（需要退出 SSMS 当前连接的用户），否则会造成 <code>RESTORE DATABASE</code> 异常终止的报错。</p>
+<p>其中<code>database_name</code>是源数据库的名称，本实验取值为 restore_test；<code>database_snapshot_name</code>是要将数据库恢复到的快照的名称，本实验取值为 restoreTest202112010900。</p>
+<div class="note info"><p>在运行之前，需要保证数据库只能存在一个快照（可能需要删除最早的快照），且不能有其他用户使用数据库（需要退出 SSMS 当前连接的用户），否则会造成<code>RESTORE DATABASE</code>异常终止的报错。</p>
 </div>
 <p>运行结束后，再对源数据库进行查询，发现相应数据回到了快照时的状态。</p>
 <table>
@@ -582,7 +613,7 @@
 </tbody>
 </table>
 <h3 id="删除快照">删除快照</h3>
-<p>快照的本质是一个数据库，所以在 T-SQL 语句中，使用 <code>DROP DATABASE</code> 语句就足以达成要求。</p>
+<p>快照的本质是一个数据库，所以在 T - SQL 语句中，使用<code>DROP DATABASE</code>语句就足以达成要求。</p>
 <figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> database restoreTest202112010900;</span><br></pre></td></tr></tbody></table></figure>
 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2021/12/01/experiments/database/snapshot/Untitled_9CG69t-fgQ.png" class="" title="运行过后，Databases列表相应项被删除"></div><div class="group-picture-column"><img data-src="/2021/12/01/experiments/database/snapshot/Untitled__wrwW68RzR.png" class="" title="与此同时，数据库快照所使用的文件也一并删除"></div></div></div>
 

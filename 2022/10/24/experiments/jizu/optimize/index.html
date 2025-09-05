@@ -14,13 +14,13 @@
 
 <link rel="stylesheet" href="https://fonts.geekzu.org/css2?family=Tahoma:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;family=Open+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;display=swap&amp;subset=latin,latin-ext">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.36/fancybox/fancybox.css" integrity="sha256-zM8WXtG4eUn7dKKNMTuoWZub++VnSfaOpA/8PJfvTBo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer=""></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.23.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
 
     <meta name="description" content="学习简单编译优化方法，观察采用编译优化方法所带来的性能的提高">
 <meta property="og:type" content="article">
@@ -39,7 +39,7 @@
 <meta property="og:image" content="https://blog.jason0743.space/2022/10/24/experiments/jizu/optimize/image_9ROBHMR9xL.png">
 <meta property="og:image" content="https://blog.jason0743.space/2022/10/24/experiments/jizu/optimize/image_55nB__dTOL.png">
 <meta property="article:published_time" content="2022-10-24T11:49:56.000Z">
-<meta property="article:modified_time" content="2025-08-07T03:41:47.162Z">
+<meta property="article:modified_time" content="2025-09-05T15:57:13.726Z">
 <meta property="article:author" content="Jason Ren">
 <meta property="article:tag" content="WinDLX">
 <meta property="article:tag" content="计算机组成原理">
@@ -72,16 +72,16 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.36/fancybox/fancybox.umd.js" integrity="sha256-hiUEBwFEpLF6DlB8sGXlKo4kPZ46Ui4qGpd0vrVkOm4=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer=""></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer=""></script>
 
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer=""></script>
 
 
 
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.5.0/mermaid.min.js","integrity":"sha256-2obLuIPcceEhkE3G09G33hBdmE55ivVcZUlcKcGNHjU="}}</script>
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
   
 
 
@@ -193,7 +193,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">实验目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">实验原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.</span> <span class="nav-text">实验步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E9%9D%99%E6%80%81%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%89%8B%E5%B7%A5%E4%BC%98%E5%8C%96%E4%BB%A3%E7%A0%81"><span class="nav-number">3.1.</span> <span class="nav-text">用静态调度算法手工优化代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%B7%B2%E4%BC%98%E5%8C%96%E7%A8%8B%E5%BA%8F%E4%B8%AD%E5%87%BA%E7%8E%B0%E7%9A%84%E6%95%B0%E6%8D%AE-%E6%8E%A7%E5%88%B6-%E7%BB%93%E6%9E%84%E7%9B%B8%E5%85%B3"><span class="nav-number">3.2.</span> <span class="nav-text">分析已优化程序中出现的数据 / 控制 / 结构相关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%83%E8%99%91%E5%A2%9E%E5%8A%A0%E6%B5%AE%E7%82%B9%E8%BF%90%E7%AE%97%E9%83%A8%E4%BB%B6%E5%AF%B9%E4%BA%8E%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">3.3.</span> <span class="nav-text">考虑增加浮点运算部件对于性能的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%83%E8%99%91%E5%A2%9E%E5%8A%A0forward%E9%83%A8%E4%BB%B6%E5%AF%B9%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">3.4.</span> <span class="nav-text">考虑增加 forward 部件对性能的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%82%E5%AF%9F%E8%BD%AC%E7%A7%BB%E6%8C%87%E4%BB%A4%E5%9C%A8%E8%BD%AC%E7%A7%BB%E6%88%90%E5%8A%9F%E5%92%8C%E8%BD%AC%E7%A7%BB%E4%B8%8D%E6%88%90%E5%8A%9F%E6%97%B6%E7%9A%84%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%BC%80%E9%94%80"><span class="nav-number">3.5.</span> <span class="nav-text">观察转移指令在转移成功和转移不成功时的流水线开销</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">实验目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">实验原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.</span> <span class="nav-text">实验步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E9%9D%99%E6%80%81%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E6%89%8B%E5%B7%A5%E4%BC%98%E5%8C%96%E4%BB%A3%E7%A0%81"><span class="nav-number">3.1.</span> <span class="nav-text">用静态调度算法手工优化代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%B7%B2%E4%BC%98%E5%8C%96%E7%A8%8B%E5%BA%8F%E4%B8%AD%E5%87%BA%E7%8E%B0%E7%9A%84%E6%95%B0%E6%8D%AE-%E6%8E%A7%E5%88%B6-%E7%BB%93%E6%9E%84%E7%9B%B8%E5%85%B3"><span class="nav-number">3.2.</span> <span class="nav-text">分析已优化程序中出现的数据/控制/结构相关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%83%E8%99%91%E5%A2%9E%E5%8A%A0%E6%B5%AE%E7%82%B9%E8%BF%90%E7%AE%97%E9%83%A8%E4%BB%B6%E5%AF%B9%E4%BA%8E%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">3.3.</span> <span class="nav-text">考虑增加浮点运算部件对于性能的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%83%E8%99%91%E5%A2%9E%E5%8A%A0forward%E9%83%A8%E4%BB%B6%E5%AF%B9%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">3.4.</span> <span class="nav-text">考虑增加 forward 部件对性能的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%82%E5%AF%9F%E8%BD%AC%E7%A7%BB%E6%8C%87%E4%BB%A4%E5%9C%A8%E8%BD%AC%E7%A7%BB%E6%88%90%E5%8A%9F%E5%92%8C%E8%BD%AC%E7%A7%BB%E4%B8%8D%E6%88%90%E5%8A%9F%E6%97%B6%E7%9A%84%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%BC%80%E9%94%80"><span class="nav-number">3.5.</span> <span class="nav-text">观察转移指令在转移成功和转移不成功时的流水线开销</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -259,6 +259,30 @@
         </ul>
       </div>
     </div>
+        <div class="sidebar-inner sidebar-post-related">
+          <div class="animated">
+              <div class="links-of-blogroll-title"><i class="fa fa-signs-post fa-fw"></i>
+    相关文章
+  </div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2022/10/15/experiments/jizu/relation-analysis/" rel="bookmark">
+        <time class="popular-posts-time">2022-10-15</time>
+        <br>
+      指令流水线相关性分析
+      </a>
+    </li>
+    <li class="popular-posts-item">
+      <a class="popular-posts-link" href="/2022/10/24/experiments/jizu/programming/" rel="bookmark">
+        <time class="popular-posts-time">2022-10-24</time>
+        <br>
+      DLX 处理器程序设计
+      </a>
+    </li>
+  </ul>
+
+          </div>
+        </div>
   </aside>
 
 
@@ -311,7 +335,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-07 11:41:47" itemprop="dateModified" datetime="2025-08-07T11:41:47+08:00">2025-08-07</time>
+      <time title="修改时间：2025-09-05 23:57:13" itemprop="dateModified" datetime="2025-09-05T23:57:13+08:00">2025-09-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -380,7 +404,7 @@
 <h3 id="用静态调度算法手工优化代码">用静态调度算法手工优化代码</h3>
 <p>选择上一个实验的两双精度浮点一维向量的加法运算代码作为优化对象，优化后的代码如下所示：</p>
 <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">.data</span><br><span class="line">VecLen: .word 16</span><br><span class="line">Vector1: .double 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16</span><br><span class="line">; vec1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]</span><br><span class="line">Vector2: .double 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32</span><br><span class="line">; vec2=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32]</span><br><span class="line">; 声明向量长度以及两个向量1、2</span><br><span class="line">Printf1: .asciiz "The result is\n"</span><br><span class="line">Printf2: .asciiz "%f\t"</span><br><span class="line"></span><br><span class="line">.align 2</span><br><span class="line"></span><br><span class="line">PrintfHead: .word Printf1</span><br><span class="line">PrintfValue: .word Printf2</span><br><span class="line">result: .space 8</span><br><span class="line">; 打印数据空间的申请</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"></span><br><span class="line">main:</span><br><span class="line">addi r14,r0,PrintfHead</span><br><span class="line">trap 5</span><br><span class="line">addi r2,r0,0</span><br><span class="line">lw r20,VecLen</span><br><span class="line">;addi r2,r0,0</span><br><span class="line"></span><br><span class="line">loop: ; 循环读入向量</span><br><span class="line">ld f0,Vector1(r2)</span><br><span class="line">ld f2,Vector2(r2)</span><br><span class="line">; 插入指令，避免f2的RAW</span><br><span class="line">addi r2,r2,8</span><br><span class="line">subi r20,r20,1</span><br><span class="line"></span><br><span class="line">addd f4,f0,f2</span><br><span class="line">; 主要的加法运算</span><br><span class="line">sd result,f4</span><br><span class="line">addi r14,r0,PrintfValue</span><br><span class="line">trap 5</span><br><span class="line">;addi r2,r2,8</span><br><span class="line">;subi r20,r20,1 提前到了前面</span><br><span class="line">bnez r20,loop</span><br><span class="line"></span><br><span class="line">trap 0</span><br><span class="line">; 系统中断，输出结果 "The result is 3.000000, 6.000000, ...."</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="分析已优化程序中出现的数据-控制-结构相关">分析已优化程序中出现的数据 / 控制 / 结构相关</h3>
+<h3 id="分析已优化程序中出现的数据-控制-结构相关">分析已优化程序中出现的数据/控制/结构相关</h3>
 <div class="tabs" id="res1"><ul class="nav-tabs"><li class="tab active"><a href="#res1-1">优化前</a></li><li class="tab"><a href="#res1-2">优化后</a></li></ul><div class="tab-content"><div class="tab-pane active" id="res1-1"><p><img data-src="image_czojEXSniG.png" alt="优化前程序" title="优化前程序"></p></div><div class="tab-pane" id="res1-2"><p><img data-src="image__c0vohBdpb.png" alt="优化后程序" title="优化后程序"></p></div></div></div>
 <p>优化后的程序的时钟周期从 267 个减少到了 235 个，RAW 相关也从 48 个大大减少到了 16 个，控制相关和结构相关的数量没有改变，由此可见本次所作代码优化对数据相关的改善最大。</p>
 <h3 id="考虑增加浮点运算部件对于性能的影响">考虑增加浮点运算部件对于性能的影响</h3>

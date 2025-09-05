@@ -6,7 +6,7 @@
   <link href="https://blog.jason0743.space/atom.xml" rel="self"/>
   
   <link href="https://blog.jason0743.space/"/>
-  <updated>2025-08-07T03:41:46.919Z</updated>
+  <updated>2025-09-05T15:57:13.484Z</updated>
   <id>https://blog.jason0743.space/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://blog.jason0743.space/2024/08/25/cypher-learn-notes/"/>
     <id>https://blog.jason0743.space/2024/08/25/cypher-learn-notes/</id>
     <published>2024-08-25T03:04:21.000Z</published>
-    <updated>2025-08-07T03:41:46.919Z</updated>
+    <updated>2025-09-05T15:57:13.484Z</updated>
     
     
     <summary type="html">&lt;p&gt;由于学校实验室项目的需求，需要简单了解一下图数据库的使用，根据之前留下的基础，选择了 Neo4j 的 Cypher 语言。本篇文章整理了一些常见的 Cypher 语法。&lt;/p&gt;</summary>
@@ -44,7 +44,7 @@
     <link href="https://blog.jason0743.space/2023/10/10/publish-multiple-git-origins-at-the-same-time/"/>
     <id>https://blog.jason0743.space/2023/10/10/publish-multiple-git-origins-at-the-same-time/</id>
     <published>2023-10-10T03:28:11.000Z</published>
-    <updated>2025-08-07T03:41:47.364Z</updated>
+    <updated>2025-09-05T15:57:13.927Z</updated>
     
     
     <summary type="html">Git 小技巧记录</summary>
@@ -67,7 +67,7 @@
     <link href="https://blog.jason0743.space/2023/05/05/friendlink-apply/"/>
     <id>https://blog.jason0743.space/2023/05/05/friendlink-apply/</id>
     <published>2023-05-04T16:00:00.000Z</published>
-    <updated>2025-08-07T03:41:47.364Z</updated>
+    <updated>2025-09-05T15:57:13.927Z</updated>
     
     
     <summary type="html">也许看了我的博客后，你也有一些需要交换的内容，或者，想跟我做朋友，那就来加个友链吧。</summary>
@@ -86,7 +86,7 @@
     <link href="https://blog.jason0743.space/2023/04/21/works/working-with-https/"/>
     <id>https://blog.jason0743.space/2023/04/21/works/working-with-https/</id>
     <published>2023-04-21T12:12:00.000Z</published>
-    <updated>2025-08-07T03:41:47.374Z</updated>
+    <updated>2025-09-05T15:57:13.937Z</updated>
     
     
     <summary type="html">本文记录了个人网站配置HTTPS的过程，包括github pages、certbot等工具的配置过程。</summary>
@@ -109,7 +109,7 @@
     <link href="https://blog.jason0743.space/2023/04/03/works/how-i-built-the-blog/"/>
     <id>https://blog.jason0743.space/2023/04/03/works/how-i-built-the-blog/</id>
     <published>2023-04-03T11:45:33.000Z</published>
-    <updated>2025-08-07T03:41:47.370Z</updated>
+    <updated>2025-09-05T15:57:13.932Z</updated>
     
     
     <summary type="html">&lt;p&gt;好久不见！经过许久的折腾以后，终于闲下功夫来复盘一下博客如何部署起来的了！话不多说，这就进入主题！&lt;/p&gt;</summary>
@@ -132,11 +132,11 @@
     <link href="https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/"/>
     <id>https://blog.jason0743.space/2023/02/17/works/frontend/what-is-behind-b23tv/</id>
     <published>2023-02-17T03:19:30.000Z</published>
-    <updated>2025-08-07T03:41:47.369Z</updated>
+    <updated>2025-09-05T15:57:13.931Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;前言&quot;&gt;前言&lt;/h2&gt;
-&lt;p&gt;日常网友聊天时，总是会从视频网站中分享点东西，在分享的众多网站中，又以 &lt;a href=&quot;https://www.bilibili.com&quot;&gt;b 站&lt;/a&gt;为主。在这个场景中，我想各位一定也会经常见到不少 b 站的短链接 &lt;code&gt;b23.tv&lt;/code&gt; 域名了。这其中背后会有什么故事呢？&lt;/p&gt;</summary>
+&lt;p&gt;日常网友聊天时，总是会从视频网站中分享点东西，在分享的众多网站中，又以&lt;a href=&quot;https://www.bilibili.com&quot;&gt;b 站&lt;/a&gt;为主。在这个场景中，我想各位一定也会经常见到不少 b 站的短链接 &lt;code&gt;b23.tv&lt;/code&gt; 域名了。这其中背后会有什么故事呢？&lt;/p&gt;</summary>
     
     
     
@@ -154,7 +154,7 @@
     <link href="https://blog.jason0743.space/2022/10/24/experiments/jizu/optimize/"/>
     <id>https://blog.jason0743.space/2022/10/24/experiments/jizu/optimize/</id>
     <published>2022-10-24T11:49:56.000Z</published>
-    <updated>2025-08-07T03:41:47.162Z</updated>
+    <updated>2025-09-05T15:57:13.726Z</updated>
     
     
     <summary type="html">学习简单编译优化方法，观察采用编译优化方法所带来的性能的提高</summary>
@@ -177,7 +177,7 @@
     <link href="https://blog.jason0743.space/2022/10/24/experiments/jizu/programming/"/>
     <id>https://blog.jason0743.space/2022/10/24/experiments/jizu/programming/</id>
     <published>2022-10-24T09:16:36.000Z</published>
-    <updated>2025-08-07T03:41:47.164Z</updated>
+    <updated>2025-09-05T15:57:13.728Z</updated>
     
     
     <summary type="html">学习使用DLX汇编语言编程，进一步分析相关现象</summary>
@@ -200,7 +200,7 @@
     <link href="https://blog.jason0743.space/2022/10/15/experiments/jizu/installing-and-using-windlx/"/>
     <id>https://blog.jason0743.space/2022/10/15/experiments/jizu/installing-and-using-windlx/</id>
     <published>2022-10-15T09:16:36.000Z</published>
-    <updated>2025-08-07T03:41:47.154Z</updated>
+    <updated>2025-09-05T15:57:13.719Z</updated>
     
     
     <summary type="html">建立实验环境，了解WINDLX模拟器的结构及使用</summary>
@@ -223,7 +223,7 @@
     <link href="https://blog.jason0743.space/2022/10/15/experiments/jizu/relation-analysis/"/>
     <id>https://blog.jason0743.space/2022/10/15/experiments/jizu/relation-analysis/</id>
     <published>2022-10-15T09:16:36.000Z</published>
-    <updated>2025-08-07T03:41:47.166Z</updated>
+    <updated>2025-09-05T15:57:13.731Z</updated>
     
     
     <summary type="html">通过使用WINDLX模拟器，对程序中的三种相关原理进行观察，并对使用专用通路，增加运算部件等技术对性能的影响进行考察，加深对流水线和RISC处理器的特点的理解</summary>
@@ -246,7 +246,7 @@
     <link href="https://blog.jason0743.space/2021/12/01/experiments/database/snapshot/"/>
     <id>https://blog.jason0743.space/2021/12/01/experiments/database/snapshot/</id>
     <published>2021-12-01T02:08:06.000Z</published>
-    <updated>2025-08-07T03:41:47.153Z</updated>
+    <updated>2025-09-05T15:57:13.718Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;快照&quot;&gt;快照&lt;/h2&gt;
@@ -289,19 +289,19 @@
     <link href="https://blog.jason0743.space/2020/06/04/experiments/security/sms/"/>
     <id>https://blog.jason0743.space/2020/06/04/experiments/security/sms/</id>
     <published>2020-06-03T16:20:15.000Z</published>
-    <updated>2025-08-07T03:41:47.199Z</updated>
+    <updated>2025-09-05T15:57:13.763Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;漏洞介绍&quot;&gt;漏洞介绍&lt;/h2&gt;
-&lt;p&gt;原生安卓 4.0 系统中，有一个名称为 SMS smishing vuln 的漏洞，其具体表现为任意应用可以在没有 &lt;code&gt;write_sms&lt;/code&gt; 权限下伪造任意发件人的任意短信，影响范围从 Android 1.6 系统一直到 4.1 系统。Android 4.2 系统修复了这个安全漏洞。&lt;/p&gt;</summary>
+&lt;p&gt;原生安卓 4.0 系统中，有一个名称为 SMS smishing vuln 的漏洞，其具体表现为任意应用可以在没有&lt;code&gt;write_sms&lt;/code&gt;权限下伪造任意发件人的任意短信，影响范围从 Android 1.6 系统一直到 4.1 系统。Android 4.2 系统修复了这个安全漏洞。&lt;/p&gt;</summary>
     
     
     
     <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
     
-    <category term="漏洞" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/"/>
-    
     <category term="移动终端安全" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E7%A7%BB%E5%8A%A8%E7%BB%88%E7%AB%AF%E5%AE%89%E5%85%A8/"/>
+    
+    <category term="漏洞" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/"/>
     
     <category term="Android" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/Android/"/>
     
@@ -321,7 +321,7 @@
     <link href="https://blog.jason0743.space/2020/04/02/works/frontend/echarts-drawing/"/>
     <id>https://blog.jason0743.space/2020/04/02/works/frontend/echarts-drawing/</id>
     <published>2020-04-02T02:38:58.000Z</published>
-    <updated>2025-08-07T03:41:47.364Z</updated>
+    <updated>2025-09-05T15:57:13.927Z</updated>
     
     
     <summary type="html">&lt;p&gt;2020 年开始到现在的时间，真是发生了太多的事情，心情复杂，但又没有什么话好说，只能以有限的方式表达着对这些事件的思考。&lt;/p&gt;
@@ -374,19 +374,19 @@
     <link href="https://blog.jason0743.space/2019/12/25/experiments/security/software/string-format/"/>
     <id>https://blog.jason0743.space/2019/12/25/experiments/security/software/string-format/</id>
     <published>2019-12-25T12:32:14.000Z</published>
-    <updated>2025-08-07T03:41:47.243Z</updated>
+    <updated>2025-09-05T15:57:13.807Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;目标&quot;&gt;目标&lt;/h2&gt;
-&lt;p&gt;通过几个例子来理解格式化输出函数漏洞的利用，使用 &lt;code&gt;%s&lt;/code&gt;、&lt;code&gt;%x&lt;/code&gt;、&lt;code&gt;%n&lt;/code&gt; 格式操作符操作内存，完成给定 shellcode 调用。&lt;/p&gt;</summary>
+&lt;p&gt;通过几个例子来理解格式化输出函数漏洞的利用，使用&lt;code&gt;%s&lt;/code&gt;、&lt;code&gt;%x&lt;/code&gt;、&lt;code&gt;%n&lt;/code&gt;格式操作符操作内存，完成给定 shellcode 调用。&lt;/p&gt;</summary>
     
     
     
     <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
     
-    <category term="漏洞" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/"/>
-    
     <category term="软件安全" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/"/>
+    
+    <category term="漏洞" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/"/>
     
     <category term="格式化字符串" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/"/>
     
@@ -402,7 +402,7 @@
     <link href="https://blog.jason0743.space/2019/12/21/experiments/oskernel/moosefs/"/>
     <id>https://blog.jason0743.space/2019/12/21/experiments/oskernel/moosefs/</id>
     <published>2019-12-21T05:47:00.000Z</published>
-    <updated>2025-08-07T03:41:47.174Z</updated>
+    <updated>2025-09-05T15:57:13.739Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;实验目的&quot;&gt;实验目的&lt;/h2&gt;
@@ -434,7 +434,7 @@
     <link href="https://blog.jason0743.space/2019/12/17/experiments/security/system/soc/"/>
     <id>https://blog.jason0743.space/2019/12/17/experiments/security/system/soc/</id>
     <published>2019-12-17T05:39:51.000Z</published>
-    <updated>2025-08-07T03:41:47.295Z</updated>
+    <updated>2025-09-05T15:57:13.859Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;实验目的&quot;&gt;实验目的&lt;/h2&gt;
@@ -458,7 +458,7 @@
     <link href="https://blog.jason0743.space/2019/12/12/experiments/security/software/virtual_func_and_seh/"/>
     <id>https://blog.jason0743.space/2019/12/12/experiments/security/software/virtual_func_and_seh/</id>
     <published>2019-12-12T15:12:35.000Z</published>
-    <updated>2025-08-07T03:41:47.259Z</updated>
+    <updated>2025-09-05T15:57:13.824Z</updated>
     
     
     <summary type="html">&lt;h2 id=&quot;目标&quot;&gt;目标&lt;/h2&gt;
@@ -468,9 +468,9 @@
     
     <category term="实验" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/"/>
     
-    <category term="漏洞" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/"/>
-    
     <category term="软件安全" scheme="https://blog.jason0743.space/categories/%E5%AE%9E%E9%AA%8C/%E8%BD%AF%E4%BB%B6%E5%AE%89%E5%85%A8/"/>
+    
+    <category term="漏洞" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/"/>
     
     <category term="SEH" scheme="https://blog.jason0743.space/categories/%E6%BC%8F%E6%B4%9E/SEH/"/>
     
@@ -488,7 +488,7 @@
     <link href="https://blog.jason0743.space/2019/12/10/experiments/security/web/https-ssl/"/>
     <id>https://blog.jason0743.space/2019/12/10/experiments/security/web/https-ssl/</id>
     <published>2019-12-10T11:42:33.000Z</published>
-    <updated>2025-08-07T03:41:47.334Z</updated>
+    <updated>2025-09-05T15:57:13.899Z</updated>
     
     
     <summary type="html">&lt;div class=&quot;note warning&quot;&gt;&lt;p&gt;本篇文章未整理成正式实验记录，故可能出现书写或表述不完整的情况。&lt;/p&gt;
