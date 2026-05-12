@@ -11,7 +11,7 @@
   <rights>All rights reserved 2026, Jason Ren</rights>
   <subtitle>展现安全态度</subtitle>
   <title>随心记</title>
-  <updated>2026-05-12T02:26:24.177Z</updated>
+  <updated>2026-05-12T02:33:58.539Z</updated>
   <entry>
     <author>
       <name>Jason Ren</name>
@@ -27,7 +27,7 @@
       <![CDATA[<p>由于学校实验室项目的需求，需要简单了解一下图数据库的使用，根据之前留下的基础，选择了 Neo4j 的 Cypher 语言。本篇文章整理了一些常见的 Cypher 语法。</p>]]>
     </summary>
     <title>Cypher 学习笔记</title>
-    <updated>2026-05-12T02:26:24.177Z</updated>
+    <updated>2026-05-12T02:33:58.539Z</updated>
   </entry>
   <entry>
     <author>
@@ -42,7 +42,7 @@
     <published>2023-10-10T03:28:11.000Z</published>
     <summary>Git 小技巧记录</summary>
     <title>同时推送多个 Git 仓库提交</title>
-    <updated>2026-05-12T02:26:24.608Z</updated>
+    <updated>2026-05-12T02:33:58.935Z</updated>
   </entry>
   <entry>
     <author>
@@ -55,7 +55,7 @@
     <published>2023-05-04T16:00:00.000Z</published>
     <summary>也许看了我的博客后，你也有一些需要交换的内容，或者，想跟我做朋友，那就来加个友链吧。</summary>
     <title>来点朋友吧！互相学习一下！</title>
-    <updated>2026-05-12T02:26:24.608Z</updated>
+    <updated>2026-05-12T02:33:58.935Z</updated>
   </entry>
   <entry>
     <author>
@@ -70,7 +70,7 @@
     <published>2023-04-21T12:12:00.000Z</published>
     <summary>本文记录了个人网站配置HTTPS的过程，包括github pages、certbot等工具的配置过程。</summary>
     <title>给自己的小破站上个 HTTPS</title>
-    <updated>2026-05-12T02:26:24.619Z</updated>
+    <updated>2026-05-12T02:33:58.944Z</updated>
   </entry>
   <entry>
     <author>
@@ -87,7 +87,7 @@
       <![CDATA[<p>好久不见！经过许久的折腾以后，终于闲下功夫来复盘一下博客如何部署起来的了！话不多说，这就进入主题！</p>]]>
     </summary>
     <title>我是如何一步步把这个博客搭建起来的</title>
-    <updated>2026-05-12T02:26:24.615Z</updated>
+    <updated>2026-05-12T02:33:58.940Z</updated>
   </entry>
   <entry>
     <author>
@@ -104,7 +104,7 @@
 <p>日常网友聊天时，总是会从视频网站中分享点东西，在分享的众多网站中，又以<a href="https://www.bilibili.com">b 站</a>为主。在这个场景中，我想各位一定也会经常见到不少 b 站的短链接 <code>b23.tv</code> 域名了。这其中背后会有什么故事呢？</p>]]>
     </summary>
     <title>谈点 b23tv 短链接相关</title>
-    <updated>2026-05-12T02:26:24.613Z</updated>
+    <updated>2026-05-12T02:33:58.939Z</updated>
   </entry>
   <entry>
     <author>
@@ -119,7 +119,7 @@
     <published>2022-10-24T11:49:56.000Z</published>
     <summary>学习简单编译优化方法，观察采用编译优化方法所带来的性能的提高</summary>
     <title>代码优化</title>
-    <updated>2026-05-12T02:26:24.396Z</updated>
+    <updated>2026-05-12T02:33:58.747Z</updated>
   </entry>
   <entry>
     <author>
@@ -134,7 +134,7 @@
     <published>2022-10-24T09:16:36.000Z</published>
     <summary>学习使用DLX汇编语言编程，进一步分析相关现象</summary>
     <title>DLX 处理器程序设计</title>
-    <updated>2026-05-12T02:26:24.399Z</updated>
+    <updated>2026-05-12T02:33:58.750Z</updated>
   </entry>
   <entry>
     <author>
@@ -149,7 +149,7 @@
     <published>2022-10-15T09:16:36.000Z</published>
     <summary>建立实验环境，了解WINDLX模拟器的结构及使用</summary>
     <title>WinDLX 模拟器安装与使用</title>
-    <updated>2026-05-12T02:26:24.390Z</updated>
+    <updated>2026-05-12T02:33:58.741Z</updated>
   </entry>
   <entry>
     <author>
@@ -164,7 +164,7 @@
     <published>2022-10-15T09:16:36.000Z</published>
     <summary>通过使用WINDLX模拟器，对程序中的三种相关原理进行观察，并对使用专用通路，增加运算部件等技术对性能的影响进行考察，加深对流水线和RISC处理器的特点的理解</summary>
     <title>指令流水线相关性分析</title>
-    <updated>2026-05-12T02:26:24.402Z</updated>
+    <updated>2026-05-12T02:33:58.752Z</updated>
   </entry>
   <entry>
     <author>
@@ -184,7 +184,7 @@
 <p>数据库快照是 SQL Server 数据库（源数据库）的只读静态视图。自创建快照那刻起，数据库快照在事务上与源数据库一致。数据库快照始终与其源数据库位于同一服务器实例上。虽然数据库快照提供与创建快照时处于相同状态的数据的只读视图，但快照文件的大小随着对源数据库的更改而增大。给定源数据库中可以存在多个快照。在数据库所有者显式删除每个数据库快照之前，该快照将一直保留。</p>]]>
     </summary>
     <title>快照</title>
-    <updated>2026-05-12T02:26:24.388Z</updated>
+    <updated>2026-05-12T02:33:58.740Z</updated>
   </entry>
   <entry>
     <author>
@@ -219,7 +219,7 @@
 <p>原生安卓 4.0 系统中，有一个名称为 SMS smishing vuln 的漏洞，其具体表现为任意应用可以在没有<code>write_sms</code>权限下伪造任意发件人的任意短信，影响范围从 Android 1.6 系统一直到 4.1 系统。Android 4.2 系统修复了这个安全漏洞。</p>]]>
     </summary>
     <title>移动安全 - 短信欺诈漏洞验证</title>
-    <updated>2026-05-12T02:26:24.437Z</updated>
+    <updated>2026-05-12T02:33:58.781Z</updated>
   </entry>
   <entry>
     <author>
@@ -239,7 +239,7 @@
 <p>最近买了个服务器，也正在着手搭建网站，利用一下我已经学到的前端知识，第一个应用性的内容，就以这次疫情的情况为出发点吧！</p>]]>
     </summary>
     <title>使用 echarts 绘制 2020 疫情折线图</title>
-    <updated>2026-05-12T02:26:24.610Z</updated>
+    <updated>2026-05-12T02:33:58.936Z</updated>
   </entry>
   <entry>
     <author>
@@ -277,7 +277,7 @@
 <p>通过几个例子来理解格式化输出函数漏洞的利用，使用<code>%s</code>、<code>%x</code>、<code>%n</code>格式操作符操作内存，完成给定 shellcode 调用。</p>]]>
     </summary>
     <title>格式化字符串</title>
-    <updated>2026-05-12T02:26:24.482Z</updated>
+    <updated>2026-05-12T02:33:58.823Z</updated>
   </entry>
   <entry>
     <author>
@@ -299,7 +299,7 @@
 <p>配置分布式文件系统 MooseFS，并尝试挂载操作。</p>]]>
     </summary>
     <title>分布式文件系统 MooseFS 搭建</title>
-    <updated>2026-05-12T02:26:24.410Z</updated>
+    <updated>2026-05-12T02:33:58.759Z</updated>
   </entry>
   <entry>
     <author>
@@ -317,7 +317,7 @@
 <p>掌握在 Ubuntu 系统中配置 java 环境的方法，学习配置一个日志服务器。</p>]]>
     </summary>
     <title>SOC 平台组建</title>
-    <updated>2026-05-12T02:26:24.537Z</updated>
+    <updated>2026-05-12T02:33:58.874Z</updated>
   </entry>
   <entry>
     <author>
@@ -338,7 +338,7 @@
 <p>了解 SEH 和虚函数攻击两种攻击方式，通过调试代码来理解进行上述攻击的过程。</p>]]>
     </summary>
     <title>虚函数攻击与 SEH</title>
-    <updated>2026-05-12T02:26:24.500Z</updated>
+    <updated>2026-05-12T02:33:58.840Z</updated>
   </entry>
   <entry>
     <author>
@@ -356,6 +356,6 @@
 </div>]]>
     </summary>
     <title>HTTPS 与 SSL 实验</title>
-    <updated>2026-05-12T02:26:24.579Z</updated>
+    <updated>2026-05-12T02:33:58.910Z</updated>
   </entry>
 </feed>
