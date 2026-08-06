@@ -15,7 +15,7 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
     steps:
       - name: Checkout source
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: main
           fetch-depth: 0
@@ -25,7 +25,7 @@ jobs:
           date
           echo "---"
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
       - name: Deploy Key Setup 🔑
@@ -42,7 +42,7 @@ jobs:
           npm install hexo-cli -g
           npm install
       - name: Fetch current htmls
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
           fetch-depth: 0
