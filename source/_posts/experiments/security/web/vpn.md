@@ -111,7 +111,7 @@ Windows XP端的IP为192.168.235.136，Windows 2000端的IP为192.168.235.141
 	{% endtabs %}
 
 8. 生成 ta key
-    {% codeblock lang:shell line_number:false %
+    {% codeblock lang:shell line_number:false %}
     openvpn --genkey --secret keys/ta.key
     {% endcodeblock %}
 

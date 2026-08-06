@@ -326,8 +326,6 @@ theme_color:
 body_scrollbar:
   # Place the scrollbar over the content.
   overlay: true
-  # Present the scrollbar even if the content is not overflowing.
-  stable: false
 
 codeblock:
   # Code Highlight theme
@@ -487,6 +485,8 @@ math:
     enable: true
     # Available values: none | ams | all
     tags: none
+    # Available values: overflow | scroll | scale | truncate | linebreak
+    display_overflow: scroll
 
   # hexo-renderer-markdown-it-plus (or hexo-renderer-markdown-it with markdown-it-katex plugin) required for full Katex support.
   katex:
@@ -497,10 +497,6 @@ math:
 # FancyBox is a tool that offers a nice and elegant way to add zooming functionality for images.
 # For more information: https://fancyapps.com/fancybox
 fancybox: true
-
-# Vanilla JavaScript plugin for lazyloading images.
-# For more information: https://apoorv.pro/lozad.js/demo/
-lazyload: true
 
 # Pangu Support
 # For more information: https://github.com/vinta/pangu.js
