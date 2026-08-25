@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.2">
 <link rel="preconnect" href="https://fonts.geekzu.org" crossorigin="">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,11 +16,11 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.1.14/fancybox/fancybox.css" integrity="sha256-mdaMxrItEW6hMIVJJNPKuX0B7KCSJQVEv3mVY4N2we4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer=""></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.29.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
 
     <meta name="description" content="好久不见！经过许久的折腾以后，终于闲下功夫来复盘一下博客如何部署起来的了！话不多说，这就进入主题！">
 <meta property="og:type" content="article">
@@ -47,10 +47,10 @@
 <meta property="og:image" content="https://blog.jason0743.space/2023/04/03/works/how-i-built-the-blog/gen-key-3.png">
 <meta property="og:image" content="https://blog.jason0743.space/2023/04/03/works/how-i-built-the-blog/gen-key-4.png">
 <meta property="article:published_time" content="2023-04-03T11:45:33.000Z">
-<meta property="article:modified_time" content="2026-05-12T02:33:58.940Z">
+<meta property="article:modified_time" content="2026-08-25T15:31:02.662Z">
 <meta property="article:author" content="Jason Ren">
-<meta property="article:tag" content="运维">
 <meta property="article:tag" content="建站">
+<meta property="article:tag" content="运维">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog.jason0743.space/2023/04/03/works/how-i-built-the-blog/menu.png">
 
@@ -79,10 +79,8 @@
 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.1.14/fancybox/fancybox.umd.js" integrity="sha256-QnJV4HT5r8i89ovZGRD86iynZqHerEbT2xt69vDM36I=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.1/pangu.umd.js" integrity="sha256-kRsxecBnwG6mULFPe2E6UKnNm8XfDOuDwCOprjLZuX8=" crossorigin="anonymous" defer=""></script>
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer=""></script>
@@ -107,7 +105,7 @@
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","display_overflow":"scroll","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-mml-chtml.js","integrity":"sha256-ihPtDDm7pTmSF9ViEsItlvsrBTsNkz0MOXMchzOwCQw="}}</script>
 
 
 
@@ -115,7 +113,119 @@
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
-<link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
 </head>
 
 <body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion">
@@ -152,7 +262,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-todo"><a href="/todo/" rel="section"><i class="fa fa-check fa-fw"></i>待办事项</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><span class="exturl" data-url="aHR0cHM6Ly93d3cuamFzb24wNzQzLnNwYWNlLyMvYWJvdXQ="><i class="fa fa-user fa-fw"></i>关于</span></li><li class="menu-item menu-item-note"><span class="exturl" data-url="aHR0cHM6Ly9ub3RlLmphc29uMDc0My5zcGFjZQ=="><i class="fa fa-book fa-fw"></i>笔记</span></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-todo"><a href="/todo/" rel="section"><i class="fa fa-check fa-fw"></i>待办事项</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -233,16 +343,16 @@
 </div>
   <div class="links-of-author animated">
       <span class="links-of-author-item">
-        <a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2phc29ucmVuMDQwMw==" title="GitHub → https://github.com/jasonren0403"><i class="fab fa-github fa-fw"></i>GitHub</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://x.com/theRealRev270" title="X(前 Twitter) → https://x.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-x fa-fw"></i>X(前 Twitter)</a>
+        <span class="exturl" data-url="aHR0cHM6Ly94LmNvbS90aGVSZWFsUmV2Mjcw" title="X(前 Twitter) → https://x.com/theRealRev270"><i class="fab fa-x fa-fw"></i>X(前 Twitter)</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cuZmFjZWJvb2suY29tL3Jlbmphc29uMTk5OS8=" title="Facebook → https://www.facebook.com/renjason1999/"><i class="fab fa-facebook fa-fw"></i>Facebook</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cuaW5zdGFncmFtLmNvbS9qYXNvbnJlbjA0MDMv" title="Instagram → https://www.instagram.com/jasonren0403/"><i class="fab fa-instagram fa-fw"></i>Instagram</span>
       </span>
   </div>
 
@@ -262,35 +372,11 @@
         </div>
         <ul class="links-of-blogroll-list">
             <li class="links-of-blogroll-item">
-              <a href="https://hanyujie2002.fly.dev/" title="https://hanyujie2002.fly.dev/" rel="noopener external nofollow noreferrer" target="_blank">Yujie Han’s blog</a>
+              <span class="exturl" data-url="aHR0cHM6Ly9oYW55dWppZTIwMDIuZmx5LmRldi8=" title="https://hanyujie2002.fly.dev/">Yujie Han’s blog</span>
             </li>
         </ul>
       </div>
     </div>
-        <div class="sidebar-inner sidebar-post-related">
-          <div class="animated">
-              <div class="links-of-blogroll-title"><i class="fa fa-signs-post fa-fw"></i>
-    相关文章
-  </div>
-  <ul class="popular-posts">
-    <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/2023/10/10/publish-multiple-git-origins-at-the-same-time/" rel="bookmark">
-        <time class="popular-posts-time">2023-10-10</time>
-        <br>
-      同时推送多个 Git 仓库提交
-      </a>
-    </li>
-    <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/2023/04/21/works/working-with-https/" rel="bookmark">
-        <time class="popular-posts-time">2023-04-21</time>
-        <br>
-      给自己的小破站上个 HTTPS
-      </a>
-    </li>
-  </ul>
-
-          </div>
-        </div>
   </aside>
 
 
@@ -343,7 +429,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-05-12 10:33:58" itemprop="dateModified" datetime="2026-05-12T10:33:58+08:00">2026-05-12</time>
+      <time title="修改时间：2026-08-25 23:31:02" itemprop="dateModified" datetime="2026-08-25T23:31:02+08:00">2026-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -408,7 +494,7 @@
 <span id="more"></span>
 <h2 id="选择博客主题和架构">选择博客主题和架构</h2>
 <p>作为一个主要承担内容输出的部分，我首先在自行开发和成熟博客框架上进行了趋于中间化的选择。成熟的框架，如 WordPress，固然可以完整提供博客所具有的全部功能，但是略显笨重，且对于本来空间就不大的云服务器更是一种考验。如果全部自己撰写的话，又会陷入到维护成本过高的问题。各种小部件的适配和样式的维护，都是一件很痛苦的事情。由此看来，静态博客生成器是一个不错的选择。</p>
-<p>GitHub 上有很多成熟的静态博客生成器，如 Hexo、Jekyll、Hugo 等等。进行了一番对比后，我最终选择了<a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a> 和<a target="_blank" rel="noopener external nofollow noreferrer" href="https://theme-next.js.org/">Hexo-next</a> 主题。Hexo 本体是基于 Node.js 的，我可以专心使用 Markdown 书写内容，而由一些 hexo 终端命令来渲染成所需的静态文档。而且，经过对一些 GitHub 仓库的浏览，我发现 Hexo 的主题和插件也是非常丰富的，可以满足我对于博客的基本需求。</p>
+<p>GitHub 上有很多成熟的静态博客生成器，如 Hexo、Jekyll、Hugo 等等。进行了一番对比后，我最终选择了<span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv"> Hexo<i class="fa fa-external-link-alt"></i></span> 和<span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy8="> Hexo-next<i class="fa fa-external-link-alt"></i></span> 主题。Hexo 本体是基于 Node.js 的，我可以专心使用 Markdown 书写内容，而由一些 hexo 终端命令来渲染成所需的静态文档。而且，经过对一些 GitHub 仓库的浏览，我发现 Hexo 的主题和插件也是非常丰富的，可以满足我对于博客的基本需求。</p>
 <h2 id="主题安装与配置">主题安装与配置</h2>
 <p>Hexo 的文档很清楚，我可以直接通过 npm 命令来安装 Hexo 本体，并安装 Hexo next 主题：</p>
 <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-theme-next</span><br></pre></td></tr></tbody></table></figure>
@@ -420,7 +506,7 @@
 <figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">theme:</span> <span class="string">next</span></span><br></pre></td></tr></tbody></table></figure>
 <p>以上步骤结束，我们就可以通过 <code>hexo s</code> 命令来启动本地服务器，通过 <code>localhost:4000</code> 来预览博客的样子了。但是，我们还需要对主题配置文件进行进一步配置。</p>
 <h3 id="next主题配置文件的进一步配置">next 主题配置文件的进一步配置</h3>
-<div class="note info"><p>官方配置文档在<a target="_blank" rel="noopener external nofollow noreferrer" href="https://theme-next.js.org/docs/theme-settings/">这里</a>，可供参考</p>
+<div class="note info"><p>官方配置文档在<span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9kb2NzL3RoZW1lLXNldHRpbmdzLw==">这里<i class="fa fa-external-link-alt"></i></span>，可供参考</p>
 </div>
 <p>我所安装的 Hexo 已经是 5.0 版本以后了，官方推荐使用替代配置文件<code>_config.next.yml</code>来进行主题配置，以防止更新时被覆盖。</p>
 <p>首先是博客主题（scheme），NexT 提供了 4 种主题（<code>Muse</code>、<code>Mist</code>、<code>Pisces</code>和<code>Gemini</code>），我直接选择了默认主题 <code>Muse</code>，可能我个人对这个也没啥大要求吧，哪天可以改改试试其他的。</p>
@@ -431,20 +517,20 @@
 <figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">favicon:</span></span><br><span class="line">  <span class="attr">small:</span> <span class="string">/images/favicon-16x16-next.png</span></span><br><span class="line">  <span class="attr">medium:</span> <span class="string">/images/favicon-32x32-next.png</span></span><br><span class="line">  <span class="attr">apple_touch_icon:</span> <span class="string">/images/apple-touch-icon-next.png</span></span><br><span class="line">  <span class="attr">safari_pinned_tab:</span> <span class="string">/images/logo.svg</span></span><br></pre></td></tr></tbody></table></figure>
 <p>有关博客文章的版权声明，鉴于本博客大多以分享为主，我沿用了主题提供的 CC4.0 配置，意味着放开了共享和演绎（虽然我的文章一般没啥人看就是了 qwq）。这个选项的配置效果决定了文章底部的版权声明显示。</p>
 <figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">creative_commons:</span></span><br><span class="line">  <span class="attr">license:</span> <span class="string">by-nc-sa</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">post:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">language:</span></span><br></pre></td></tr></tbody></table></figure>
-<p>为了优化 SEO，OpenGraph 当然是必须配置的。这里参考 <a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io/docs/helpers#open-graph">hexo 的配置文档</a>配置了一些项目。</p>
+<p>为了优化 SEO，OpenGraph 当然是必须配置的。这里参考<span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL2RvY3MvaGVscGVycyNvcGVuLWdyYXBo"> hexo 的配置文档<i class="fa fa-external-link-alt"></i></span>配置了一些项目。</p>
 <figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">open_graph:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">options:</span></span><br><span class="line">  <span class="comment"># 配置twitter_id、twitter_profile等</span></span><br></pre></td></tr></tbody></table></figure>
 <p>目录设置需要在<code>menu</code>选项下进行配置，其配置分为<code>Key</code>、<code>link</code>和<code>icon</code>三部分。其中：</p>
 <ul>
 <li><code>Key</code>是目录项的名称，大小写敏感。除了<code>home</code>和<code>archive</code>以外，其他类型都需要在<code>source</code>文件夹下手动创建文件夹和对应的<code>index.md</code>文件</li>
 <li><code>link</code>是目录项的链接，是链接到本站的相对路径，在实际测试时发现也可以写站外的绝对路径</li>
-<li><code>icon</code>是目录项的 Font Awesome 图标名，可以在<a target="_blank" rel="noopener external nofollow noreferrer" href="https://fontawesome.com/">这里</a>找到
+<li><code>icon</code>是目录项的 Font Awesome 图标名，可以在<span class="exturl" data-url="aHR0cHM6Ly9mb250YXdlc29tZS5jb20v">这里<i class="fa fa-external-link-alt"></i></span>找到
 <ul>
 <li><code>link</code>和<code>icon</code>之间用<code>||</code>分隔</li>
 </ul>
 </li>
 </ul>
 <figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">home:</span> <span class="string">/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-home</span></span><br><span class="line">  <span class="attr">about:</span> <span class="string">https://www.jason0743.space/#/about</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-user</span></span><br><span class="line">  <span class="attr">tags:</span> <span class="string">/tags/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-tags</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="string">/categories/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-th</span></span><br><span class="line">  <span class="attr">archives:</span> <span class="string">/archives/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-archive</span></span><br><span class="line">  <span class="attr">sitemap:</span> <span class="string">/sitemap.xml</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-sitemap</span></span><br></pre></td></tr></tbody></table></figure>
-<img data-src="/2023/04/03/works/how-i-built-the-blog/menu.png" class="" title="显示效果">
+<img src="/2023/04/03/works/how-i-built-the-blog/menu.png" class="" title="显示效果">
 <p><code>menu</code> 下还可以配置 <code>sub-menu</code>，其配置和 <code>menu</code> 类似，但是本站没必要配置这个，就不写了。</p>
 <p>另外，在 <code>menu_settings</code> 还可以配置使用 <code>badges</code> 或者 <code>icons</code>。<code>badges: true</code> 会显示文章、类别和标签的数量。默认的 <code>icons: true</code> 会在 <code>menu</code> 项前显示图标。</p>
 <h4 id="侧边栏">侧边栏</h4>
@@ -493,7 +579,7 @@
 <p>对于单个博客文章，<code>Table of Contents(TOC)</code> 是非常必要的，它可以显示你的文章的大致结构。可以通过 <code>toc</code> 配置项进行启用和禁用。我的配置如下：</p>
 <figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">toc:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">number:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">wrap:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">expand_all:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">max_depth:</span> <span class="number">6</span></span><br></pre></td></tr></tbody></table></figure>
 <p>侧边栏所展现的个人头像可以通过 <code>avatar</code> 来进行配置，NexT 主题还支持使用 <code>rounded</code> 属性设置圆形头像，<code>rotated</code> 属性支持鼠标悬停时旋转头像。</p>
-<img data-src="/2023/04/03/works/how-i-built-the-blog/sidemenu.png" class="" title="侧边栏头像效果">
+<img src="/2023/04/03/works/how-i-built-the-blog/sidemenu.png" class="" title="侧边栏头像效果">
 <h4 id="页脚">页脚</h4>
 <p>以下配置需要在 <code>footer</code> 选项下进行配置。</p>
 <h5 id="备案信息">备案信息</h5>
@@ -509,8 +595,8 @@
 <h5 id="生成平台信息">生成平台信息</h5>
 <p>在默认情况下，NexT 主题会在页脚显示 <code>Powered by Hexo &amp; Next.xxx</code>，表示生成器和主题，可以通过 <code>powered</code> 配置项进行更改。我觉得留着也没什么问题，就没改。</p>
 <h3 id="域名配置">域名配置</h3>
-<p>根据<a target="_blank" rel="noopener external nofollow noreferrer" href="https://docs.github.com/zh/pages/configuring-a-custom-domain-for-your-github-pages-site/about-custom-domains-and-github-pages">GitHub 相关配置文档</a>和<a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io/zh-cn/docs/github-pages.html">Hexo 文档</a>，需要在项目根目录下创建一个<code>CNAME</code>文件，里面写入你的域名，如<code>example.com</code>。由于 hexo 部署时相当于把整个 source 文件夹复制到一个新的分支，故这个<code>CNAME</code>文件需要创建在<code>source/</code>文件夹下 <sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>。</p>
-<img data-src="/2023/04/03/works/how-i-built-the-blog/cname.png" class="" title="项目结构及CNAME文件">
+<p>根据<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLmdpdGh1Yi5jb20vemgvcGFnZXMvY29uZmlndXJpbmctYS1jdXN0b20tZG9tYWluLWZvci15b3VyLWdpdGh1Yi1wYWdlcy1zaXRlL2Fib3V0LWN1c3RvbS1kb21haW5zLWFuZC1naXRodWItcGFnZXM="> GitHub 相关配置文档<i class="fa fa-external-link-alt"></i></span>和<span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL3poLWNuL2RvY3MvZ2l0aHViLXBhZ2VzLmh0bWw="> Hexo 文档<i class="fa fa-external-link-alt"></i></span>，需要在项目根目录下创建一个<code>CNAME</code>文件，里面写入你的域名，如<code>example.com</code>。由于 hexo 部署时相当于把整个 source 文件夹复制到一个新的分支，故这个<code>CNAME</code>文件需要创建在<code>source/</code>文件夹下 <sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>。</p>
+<img src="/2023/04/03/works/how-i-built-the-blog/cname.png" class="" title="项目结构及CNAME文件">
 <p>在 Hexo 侧，需要在主配置文件<code>_config.yml</code>中配合作这样的设置，以正确加载脚本及相关资源文件：</p>
 <figure class="highlight yml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">url:</span> <span class="string">https://blog.jason0743.space/</span></span><br><span class="line"><span class="attr">root:</span> <span class="string">/</span></span><br></pre></td></tr></tbody></table></figure>
 <p>其中 URL 项需要填写自己的自定义网址。我是使用了 blog 作为三级域名，所以在 URL 处填写的是整个网址，后面以斜杠<code>/</code>为结尾，而 root 就是网页的根目录。</p>
@@ -526,51 +612,51 @@
 <h2 id="安装插件">安装插件</h2>
 <h3 id="评论显示">评论显示</h3>
 <p>静态站并没有 “后端” 这个概念，传统的评论系统该怎么实现呢？我们可以借助一些插件来实现。</p>
-<p>我在这里的选择是 <a target="_blank" rel="noopener external nofollow noreferrer" href="https://waline.js.org/">Waline</a>，比起之前的 Valine 来说，更加安全<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>，但配置起来需要一定时间。它需要同时考虑到 server 和 client 的部署问题。</p>
-<div class="note info"><p>Waline 官方提供了<a target="_blank" rel="noopener external nofollow noreferrer" href="https://waline.js.org/guide/get-started/">部署文档</a>，所有步骤跟随这个走就行。</p>
+<p>我在这里的选择是 <span class="exturl" data-url="aHR0cHM6Ly93YWxpbmUuanMub3JnLw==">Waline<i class="fa fa-external-link-alt"></i></span>，比起之前的 Valine 来说，更加安全 <sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>，但配置起来需要一定时间。它需要同时考虑到 server 和 client 的部署问题。</p>
+<div class="note info"><p>Waline 官方提供了<span class="exturl" data-url="aHR0cHM6Ly93YWxpbmUuanMub3JnL2d1aWRlL2dldC1zdGFydGVkLw==">部署文档<i class="fa fa-external-link-alt"></i></span>，所有步骤跟随这个走就行。</p>
 </div>
 <h4 id="服务端配置">服务端配置</h4>
-<div class="note info"><p>LeanCloud 注册当然要选<a target="_blank" rel="noopener external nofollow noreferrer" href="https://leancloud.app/">国际版</a>，懂得都懂~</p>
+<div class="note info"><p>LeanCloud 注册当然要选<span class="exturl" data-url="aHR0cHM6Ly9sZWFuY2xvdWQuYXBwLw==">国际版<i class="fa fa-external-link-alt"></i></span>，懂得都懂~</p>
 </div>
 <p>首先是 LeanCloud 端数据库的配置，注册账号和创建应用的过程就不赘述了（作为普通白嫖用户当然要选择开发版），然后到左侧的设置→应用凭证中，记下 AppID、AppKey 和 MasterKey，以后要用到。</p>
-<img data-src="/2023/04/03/works/how-i-built-the-blog/leancloud-1.png" class="">
-<p>接下来使用<a target="_blank" rel="noopener external nofollow noreferrer" href="https://vercel.com/">Vercel</a> 进行服务端部署，如果没有账户的话，可以直接使用 GitHub 账号登录。然后点击 Waline 文档中的 Vercel 部署按钮或<a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/walinejs/waline/tree/main/example">直接访问这个仓库</a>的 README.md 文件。</p>
+<img src="/2023/04/03/works/how-i-built-the-blog/leancloud-1.png" class="">
+<p>接下来使用<span class="exturl" data-url="aHR0cHM6Ly92ZXJjZWwuY29tLw=="> Vercel<i class="fa fa-external-link-alt"></i></span>进行服务端部署，如果没有账户的话，可以直接使用 GitHub 账号登录。然后点击 Waline 文档中的 Vercel 部署按钮或<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3dhbGluZWpzL3dhbGluZS90cmVlL21haW4vZXhhbXBsZQ==">直接访问这个仓库<i class="fa fa-external-link-alt"></i></span>的 README.md 文件。</p>
 <p>接下来会基于一个简单的模板创建 Git 仓库，作为 GitHub 常驻用户肯定时要选择 GitHub 的，如果有别的平台也可以点击别的平台按钮创建。</p>
-<img data-src="/2023/04/03/works/how-i-built-the-blog/vercel-1.png" class="" title="选择仓库">
+<img src="/2023/04/03/works/how-i-built-the-blog/vercel-1.png" class="" title="选择仓库">
 <p>项目创建成功后，进入到控制台中，从上方的 “Settings” 中进入项目设置，然后点击左侧的 “Environment Variables”，进入环境变量配置，建立三个环境变量 <code>LEAN_ID</code>、<code>LEAN_KEY</code>、<code>LEAN_MASTER_KEY</code>，分别对应上一步在 LeanCloud 获得的 AppID、AppKey 和 MasterKey。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2023/04/03/works/how-i-built-the-blog/vercel-2.png" class="" title="环境变量配置1"></div><div class="group-picture-column"><img data-src="/2023/04/03/works/how-i-built-the-blog/vercel-3.png" class="" title="环境变量配置2"></div></div></div>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2023/04/03/works/how-i-built-the-blog/vercel-2.png" class="" title="环境变量配置1"></div><div class="group-picture-column"><img src="/2023/04/03/works/how-i-built-the-blog/vercel-3.png" class="" title="环境变量配置2"></div></div></div>
 <p>然后点击顶部的 “Deployments” 进入部署页面，选择最近一次部署，点击 “Redeploy“使得刚才的环境变量生效。部署好后就可以回到主页点击” Visit“访问服务端了。</p>
-<img data-src="/2023/04/03/works/how-i-built-the-blog/vercel-4.png" class="" title="回到主页">
+<img src="/2023/04/03/works/how-i-built-the-blog/vercel-4.png" class="" title="回到主页">
 <p>其界面大致是这样的</p>
-<img data-src="/2023/04/03/works/how-i-built-the-blog/vercel-5.png" class="" title="部署完毕">
-<p>如果需要加入域名（vercel 默认域名实在有些丑），则依然需要进入设置页中，这次需要进入” Domains” 中，输入需要绑定的域名并点击 “Add” 添加域名，然后在服务商处加入 CNAME 解析记录，其值为 <code>cname.vercel-dns.com</code>，之后就可以用自己的域名来访问评论系统和管理端了。</p>
-<img data-src="/2023/04/03/works/how-i-built-the-blog/vercel-6.png" class="">
+<img src="/2023/04/03/works/how-i-built-the-blog/vercel-5.png" class="" title="部署完毕">
+<p>如果需要加入域名（vercel 默认域名实在有些丑），则依然需要进入设置页中，这次需要进入 ”Domains” 中，输入需要绑定的域名并点击 “Add” 添加域名，然后在服务商处加入 CNAME 解析记录，其值为 <code>cname.vercel-dns.com</code>，之后就可以用自己的域名来访问评论系统和管理端了。</p>
+<img src="/2023/04/03/works/how-i-built-the-blog/vercel-6.png" class="">
 <p>立即访问管理端（<code>&lt;url&gt;/ui/register</code>）进行注册，注册成功后，以后就可以通过 <code>&lt;url&gt;/ui</code> 管理评论了。</p>
 <div class="note info"><p>这里最好通过账号绑定设置（<code>&lt;url&gt;/ui/profile</code>）到自己常用账户上，防止忘记登录凭证。</p>
 </div>
 <div class="note info"><p><code>&lt;url&gt;</code> 为 vercel 域名设置中所列出的域名，项目新建的默认值一般为 <code>&lt;project-name&gt;.vercel.app</code></p>
 </div>
-<img data-src="/2023/04/03/works/how-i-built-the-blog/management.png" class="" title="管理界面">
+<img src="/2023/04/03/works/how-i-built-the-blog/management.png" class="" title="管理界面">
 <h4 id="客户端配置">客户端配置</h4>
-<p>客户端需要进行样式导入和代码注入，对于 hexo-next 来说，像下面这样安装<a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.npmjs.com/package/@waline/hexo-next">插件</a>并加以配置即可。</p>
+<p>客户端需要进行样式导入和代码注入，对于 hexo-next 来说，像下面这样安装<span class="exturl" data-url="aHR0cHM6Ly93d3cubnBtanMuY29tL3BhY2thZ2UvQHdhbGluZS9oZXhvLW5leHQ=">插件<i class="fa fa-external-link-alt"></i></span>并加以配置即可。</p>
 <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install @waline/hexo-next</span><br></pre></td></tr></tbody></table></figure>
 <p>然后在主题配置文件 <code>_config.next.yml</code> 中加入以下内容：</p>
 <figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">waline:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">serverURL:</span> </span><br><span class="line">  <span class="attr">libUrl:</span></span><br><span class="line">  <span class="attr">cssUrl:</span></span><br><span class="line">  <span class="attr">locale:</span></span><br><span class="line">    <span class="attr">placeholder:</span> </span><br><span class="line">  <span class="attr">commentCount:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">pageview:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">emoji:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">https://unpkg.com/@waline/emojis@1.0.1/weibo</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">https://unpkg.com/@waline/emojis@1.0.1/alus</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">https://unpkg.com/@waline/emojis@1.0.1/bilibili</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">https://unpkg.com/@waline/emojis@1.0.1/qq</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">https://unpkg.com/@waline/emojis@1.0.1/tieba</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">https://unpkg.com/@waline/emojis@1.0.1/tw-emoji</span></span><br><span class="line">  <span class="attr">meta:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">nick</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">mail</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">link</span></span><br><span class="line">  <span class="attr">requiredMeta:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">nick</span></span><br><span class="line">  <span class="attr">lang:</span> <span class="string">zh-CN</span>	</span><br><span class="line">  <span class="attr">wordLimit:</span> <span class="number">0</span></span><br><span class="line">  <span class="attr">login:</span> <span class="string">enable</span></span><br><span class="line">  <span class="attr">pageSize:</span> <span class="number">10</span></span><br></pre></td></tr></tbody></table></figure>
 <p>首先当然要启用该插件（<code>enable:true</code>）。然后需要设置 <code>serverURL</code> 为刚才部署的服务端地址，如果使用了自定义域名的话，这里就需要填写自定义域名。语言当然设置为 <code>zh-CN</code>，我也启用了 <code>pageview</code> 和 <code>commentCount</code> 两个功能，显示文章的阅读统计和评论数量，配置效果如下：</p>
-<img data-src="/2023/04/03/works/how-i-built-the-blog/comment.png" class="" title="评论区效果">
+<img src="/2023/04/03/works/how-i-built-the-blog/comment.png" class="" title="评论区效果">
 <h3 id="视频-音乐嵌入">视频 / 音乐嵌入</h3>
-<p>博客如果只有静态的文字和图片的话，也未免太单调了吧！如果能适时地嵌入一些其他网站或自己上传的资源，就更好了。我选择的是 <a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.u2sb.com/OpenSw/hexo-tag-mmedia/install.html">mmedia</a> 插件，因为它目前支持较广，而且使用也比较方便。</p>
-<p>针对 hexo，只需要安装 <a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.npmjs.com/package/hexo-tag-mmedia">hexo-tag-mmedia</a> 插件即可，安装方法如下：</p>
+<p>博客如果只有静态的文字和图片的话，也未免太单调了吧！如果能适时地嵌入一些其他网站或自己上传的资源，就更好了。我选择的是 <span class="exturl" data-url="aHR0cHM6Ly93d3cudTJzYi5jb20vT3BlblN3L2hleG8tdGFnLW1tZWRpYS9pbnN0YWxsLmh0bWw=">mmedia<i class="fa fa-external-link-alt"></i></span> 插件，因为它目前支持较广，而且使用也比较方便。</p>
+<p>针对 hexo，只需要安装 <span class="exturl" data-url="aHR0cHM6Ly93d3cubnBtanMuY29tL3BhY2thZ2UvaGV4by10YWctbW1lZGlh">hexo-tag-mmedia<i class="fa fa-external-link-alt"></i></span> 插件即可，安装方法如下：</p>
 <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-tag-mmedia --save</span><br></pre></td></tr></tbody></table></figure>
 <p>然后在 <code>_config.yml</code> 下采用作者推荐的默认设置即可：</p>
 <figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mmedia:</span></span><br><span class="line">  <span class="attr">audio:</span></span><br><span class="line">    <span class="attr">default:</span></span><br><span class="line">  <span class="attr">video:</span></span><br><span class="line">    <span class="attr">default:</span></span><br><span class="line">  <span class="attr">aplayer:</span></span><br><span class="line">    <span class="attr">js:</span> <span class="string">https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.js</span></span><br><span class="line">    <span class="attr">css:</span> <span class="string">https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.css</span></span><br><span class="line">    <span class="attr">default:</span></span><br><span class="line">      <span class="attr">contents:</span></span><br><span class="line">  <span class="attr">meting:</span></span><br><span class="line">    <span class="attr">js:</span> <span class="string">https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js</span></span><br><span class="line">    <span class="attr">api:</span></span><br><span class="line">    <span class="attr">default:</span></span><br><span class="line">  <span class="attr">dplayer:</span></span><br><span class="line">    <span class="attr">js:</span> <span class="string">https://cdn.jsdelivr.net/npm/dplayer@1/dist/DPlayer.min.js</span></span><br><span class="line">    <span class="attr">hls_js:</span> <span class="string">https://cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js</span></span><br><span class="line">    <span class="attr">dash_js:</span> <span class="string">https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js</span></span><br><span class="line">    <span class="attr">shaka_dash_js:</span> <span class="string">https://cdn.jsdelivr.net/npm/shaka-player/dist/shaka-player.compiled.js</span></span><br><span class="line">    <span class="attr">flv_js:</span> <span class="string">https://cdn.jsdelivr.net/npm/flv.js/dist/flv.min.js</span></span><br><span class="line">    <span class="attr">webtorrent_js:</span> <span class="string">https://cdn.jsdelivr.net/npm/webtorrent/webtorrent.min.js</span></span><br><span class="line">    <span class="attr">default:</span></span><br><span class="line">      <span class="attr">contents:</span></span><br><span class="line">  <span class="attr">bilibili:</span></span><br><span class="line">    <span class="attr">default:</span></span><br><span class="line">      <span class="attr">page:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">danmaku:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">allowfullscreen:</span> <span class="string">allowfullscreen</span></span><br><span class="line">      <span class="attr">sandbox:</span> <span class="string">allow-top-navigation</span> <span class="string">allow-same-origin</span> <span class="string">allow-forms</span> <span class="string">allow-scripts</span> <span class="string">allow-popups</span></span><br><span class="line">      <span class="attr">width:</span> <span class="number">100</span><span class="string">%</span></span><br><span class="line">      <span class="attr">max_width:</span> <span class="string">850px</span></span><br><span class="line">      <span class="attr">margin:</span> <span class="string">auto</span></span><br><span class="line">  <span class="attr">xigua:</span></span><br><span class="line">    <span class="attr">default:</span></span><br><span class="line">      <span class="attr">autoplay:</span> <span class="literal">false</span></span><br><span class="line">      <span class="attr">startTime:</span> <span class="number">0</span></span><br><span class="line">      <span class="attr">allowfullscreen:</span> <span class="string">allowfullscreen</span></span><br><span class="line">      <span class="attr">sandbox:</span> <span class="string">allow-top-navigation</span> <span class="string">allow-same-origin</span> <span class="string">allow-forms</span> <span class="string">allow-scripts</span> <span class="string">allow-popups</span></span><br><span class="line">      <span class="attr">width:</span> <span class="number">100</span><span class="string">%</span></span><br><span class="line">      <span class="attr">max_width:</span> <span class="string">850px</span></span><br><span class="line">      <span class="attr">margin:</span> <span class="string">auto</span></span><br></pre></td></tr></tbody></table></figure>
 <p>在使用上，假如要嵌入一个 B 站的视频，只需要使用这个简单语法：</p>
 <figure class="highlight markdown"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">{% mmedia "bilibili" "bvid:BV<span class="language-xml"><span class="tag">&lt;<span class="name">xxxxx</span>&gt;</span></span>" %}</span><br></pre></td></tr></tbody></table></figure>
 <p>即可，其中第一个参数是要引用的视频网站名称，第二个参数是要引用的视频 id，以冒号或者等号分隔都可以。</p>
-<p>如果要嵌入音乐播放列表，则需要采用其中的 MetingJS 标签形式，采用的参数可以在<a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/metowolf/MetingJS">这里</a>了解。</p>
+<p>如果要嵌入音乐播放列表，则需要采用其中的 MetingJS 标签形式，采用的参数可以在<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL21ldG93b2xmL01ldGluZ0pT">这里<i class="fa fa-external-link-alt"></i></span>了解。</p>
 <figure class="highlight markdown"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">{% mmedia "meting" "server=<span class="language-xml">&lt;netease|tencent|kugou|xiami|baidu&gt;</span>" "type=<span class="language-xml">&lt;song|playlist|album|search|artist&gt;</span>" %}</span><br></pre></td></tr></tbody></table></figure>
 <p>其支持的平台其实已经能够涵盖常见的用途了。如果以上几种不够用，还有最后的 Audio 和 Video 参数打底，它可以支持上传自有资源，插入原生的标签。</p>
-<div class="note warning"><p>不过<a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/u2sb/hexo-tag-mmedia/issues/23">这个插件的原作者说他要弃坑了</a>，保证稳定性的话，还是最好找个替代品，或者自己二次封装一下比较合适。</p>
+<div class="note warning"><p>不过<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3Uyc2IvaGV4by10YWctbW1lZGlhL2lzc3Vlcy8yMw==">这个插件的原作者说他要弃坑了<i class="fa fa-external-link-alt"></i></span>，保证稳定性的话，还是最好找个替代品，或者自己二次封装一下比较合适。</p>
 </div>
 <h3 id="Markdown渲染器配置">Markdown 渲染器配置</h3>
 <p>Hexo 默认搭配的渲染器是 <code>hexo-renderer-marked</code>，其支持的渲染格式有限，所以我重新使用了 <code>hexo-renderer-markdown-it</code>，它支持更多的解析和渲染格式，如 GFM 和 Commonmark 等，还支持插件。</p>
@@ -594,7 +680,7 @@
 <p>GitHub Actions 是处于 git 仓库中 <code>.github/workflows</code> 文件夹下的一个 yml 配置文件。其记载了在什么样的条件下，自动执行什么样的操作。</p>
 <p>我们的文件是这样的：</p>
 <figure class="highlight yml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">publish-webpage</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">main</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">publish-webpage:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">if:</span> <span class="string">github.event.repository.owner.id</span> <span class="string">==</span> <span class="string">github.event.sender.id</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span> <span class="string">source</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/checkout@v3</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">ref:</span> <span class="string">main</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Setup</span> <span class="string">Node.js</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/setup-node@v3</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">node-version:</span> <span class="number">16</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Setup</span> <span class="string">Hexo</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">ACTION_DEPLOY_KEY:</span> <span class="string">${{</span> <span class="string">secrets.HEXO_DEPLOY_KEY</span> <span class="string">}}</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">          mkdir -p ~/.ssh/</span></span><br><span class="line"><span class="string">          echo "$ACTION_DEPLOY_KEY" &gt; ~/.ssh/id_rsa</span></span><br><span class="line"><span class="string">          chmod 700 ~/.ssh</span></span><br><span class="line"><span class="string">          chmod 600 ~/.ssh/id_rsa</span></span><br><span class="line"><span class="string">          ssh-keyscan github.com &gt;&gt; ~/.ssh/known_hosts</span></span><br><span class="line"><span class="string">          git config --global user.email "40999116+jasonren0403@users.noreply.github.com"</span></span><br><span class="line"><span class="string">          git config --global user.name "Jason Ren"</span></span><br><span class="line"><span class="string">          npm install hexo-cli -g</span></span><br><span class="line"><span class="string">          npm install</span></span><br><span class="line"><span class="string"></span>      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span> <span class="string">and</span> <span class="string">Deploy</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">          hexo clean</span></span><br><span class="line"><span class="string">          hexo generate</span></span><br><span class="line"><span class="string">          hexo deploy</span></span><br></pre></td></tr></tbody></table></figure>
-<p>注意，这些代码与<a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io/zh-cn/docs/github-pages">hexo 文档</a>上的部署代码并不一样，主要的不同点在于官方教程使用了 <code>actions-gh-pages</code>，而自己这边使用的是 git 原生命令来自己建一个部署密钥。</p>
+<p>注意，这些代码与<span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL3poLWNuL2RvY3MvZ2l0aHViLXBhZ2Vz"> hexo 文档<i class="fa fa-external-link-alt"></i></span>上的部署代码并不一样，主要的不同点在于官方教程使用了 <code>actions-gh-pages</code>，而自己这边使用的是 git 原生命令来自己建一个部署密钥。</p>
 <div class="note "><p>其实个人认为官方这个代码是比较好的，因为其所使用的 <code>actions-gh-pages</code> 无需担心部署密钥，<code>github_token</code> 是可以自动在工作流中认证的，不是个人访问令牌，除了首次部署外，无需特别配置。</p>
 <p>而且，它还注意了 npm 依赖的缓存，以后要是再次部署的话，无需再费很长时间安装依赖，博客上线速度可以大大加快。</p>
 </div>
@@ -603,21 +689,21 @@
 <ol>
 <li>
 <p>在本地运行 <code>ssh-keygen -t rsa -b 4096 -C "Hexo Deploy Key" -f github-deploy-key -N ""</code> 生成一个新的密钥对。</p>
- <img data-src="/2023/04/03/works/how-i-built-the-blog/gen-key-1.png" class="">
+ <img src="/2023/04/03/works/how-i-built-the-blog/gen-key-1.png" class="">
 </li>
 <li>
 <p>在仓库的设置选项卡中，选择 “Secrets”（现为 “Secrets and variables”），新建名称为 “HEXO_DEPLOY_KEY”（这个名称是与刚才工作流配置文件中的<code>secrets.*</code>后面的内容是对应的）的密钥，将刚刚生成的公钥对应的私钥的内容复制进去。</p>
- <img data-src="/2023/04/03/works/how-i-built-the-blog/gen-key-0.png" class="">
+ <img src="/2023/04/03/works/how-i-built-the-blog/gen-key-0.png" class="">
 <p>配置完成后，Action Secrets 列表（现 Actions Secrets and variables 中的 Repository secrets）中应该会出现一个新的密钥。</p>
- <img data-src="/2023/04/03/works/how-i-built-the-blog/gen-key-2.png" class="">
+ <img src="/2023/04/03/works/how-i-built-the-blog/gen-key-2.png" class="">
 </li>
 <li>
 <p>转到 “Deploy Keys” 中，右上角新添加一个部署密钥。</p>
- <img data-src="/2023/04/03/works/how-i-built-the-blog/gen-key-3.png" class="">
+ <img src="/2023/04/03/works/how-i-built-the-blog/gen-key-3.png" class="">
 </li>
 <li>
 <p>将刚才生成公钥的内容复制进去（以 ssh-rsa 开头），并勾选 “Allow write access”。</p>
- <img data-src="/2023/04/03/works/how-i-built-the-blog/gen-key-4.png" class="">
+ <img src="/2023/04/03/works/how-i-built-the-blog/gen-key-4.png" class="">
 </li>
 </ol>
 <p>配置完成后，每次将博客源码推送到 <code>main</code> 分支时，GitHub Actions 就会自动执行部署操作。</p>
@@ -648,7 +734,7 @@
 <hr class="footnotes-sep">
 <section class="footnotes">
 <ol class="footnotes-list">
-<li id="fn1" class="footnote-item"><p><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io/zh-cn/docs/github-pages#%E9%A1%B9%E7%9B%AE%E9%A1%B5%E9%9D%A2">https://hexo.io/zh-cn/docs/github-pages#项目页面</a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+<li id="fn1" class="footnote-item"><p><span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL3poLWNuL2RvY3MvZ2l0aHViLXBhZ2VzIyVFOSVBMSVCOSVFNyU5QiVBRSVFOSVBMSVCNSVFOSU5RCVBMg==">https://hexo.io/zh-cn/docs/github-pages#项目页面<i class="fa fa-external-link-alt"></i></span> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
 </li>
 <li id="fn2" class="footnote-item"><p>查阅资料得知 waline 使用了 vercel 部署了一个 webapp，隔离了前端和存储，避免了安全问题 <a href="#fnref2" class="footnote-backref">↩︎</a></p>
 </li>
@@ -692,7 +778,7 @@
       <a href="https://blog.jason0743.space/2023/04/03/works/how-i-built-the-blog/" title="我是如何一步步把这个博客搭建起来的">https://blog.jason0743.space/2023/04/03/works/how-i-built-the-blog/</a>
   </li>
   <li class="post-copyright-license">
-      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
   </li>
 </ul>
 </div>
@@ -844,7 +930,7 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> &amp; <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9tdXNlLw==">NexT.Muse</span> 强力驱动
   </div>
 
     </div>
@@ -860,7 +946,7 @@
   <div class="reading-progress-bar"></div>
   <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-  <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2phc29ucmVuMDQwMw==" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
 
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>

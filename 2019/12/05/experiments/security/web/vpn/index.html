@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.2">
 <link rel="preconnect" href="https://fonts.geekzu.org" crossorigin="">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,11 +16,11 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.1.14/fancybox/fancybox.css" integrity="sha256-mdaMxrItEW6hMIVJJNPKuX0B7KCSJQVEv3mVY4N2we4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer=""></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.29.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
 
     <meta name="description" content="目标 了解什么是虚拟专用网（VPN），知道 VPN 的原理和应用。通过实验理解 IPSec 和 VPN 的关系和必要性。">
 <meta property="og:type" content="article">
@@ -49,11 +49,35 @@
 <meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/17-2.png">
 <meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/18-1.png">
 <meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/18-2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/19.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/20.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/21.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/22.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/23.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/24.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/25-1.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/25-2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/25-3.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/25-4.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/25-5.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/25-6.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/26-1.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/26-2.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/26-3.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/26-4.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/27.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/28.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/29.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/30.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/31.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/32.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/20.png">
+<meta property="og:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/21.png">
 <meta property="article:published_time" content="2019-12-05T12:52:04.000Z">
-<meta property="article:modified_time" content="2026-05-12T02:33:58.915Z">
+<meta property="article:modified_time" content="2026-08-25T15:31:02.633Z">
 <meta property="article:author" content="Jason Ren">
-<meta property="article:tag" content="网络空间安全">
 <meta property="article:tag" content="网络安全">
+<meta property="article:tag" content="网络空间安全">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/1.png">
 
@@ -82,10 +106,8 @@
 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.1.14/fancybox/fancybox.umd.js" integrity="sha256-QnJV4HT5r8i89ovZGRD86iynZqHerEbT2xt69vDM36I=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.1/pangu.umd.js" integrity="sha256-kRsxecBnwG6mULFPe2E6UKnNm8XfDOuDwCOprjLZuX8=" crossorigin="anonymous" defer=""></script>
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer=""></script>
@@ -110,7 +132,7 @@
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","display_overflow":"scroll","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-mml-chtml.js","integrity":"sha256-ihPtDDm7pTmSF9ViEsItlvsrBTsNkz0MOXMchzOwCQw="}}</script>
 
 
 
@@ -118,7 +140,119 @@
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
-<link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
 </head>
 
 <body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion">
@@ -155,7 +289,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-todo"><a href="/todo/" rel="section"><i class="fa fa-check fa-fw"></i>待办事项</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><span class="exturl" data-url="aHR0cHM6Ly93d3cuamFzb24wNzQzLnNwYWNlLyMvYWJvdXQ="><i class="fa fa-user fa-fw"></i>关于</span></li><li class="menu-item menu-item-note"><span class="exturl" data-url="aHR0cHM6Ly9ub3RlLmphc29uMDc0My5zcGFjZQ=="><i class="fa fa-book fa-fw"></i>笔记</span></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-todo"><a href="/todo/" rel="section"><i class="fa fa-check fa-fw"></i>待办事项</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -204,7 +338,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87"><span class="nav-number">1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E4%B8%93%E7%94%A8%E7%BD%91-VPN-1"><span class="nav-number">2.1.</span> <span class="nav-text">虚拟专用网 (VPN)[^1]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IPSec"><span class="nav-number">2.2.</span> <span class="nav-text">IPSec</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%E5%92%8C%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF"><span class="nav-number">3.</span> <span class="nav-text">步骤和关键技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IPSec%E5%8D%8F%E8%AE%AE%E9%85%8D%E7%BD%AE"><span class="nav-number">3.1.</span> <span class="nav-text">IPSec 协议配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OpenVPN%E9%85%8D%E7%BD%AE"><span class="nav-number">3.2.</span> <span class="nav-text">OpenVPN 配置</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87"><span class="nav-number">1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E4%B8%93%E7%94%A8%E7%BD%91-VPN"><span class="nav-number">2.1.</span> <span class="nav-text">虚拟专用网 (VPN)[1]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IPSec"><span class="nav-number">2.2.</span> <span class="nav-text">IPSec</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%E5%92%8C%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF"><span class="nav-number">3.</span> <span class="nav-text">步骤和关键技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IPSec%E5%8D%8F%E8%AE%AE%E9%85%8D%E7%BD%AE"><span class="nav-number">3.1.</span> <span class="nav-text">IPSec 协议配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OpenVPN%E9%85%8D%E7%BD%AE"><span class="nav-number">3.2.</span> <span class="nav-text">OpenVPN 配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">数据和分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IPSec%E7%9B%B8%E5%85%B3%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E6%9E%90"><span class="nav-number">4.1.</span> <span class="nav-text">IPSec 相关数据包分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OpenVPN%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="nav-number">4.2.</span> <span class="nav-text">OpenVPN 连接过程日志分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B6%E8%8E%B7"><span class="nav-number">5.</span> <span class="nav-text">收获</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Packet-tracer%E5%AE%9E%E9%AA%8C%E9%87%8D%E8%A6%81%E6%88%AA%E5%9B%BE"><span class="nav-number">6.</span> <span class="nav-text">Packet-tracer 实验重要截图</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -236,16 +370,16 @@
 </div>
   <div class="links-of-author animated">
       <span class="links-of-author-item">
-        <a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2phc29ucmVuMDQwMw==" title="GitHub → https://github.com/jasonren0403"><i class="fab fa-github fa-fw"></i>GitHub</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://x.com/theRealRev270" title="X(前 Twitter) → https://x.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-x fa-fw"></i>X(前 Twitter)</a>
+        <span class="exturl" data-url="aHR0cHM6Ly94LmNvbS90aGVSZWFsUmV2Mjcw" title="X(前 Twitter) → https://x.com/theRealRev270"><i class="fab fa-x fa-fw"></i>X(前 Twitter)</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cuZmFjZWJvb2suY29tL3Jlbmphc29uMTk5OS8=" title="Facebook → https://www.facebook.com/renjason1999/"><i class="fab fa-facebook fa-fw"></i>Facebook</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cuaW5zdGFncmFtLmNvbS9qYXNvbnJlbjA0MDMv" title="Instagram → https://www.instagram.com/jasonren0403/"><i class="fab fa-instagram fa-fw"></i>Instagram</span>
       </span>
   </div>
 
@@ -265,28 +399,11 @@
         </div>
         <ul class="links-of-blogroll-list">
             <li class="links-of-blogroll-item">
-              <a href="https://hanyujie2002.fly.dev/" title="https://hanyujie2002.fly.dev/" rel="noopener external nofollow noreferrer" target="_blank">Yujie Han’s blog</a>
+              <span class="exturl" data-url="aHR0cHM6Ly9oYW55dWppZTIwMDIuZmx5LmRldi8=" title="https://hanyujie2002.fly.dev/">Yujie Han’s blog</span>
             </li>
         </ul>
       </div>
     </div>
-        <div class="sidebar-inner sidebar-post-related">
-          <div class="animated">
-              <div class="links-of-blogroll-title"><i class="fa fa-signs-post fa-fw"></i>
-    相关文章
-  </div>
-  <ul class="popular-posts">
-    <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/2019/12/10/experiments/security/web/https-ssl/" rel="bookmark">
-        <time class="popular-posts-time">2019-12-10</time>
-        <br>
-      HTTPS 与 SSL 实验
-      </a>
-    </li>
-  </ul>
-
-          </div>
-        </div>
   </aside>
 
 
@@ -339,7 +456,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-05-12 10:33:58" itemprop="dateModified" datetime="2026-05-12T10:33:58+08:00">2026-05-12</time>
+      <time title="修改时间：2026-08-25 23:31:02" itemprop="dateModified" datetime="2026-08-25T23:31:02+08:00">2026-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -406,7 +523,7 @@
 <div class="note danger"><p>本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。</p>
 </div>
 <h2 id="原理">原理</h2>
-<h3 id="虚拟专用网-VPN-1">虚拟专用网 (VPN)[^1]</h3>
+<h3 id="虚拟专用网-VPN">虚拟专用网 (VPN)<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></h3>
 <p>虚拟专用网（Virtual Private Network，VPN）是利用 Internet 等公共网络的基础设施，通过隧道技术，为用户提供的与专用网络具有相同通信功能的安全数据通道。“虚拟” 是指用户无需建立各自专用的物理线路，而利用 Internet 等公共网络资源和设备建立一条逻辑上的专用数据通道，并实现与专用数据通道相同的通信功能。“专用网络” 是指虚拟出来的网络并非任何连接在公共网络上的用户都能使用，只有经过授权的用户才可使用。</p>
 <p>该通道内传输数据经过加密和认证，可保证传输内容的完整性和机密性。</p>
 <h3 id="IPSec">IPSec</h3>
@@ -418,22 +535,22 @@
 </div>
 <ol>
 <li>
-<p>在 WindowsXP 下打开 “控制面板→管理工具→本地安全策略”，找到 “IP 安全策略，在本地计算机”。双击进入。然后右击 “安全服务器”，点击指派规则。<img data-src="/2019/12/05/experiments/security/web/vpn/1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/2.png" class=""></p>
+<p>在 WindowsXP 下打开 “控制面板→管理工具→本地安全策略”，找到 “IP 安全策略，在本地计算机”。双击进入。然后右击 “安全服务器”，点击指派规则。<img src="/2019/12/05/experiments/security/web/vpn/1.png" class=""> <img src="/2019/12/05/experiments/security/web/vpn/2.png" class=""></p>
 </li>
 <li>
-<p>双击 “安全服务器” 进入其设置，双击 “所有 ICMP 通讯量” 进入规则设置。<img data-src="/2019/12/05/experiments/security/web/vpn/3.png" class=""></p>
+<p>双击 “安全服务器” 进入其设置，双击 “所有 ICMP 通讯量” 进入规则设置。<img src="/2019/12/05/experiments/security/web/vpn/3.png" class=""></p>
 </li>
 <li>
-<p>在 “筛选器操作” 选项卡中，选择 “需要安全”。<img data-src="/2019/12/05/experiments/security/web/vpn/4.png" class=""></p>
+<p>在 “筛选器操作” 选项卡中，选择 “需要安全”。<img src="/2019/12/05/experiments/security/web/vpn/4.png" class=""></p>
 </li>
 <li>
-<p>在 “身份验证方法” 选项卡中，添加一个共享密钥。记住此密钥，在另一端要做同样的设置。 <img data-src="/2019/12/05/experiments/security/web/vpn/5.png" class="" title="身份验证方法选项卡"></p>
- <div class="tabs" id="key"><ul class="nav-tabs"><li class="tab active"><a href="#key-1">XP 端</a></li><li class="tab"><a href="#key-2">2000 端</a></li></ul><div class="tab-content"><div class="tab-pane active" id="key-1"><img data-src="/2019/12/05/experiments/security/web/vpn/6.png" class="" title="设置共享密钥"></div><div class="tab-pane" id="key-2"><img data-src="/2019/12/05/experiments/security/web/vpn/7.png" class="" title="设置共享密钥"></div></div></div>
+<p>在 “身份验证方法” 选项卡中，添加一个共享密钥。记住此密钥，在另一端要做同样的设置。 <img src="/2019/12/05/experiments/security/web/vpn/5.png" class="" title="身份验证方法选项卡"></p>
+ <div class="tabs" id="key"><ul class="nav-tabs"><li class="tab active"><a href="#key-1">XP 端</a></li><li class="tab"><a href="#key-2">2000 端</a></li></ul><div class="tab-content"><div class="tab-pane active" id="key-1"><img src="/2019/12/05/experiments/security/web/vpn/6.png" class="" title="设置共享密钥"></div><div class="tab-pane" id="key-2"><img src="/2019/12/05/experiments/security/web/vpn/7.png" class="" title="设置共享密钥"></div></div></div>
 </li>
 <li>
 <p>只在一端配置时，ping 端会直接显示 Request timed out。双端配置时，会显示 Negotiating IP Security。正确配置时，会先显示 Negotiating IP Security，然后才会显示 ping 的 reply，代表双端成功建立了连接。可以在 win2000 端的 IP 安全监视器中看到连过来的 xp 设备。</p>
- <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/8.png" class="" title="只配置了一边"></div><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/9.png" class="" title="双端配置"></div><div class="group-picture-column"><img data-src="/2019/12/05/experiments/security/web/vpn/10.png" class="" title="完全正确的配置"></div></div></div> 
- <img data-src="/2019/12/05/experiments/security/web/vpn/11.png" class="" title="查看链接的Windows XP设备">
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/8.png" class="" title="只配置了一边"></div><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/9.png" class="" title="双端配置"></div><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/10.png" class="" title="完全正确的配置"></div></div></div> 
+ <img src="/2019/12/05/experiments/security/web/vpn/11.png" class="" title="查看链接的Windows XP设备">
  <div class="note info"><p>当然，也可以配置专用的 IPSec 安全策略，不使用系统默认值。过程类似，不再赘述。</p>
 </div>
 </li>
@@ -450,30 +567,92 @@
 <li>
 <p>将安装目录 easy-rsa 下<code>vars.bat.sample</code>文件换成自己的信息，然后更名为<code>vars.bat</code>。</p>
  <figure class="highlight shell"><figcaption><span>vars.bat</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">set &lt;KEY&gt;=&lt;VALUE&gt;</span><br></pre></td></tr></tbody></table></figure>
- <img data-src="/2019/12/05/experiments/security/web/vpn/12.png" class="">
+ <img src="/2019/12/05/experiments/security/web/vpn/12.png" class="">
 </li>
 <li>
-<p>将<code>openssl.cnf.sample</code>更名为<code>openssl.cnf</code>。 <img data-src="/2019/12/05/experiments/security/web/vpn/13.png" class=""></p>
+<p>将<code>openssl.cnf.sample</code>更名为<code>openssl.cnf</code>。 <img src="/2019/12/05/experiments/security/web/vpn/13.png" class=""></p>
 </li>
 <li>
-<p>在 easy-rsa 文件夹下，先后运行<code>vars</code>和<code>clean-all.bat</code>命令，以进行初始化。 <img data-src="/2019/12/05/experiments/security/web/vpn/14.png" class=""></p>
+<p>在 easy-rsa 文件夹下，先后运行<code>vars</code>和<code>clean-all.bat</code>命令，以进行初始化。 <img src="/2019/12/05/experiments/security/web/vpn/14.png" class=""></p>
 </li>
 <li>
-<p>生成 CA 根证书。 <img data-src="/2019/12/05/experiments/security/web/vpn/15.png" class=""></p>
+<p>生成 CA 根证书。 <img src="/2019/12/05/experiments/security/web/vpn/15.png" class=""></p>
 </li>
 <li>
-<p>生成密钥交换协议算法参数。 <img data-src="/2019/12/05/experiments/security/web/vpn/16.png" class=""></p>
+<p>生成密钥交换协议算法参数。 <img src="/2019/12/05/experiments/security/web/vpn/16.png" class=""></p>
 </li>
 <li>
 <p>生成服务端和客户端证书并签发十年有效期。</p>
  <div class="tabs" id="certificate"><ul class="nav-tabs"><li class="tab active"><a href="#certificate-1">server</a></li><li class="tab"><a href="#certificate-2">client</a></li></ul><div class="tab-content"><div class="tab-pane active" id="certificate-1"><figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">build-server-key.bat server</span><br></pre></td></tr></tbody></table></figure>
-<p><img data-src="/2019/12/05/experiments/security/web/vpn/17-1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/17-2.png" class=""></p></div><div class="tab-pane" id="certificate-2"><figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">build-key.bat client</span><br></pre></td></tr></tbody></table></figure>
-<p><img data-src="/2019/12/05/experiments/security/web/vpn/18-1.png" class=""> <img data-src="/2019/12/05/experiments/security/web/vpn/18-2.png" class=""></p></div></div></div>
+<p><img src="/2019/12/05/experiments/security/web/vpn/17-1.png" class=""> <img src="/2019/12/05/experiments/security/web/vpn/17-2.png" class=""></p></div><div class="tab-pane" id="certificate-2"><figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">build-key.bat client</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="/2019/12/05/experiments/security/web/vpn/18-1.png" class=""> <img src="/2019/12/05/experiments/security/web/vpn/18-2.png" class=""></p></div></div></div>
 </li>
 <li>
 <p>生成 ta key</p>
+ <figure class="highlight shell"><table><tbody><tr><td class="code"><pre><span class="line">openvpn --genkey --secret keys/ta.key</span><br></pre></td></tr></tbody></table></figure>
+ <img src="/2019/12/05/experiments/security/web/vpn/19.png" class="">
+</li>
+<li>
+<p>以上步骤完成后，keys 中包含了这么多文件 <img src="/2019/12/05/experiments/security/web/vpn/20.png" class=""></p>
+</li>
+<li>
+<p>配置<code>server.ovpn</code>文件，将它们连同服务器证书一起复制到 config 文件夹下。 <img src="/2019/12/05/experiments/security/web/vpn/21.png" class=""></p>
+</li>
+<li>
+<p>客户端配置 client.ovpn 文件。然后将客户端证书复制到 config 目录下。 <img src="/2019/12/05/experiments/security/web/vpn/22.png" class=""></p>
+</li>
+<li>
+<p>然后就可以右击任务栏的图标，点击 Connect 进行连接了。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/23.png" class=""></div><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/24.png" class=""></div></div></div>
 </li>
 </ol>
+<h2 id="数据和分析">数据和分析</h2>
+<h3 id="IPSec相关数据包分析">IPSec 相关数据包分析</h3>
+<ol>
+<li>在只配置了其中一端的 IPSec 时，服务器发回的包都是 Identity Protection（Main Mode）的 ISAKMP 包，其中每一段 payload 都有一个 next payload 字段，指定下一个载荷包的内容。在 Vendor ID 中，存在一个<code>MS NT5 ISAKMPOAKLEY</code>字段，这里是目标操作系统的信息（所以可能有泄露 os 的利用！）。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/25-1.png" class="" title="Exchange Type"></div><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/25-2.png" class="" title="Vendor ID 可暴露"></div></div></div>
+</li>
+<li>在 SA 段中，信息被以 IPSec 的方式来解析，Identity Only 被设为<code>True</code>，Payload 中的 Transform 段是协商的密钥信息。 <img src="/2019/12/05/experiments/security/web/vpn/25-3.png" class="" title="SA段">
+ <img src="/2019/12/05/experiments/security/web/vpn/25-4.png" class="" title="Proposal部分">
+ <img src="/2019/12/05/experiments/security/web/vpn/25-5.png" class="" title="协商参数">
+</li>
+<li>双方交互还用到了 informational 包，包的信息如下。 <img src="/2019/12/05/experiments/security/web/vpn/25-6.png" class="" title="Informational包"></li>
+<li>在双方都配置了 IPsec 的情况下，连接抓包情况如下。 <img src="/2019/12/05/experiments/security/web/vpn/26-1.png" class=""></li>
+<li>一开始是 quick mode，包的信息如下。这时信息已经是加密的了。 <img src="/2019/12/05/experiments/security/web/vpn/26-2.png" class=""></li>
+<li>后面双方的数据都以 ESP 包的形式来传送了，由于双方有了约定，后面的传输都使用相同的 SPI。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/26-3.png" class=""></div><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/26-4.png" class=""></div></div></div>
+</li>
+</ol>
+<h3 id="OpenVPN连接过程日志分析">OpenVPN 连接过程日志分析</h3>
+<img src="/2019/12/05/experiments/security/web/vpn/27.png" class="" title="建立连接">
+<ol>
+<li>在建立连接时，双方使用了 UDP 连接（我服务器端配置的是 udp 服务器），可以看出其中的数据是加密的。</li>
+<li>观察生成的 log 文件，发现 client 端使用了 1040 以上的端口与服务器端建立了连接，在连接时，双方走了个人信息的认证。还商讨了有关密码算法的信息，比对了 options hash。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/28.png" class=""></div><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/29.png" class=""></div></div></div>
+</li>
+</ol>
+<h2 id="收获">收获</h2>
+<p>通过配置虚拟专用网和抓包分析，我理解了 VPN 相对于普通连接的安全性，明白了 IPSec 在其中扮演的重要角色。</p>
+<p>但是，其中的 IKE 密钥协商过程还是有一些安全缺陷的。由于响应方需要时间计算模幂参数，占用大量 cpu 和内存空间，这是一个瓶颈，很容易受到拒绝服务攻击。主模式下无法提供身份隐藏保护，攻击方可以伪造响应方地址，并与发起方协商 D-H 公开值。</p>
+<h2 id="Packet-tracer实验重要截图">Packet-tracer 实验重要截图</h2>
+<img src="/2019/12/05/experiments/security/web/vpn/30.png" class="" title="最终网络图">
+<ul>
+<li>
+<p>注意交换机需要连接到 PC 的快速以太网口上（需要关机→修改物理设置（添加端口）→开机） <img src="/2019/12/05/experiments/security/web/vpn/31.png" class=""></p>
+</li>
+<li>
+<p>IPSec 相关设置（router0 端，另一端当然是相同的，除了 address 为 10.0.0.1） <img src="/2019/12/05/experiments/security/web/vpn/32.png" class=""></p>
+</li>
+<li>
+<p>Ping 连接效果，可以抓到 ISAKMP 类型的数据包，其中数据为加密状态。</p>
+  
+  <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/20.png" class=""></div><div class="group-picture-column"><img src="/2019/12/05/experiments/security/web/vpn/21.png" class=""></div></div></div>
+</li>
+</ul>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTkyNDg3OS9hcnRpY2xlL2RldGFpbHMvMTAxMzY1MjU3">https://blog.csdn.net/weixin_41924879/article/details/101365257<i class="fa fa-external-link-alt"></i></span> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
 
     </div>
 
@@ -512,7 +691,7 @@
       <a href="https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/" title="虚拟专用网实验">https://blog.jason0743.space/2019/12/05/experiments/security/web/vpn/</a>
   </li>
   <li class="post-copyright-license">
-      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
   </li>
 </ul>
 </div>
@@ -664,7 +843,7 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> &amp; <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9tdXNlLw==">NexT.Muse</span> 强力驱动
   </div>
 
     </div>
@@ -680,7 +859,7 @@
   <div class="reading-progress-bar"></div>
   <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-  <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2phc29ucmVuMDQwMw==" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
 
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>

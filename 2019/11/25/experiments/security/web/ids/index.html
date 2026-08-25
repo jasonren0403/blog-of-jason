@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.2">
 <link rel="preconnect" href="https://fonts.geekzu.org" crossorigin="">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,11 +16,11 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.1.14/fancybox/fancybox.css" integrity="sha256-mdaMxrItEW6hMIVJJNPKuX0B7KCSJQVEv3mVY4N2we4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer=""></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.29.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
 
     <meta name="description" content="目的 了解入侵检测的基本原理，尝试在 Windows XP 下配置 Snort IDS 并完成基于 Snort 的攻击检测。尝试利用 Snort 规则语法自己编写简单的 Snort 规则。">
 <meta property="og:type" content="article">
@@ -56,10 +56,10 @@
 <meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/26.png">
 <meta property="og:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/27.png">
 <meta property="article:published_time" content="2019-11-25T12:12:01.000Z">
-<meta property="article:modified_time" content="2026-05-12T02:33:58.913Z">
+<meta property="article:modified_time" content="2026-08-25T15:31:02.630Z">
 <meta property="article:author" content="Jason Ren">
-<meta property="article:tag" content="网络空间安全">
 <meta property="article:tag" content="网络安全">
+<meta property="article:tag" content="网络空间安全">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/0.png">
 
@@ -88,10 +88,8 @@
 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.1.14/fancybox/fancybox.umd.js" integrity="sha256-QnJV4HT5r8i89ovZGRD86iynZqHerEbT2xt69vDM36I=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.1/pangu.umd.js" integrity="sha256-kRsxecBnwG6mULFPe2E6UKnNm8XfDOuDwCOprjLZuX8=" crossorigin="anonymous" defer=""></script>
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer=""></script>
@@ -116,7 +114,7 @@
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","display_overflow":"scroll","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-mml-chtml.js","integrity":"sha256-ihPtDDm7pTmSF9ViEsItlvsrBTsNkz0MOXMchzOwCQw="}}</script>
 
 
 
@@ -124,7 +122,119 @@
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
-<link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
 </head>
 
 <body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion">
@@ -161,7 +271,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-todo"><a href="/todo/" rel="section"><i class="fa fa-check fa-fw"></i>待办事项</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><span class="exturl" data-url="aHR0cHM6Ly93d3cuamFzb24wNzQzLnNwYWNlLyMvYWJvdXQ="><i class="fa fa-user fa-fw"></i>关于</span></li><li class="menu-item menu-item-note"><span class="exturl" data-url="aHR0cHM6Ly9ub3RlLmphc29uMDc0My5zcGFjZQ=="><i class="fa fa-book fa-fw"></i>笔记</span></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-todo"><a href="/todo/" rel="section"><i class="fa fa-check fa-fw"></i>待办事项</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -242,16 +352,16 @@
 </div>
   <div class="links-of-author animated">
       <span class="links-of-author-item">
-        <a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2phc29ucmVuMDQwMw==" title="GitHub → https://github.com/jasonren0403"><i class="fab fa-github fa-fw"></i>GitHub</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://x.com/theRealRev270" title="X(前 Twitter) → https://x.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-x fa-fw"></i>X(前 Twitter)</a>
+        <span class="exturl" data-url="aHR0cHM6Ly94LmNvbS90aGVSZWFsUmV2Mjcw" title="X(前 Twitter) → https://x.com/theRealRev270"><i class="fab fa-x fa-fw"></i>X(前 Twitter)</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cuZmFjZWJvb2suY29tL3Jlbmphc29uMTk5OS8=" title="Facebook → https://www.facebook.com/renjason1999/"><i class="fab fa-facebook fa-fw"></i>Facebook</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cuaW5zdGFncmFtLmNvbS9qYXNvbnJlbjA0MDMv" title="Instagram → https://www.instagram.com/jasonren0403/"><i class="fab fa-instagram fa-fw"></i>Instagram</span>
       </span>
   </div>
 
@@ -271,7 +381,7 @@
         </div>
         <ul class="links-of-blogroll-list">
             <li class="links-of-blogroll-item">
-              <a href="https://hanyujie2002.fly.dev/" title="https://hanyujie2002.fly.dev/" rel="noopener external nofollow noreferrer" target="_blank">Yujie Han’s blog</a>
+              <span class="exturl" data-url="aHR0cHM6Ly9oYW55dWppZTIwMDIuZmx5LmRldi8=" title="https://hanyujie2002.fly.dev/">Yujie Han’s blog</span>
             </li>
         </ul>
       </div>
@@ -328,7 +438,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-05-12 10:33:58" itemprop="dateModified" datetime="2026-05-12T10:33:58+08:00">2026-05-12</time>
+      <time title="修改时间：2026-08-25 23:31:02" itemprop="dateModified" datetime="2026-08-25T23:31:02+08:00">2026-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -398,7 +508,7 @@
 <h3 id="入侵检测定义">入侵检测定义</h3>
 <p>入侵检测是防火墙的合理补充，帮助系统对付网络攻击，扩展了系统管理员的安全管理能力 (包括安全审计、监视、进攻识别和响应)，提高了信息安全基础结构的完整性。它从计算机网络系统中的若干关键点收集信息，并分析这些信息，看看网络中是否有违反安全策略的行为和遭到袭击的迹象。入侵检测被认为是防火墙之后的第二道安全闸门，在不影响网络性能的情况下能对网络进行监测，从而提供对内部攻击、外部攻击和误操作的实时保护。</p>
 <h3 id="Snort软件">Snort 软件</h3>
-<p><a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.snort.org/">Snort</a> 是由 Sourcefire 开发的一个开源的网络入侵检测系统。用 C 语言编写的开放源代码软件。它是一个跨平台、轻量级的网络入侵检测软件。它结合了协议、特征和基于异常的检测，是目前使用最多的 IDS / IPS 系统。</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly93d3cuc25vcnQub3JnLw==">Snort<i class="fa fa-external-link-alt"></i></span>是由 Sourcefire 开发的一个开源的网络入侵检测系统。用 C 语言编写的开放源代码软件。它是一个跨平台、轻量级的网络入侵检测软件。它结合了协议、特征和基于异常的检测，是目前使用最多的 IDS/IPS 系统。</p>
 <p>一条 snort 规则包括包含规则头和规则选项两部分；snort 规则如下：</p>
 <ol>
 <li>Snort 规则应写在一行，若需多行，应用<code>\</code>来拆分。</li>
@@ -408,23 +518,23 @@
 <h2 id="实验过程">实验过程</h2>
 <h3 id="配置Snort环境">配置 Snort 环境</h3>
 <p>首先装好 Snort 软件。用<code>snort -W</code>命令测试安装正确性</p>
-<img data-src="/2019/11/25/experiments/security/web/ids/0.png" class="" width="200" height="200">
-<img data-src="/2019/11/25/experiments/security/web/ids/1.png" class="" width="200" height="200" title="界面上显示了“小猪嘴”和版本号，即宣告安装成功">
+<img src="/2019/11/25/experiments/security/web/ids/0.png" class="" width="200" height="200">
+<img src="/2019/11/25/experiments/security/web/ids/1.png" class="" width="200" height="200" title="界面上显示了“小猪嘴”和版本号，即宣告安装成功">
 <ul>
 <li>
 <p>运行<code>snort -i 1</code>可以进入嗅探模式，显示如下</p>
-  <img data-src="/2019/11/25/experiments/security/web/ids/2.png" class="" width="250" height="250">
+  <img src="/2019/11/25/experiments/security/web/ids/2.png" class="" width="250" height="250">
 </li>
 <li>
-<p>运行<code>snort -de -1</code>进入的是数据包记录器模式。我把日志记录在了 C 盘的 Snort / log 文件夹下，此文件可以用 Wireshark 打开。</p>
-  <img data-src="/2019/11/25/experiments/security/web/ids/3.png" class=""> <img data-src="/2019/11/25/experiments/security/web/ids/4.png" class="">
+<p>运行<code>snort -de -1</code>进入的是数据包记录器模式。我把日志记录在了 C 盘的 Snort/log 文件夹下，此文件可以用 Wireshark 打开。</p>
+  <img src="/2019/11/25/experiments/security/web/ids/3.png" class=""> <img src="/2019/11/25/experiments/security/web/ids/4.png" class="">
 </li>
 <li>
 <p>根据实验指导书做一些配置修改后，用以下命令启动攻击检测模式。</p>
   <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">snort -c <span class="string">"path/to/snort.conf"</span> -l <span class="string">"path/to/logdir"</span></span><br></pre></td></tr></tbody></table></figure>
 <ul>
-<li>此时开始了攻击检测模式，可以到<code>C:/Snort/log</code>下查看告警日志。 <img data-src="/2019/11/25/experiments/security/web/ids/6.png" class="" width="200" height="200"> <img data-src="/2019/11/25/experiments/security/web/ids/7.png" class="" width="200" height="200"></li>
-<li>不过里面没有 UDP 包告警的相关的信息…… 是因为默认的社区规则里面并没有针对这个情况进行专门配置 <img data-src="/2019/11/25/experiments/security/web/ids/8.png" class="" width="200" height="200"></li>
+<li>此时开始了攻击检测模式，可以到<code>C:/Snort/log</code>下查看告警日志。 <img src="/2019/11/25/experiments/security/web/ids/6.png" class="" width="200" height="200"> <img src="/2019/11/25/experiments/security/web/ids/7.png" class="" width="200" height="200"></li>
+<li>不过里面没有 UDP 包告警的相关的信息…… 是因为默认的社区规则里面并没有针对这个情况进行专门配置 <img src="/2019/11/25/experiments/security/web/ids/8.png" class="" width="200" height="200"></li>
 </ul>
 </li>
 </ul>
@@ -434,19 +544,19 @@
 <p>在本地添加一条 UDP 规则</p>
  <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert udp any any &lt;&gt;$HOME_NET any (msg:”udp ids/dns-version-query”;content:”version”;)</span><br></pre></td></tr></tbody></table></figure>
  <div class="note info"><h4 id="含义">含义</h4>
-<p>这条规则的含义是：对一条 UDP 规则生成一条警报并记录这个包，此规则针对任意 UDP 协议的非本地任何地址任何端口双方向（HOME_NET 在 snort.conf 中有配置，应该配置为本机的地址），发送一条信息，内容为” udp ids/dns-version-query”，包含” version” 字符即匹配</p>
+<p>这条规则的含义是：对一条 UDP 规则生成一条警报并记录这个包，此规则针对任意 UDP 协议的非本地任何地址任何端口双方向（HOME_NET 在 snort.conf 中有配置，应该配置为本机的地址），发送一条信息，内容为” udp ids/dns-version-query”，包含 ”version” 字符即匹配</p>
 </div>
- <img data-src="/2019/11/25/experiments/security/web/ids/9.png" class="">
+ <img src="/2019/11/25/experiments/security/web/ids/9.png" class="">
 </li>
 <li>
 <p>由上图得知，我的电脑的<code>HOME_NET</code>值应该为 192.168.235.136。将规则加入 local.rules 中，注释掉其他的 rules，只运行自己写的 rules。</p>
- <img data-src="/2019/11/25/experiments/security/web/ids/10.png" class="">
+ <img src="/2019/11/25/experiments/security/web/ids/10.png" class="">
  <div class="note warning"><p>最终规则语句调整为<code>alert udp any any &lt;&gt; $HOME_NET any (sid:xxxx;msg:"udp ids/dns-version-query";content:"version";)</code>，<code>&lt;&gt;</code>两侧必须有空格，每条规则必须有一个 sid 值，msg 必须包含在英文引号中。</p>
 </div>
 </li>
 <li>
 <p>在另一台虚拟机上运行 UDP Flood 工具，对 135 端口进行扫描攻击。注意所发的信息要包含<code>”version”</code>字符串，才会有报警（否则不会匹配规则）。</p>
- <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/11.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/12.png" class=""></div></div></div>
+ <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/11/25/experiments/security/web/ids/11.png" class=""></div><div class="group-picture-column"><img src="/2019/11/25/experiments/security/web/ids/12.png" class=""></div></div></div>
 <ul>
 <li>alert.ids 和同期所记录 log 用 wireshark 打开的结果如上图所示。</li>
 </ul>
@@ -460,11 +570,11 @@
 <li>
 <p>根据 snort 规则的相关编写知识，得到相应的 snort 规则应该为：</p>
   <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert tcp !$HOME_NET any -&gt; $HOME_NET 23 (msg:"External net attempt to access internal telnet server";sid:xxxx;)</span><br></pre></td></tr></tbody></table></figure>
-  <img data-src="/2019/11/25/experiments/security/web/ids/13.png" class="" width="200" height="200">
+  <img src="/2019/11/25/experiments/security/web/ids/13.png" class="" width="200" height="200">
 </li>
 <li>
 <p>装入 local.rules 进行测试，然后用外网 telnet snort 所在的虚拟机地址。测试结果如下：（测试机需要事先开启 telnet 服务）</p>
-  <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/14.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/15.png" class=""></div><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/16.png" class=""></div></div><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/11/25/experiments/security/web/ids/17.png" class=""></div></div></div>
+  <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/11/25/experiments/security/web/ids/14.png" class=""></div><div class="group-picture-column"><img src="/2019/11/25/experiments/security/web/ids/15.png" class=""></div><div class="group-picture-column"><img src="/2019/11/25/experiments/security/web/ids/16.png" class=""></div></div><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/11/25/experiments/security/web/ids/17.png" class=""></div></div></div>
 <p>果然在<code>alert.ids</code>中有相应记录</p>
 </li>
 </ul>
@@ -472,14 +582,14 @@
 <p>为使 snort 具备端口扫描检测的能力，需要启用端口扫描检测插件，在 snort 中，这类插件通常通过预处理器的方式提供。</p>
 <ul>
 <li>
-<p>在<code>snort.conf</code>中，找到<code>sfportscan</code>预处理器，把注释去掉以开启这个预处理器。 <img data-src="/2019/11/25/experiments/security/web/ids/18.png" class=""></p>
+<p>在<code>snort.conf</code>中，找到<code>sfportscan</code>预处理器，把注释去掉以开启这个预处理器。 <img src="/2019/11/25/experiments/security/web/ids/18.png" class=""></p>
   <div class="note info"><p>其中 proto 参数代表欲检测的协议，取值有 tcp udp icmp ip all，各参数间空格分开，这里写 all 就行。 Memcap 代表分配给端口扫描的最大字节数，数字越高，越多节点可以被跟踪。Sense_level 用于检测端口扫描的敏感度水平。取值有 low medium high 三种。low 级别使用通用方法来查找响应错误，medium 会检测端口扫描和过滤端口扫描（那些没有收到响应的端口扫描），high 级别有最小的端口检测限制。这里设为了 high。除此以外，还有 scan_type、logfile、watchip、ignore_scanners 配置项，对于本实验的需求不大。</p>
 </div>
 </li>
 </ul>
 <ol>
 <li>
-<p>在一台攻击机上启动 nmap 进行扫描。同时在目标机上启动 snort。 <img data-src="/2019/11/25/experiments/security/web/ids/19.png" class=""> <img data-src="/2019/11/25/experiments/security/web/ids/20.png" class=""> <img data-src="/2019/11/25/experiments/security/web/ids/21.png" class=""> <img data-src="/2019/11/25/experiments/security/web/ids/22.png" class=""></p>
+<p>在一台攻击机上启动 nmap 进行扫描。同时在目标机上启动 snort。 <img src="/2019/11/25/experiments/security/web/ids/19.png" class=""> <img src="/2019/11/25/experiments/security/web/ids/20.png" class=""> <img src="/2019/11/25/experiments/security/web/ids/21.png" class=""> <img src="/2019/11/25/experiments/security/web/ids/22.png" class=""></p>
 </li>
 <li>
 <p>结果只检测出了上述三个有效信息，没有像预期那样检测到扫描工具扫描的痕迹。</p>
@@ -491,13 +601,13 @@
 <p>通过几个小的 snort 配置实验，我对基于 snort 的入侵检测有了初步的了解，学习书写了几个简单的 snort 规则并测试其应用过后报警的效果。这个输出格式一般为：</p>
 <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[**] [1:sid:rev] "msg" [**]</span><br><span class="line">[Classfication] [Priority:&lt;priority&gt;]</span><br><span class="line">[time] [from[ip:port]-&gt;dest[ip:port]]</span><br><span class="line">[protocol] [ttl] [tos] [id] [iplen] [dgmlen] [flags]</span><br><span class="line">[各协议包额外信息]</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="补充">补充</h2>
-<p>重新使用其他扫描工具完成端口扫描实验，发现可以成功检测。说明上述检测不成功的原因应该是扫描动作与预期规则不匹配。我使用了 Nessus 3 版本完成了这一部分的实验。 <img data-src="/2019/11/25/experiments/security/web/ids/24.png" class=""></p>
+<p>重新使用其他扫描工具完成端口扫描实验，发现可以成功检测。说明上述检测不成功的原因应该是扫描动作与预期规则不匹配。我使用了 Nessus 3 版本完成了这一部分的实验。 <img src="/2019/11/25/experiments/security/web/ids/24.png" class=""></p>
 <ol>
 <li>
-<p>同时开启被扫描端的 snort，发现除了有尝试执行 shellcode 以外 (这个原来用 nmap 扫的时候也扫到了) 还发出了 SCAN 的警告，分类信息显示为 Attempted information leak（尝试泄露信息），基本可以确认 nessus 发出的扫描被我们检测出来了。 <img data-src="/2019/11/25/experiments/security/web/ids/25.png" class=""> <img data-src="/2019/11/25/experiments/security/web/ids/26.png" class=""></p>
+<p>同时开启被扫描端的 snort，发现除了有尝试执行 shellcode 以外 (这个原来用 nmap 扫的时候也扫到了) 还发出了 SCAN 的警告，分类信息显示为 Attempted information leak（尝试泄露信息），基本可以确认 nessus 发出的扫描被我们检测出来了。 <img src="/2019/11/25/experiments/security/web/ids/25.png" class=""> <img src="/2019/11/25/experiments/security/web/ids/26.png" class=""></p>
 </li>
 <li>
-<p>此扫描还尝试利用 NETBIOS 登录来取得用户权限，以获取后续漏洞信息。 <img data-src="/2019/11/25/experiments/security/web/ids/27.png" class=""></p>
+<p>此扫描还尝试利用 NETBIOS 登录来取得用户权限，以获取后续漏洞信息。 <img src="/2019/11/25/experiments/security/web/ids/27.png" class=""></p>
 </li>
 </ol>
 
@@ -538,7 +648,7 @@
       <a href="https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/" title="入侵检测">https://blog.jason0743.space/2019/11/25/experiments/security/web/ids/</a>
   </li>
   <li class="post-copyright-license">
-      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
   </li>
 </ul>
 </div>
@@ -690,7 +800,7 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> &amp; <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9tdXNlLw==">NexT.Muse</span> 强力驱动
   </div>
 
     </div>
@@ -706,7 +816,7 @@
   <div class="reading-progress-bar"></div>
   <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-  <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2phc29ucmVuMDQwMw==" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
 
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>

