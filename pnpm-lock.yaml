@@ -11,6 +11,9 @@ patchedDependencies:
   hexo-pangu@0.6.0:
     hash: 7d3af3e9f38f3b1ddd9e6449dba3e97ff7e50309b46d779b7d38328c39a06b53
     path: patches/hexo-pangu@0.6.0.patch
+  hexo-word-counter@0.2.2:
+    hash: 0adb04e6bab44c2e79c47b23d14e678627855f2b319ebaa13197f29f58d98730
+    path: patches/hexo-word-counter@0.2.2.patch
 
 importers:
 
@@ -90,7 +93,7 @@ importers:
         version: 8.29.0
       hexo-word-counter:
         specifier: 0.2.2
-        version: 0.2.2
+        version: 0.2.2(patch_hash=0adb04e6bab44c2e79c47b23d14e678627855f2b319ebaa13197f29f58d98730)
       markdown-it-abbr:
         specifier: ^2.0.0
         version: 2.0.0
@@ -4434,7 +4437,7 @@ snapshots:
       prismjs: 1.30.0
       strip-indent: 3.0.0
 
-  hexo-word-counter@0.2.2:
+  hexo-word-counter@0.2.2(patch_hash=0adb04e6bab44c2e79c47b23d14e678627855f2b319ebaa13197f29f58d98730):
     dependencies:
       cargo-cp-artifact: 0.1.9
 

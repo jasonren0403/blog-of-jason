@@ -46,12 +46,14 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "hexo-pangu@0.6.0": "patches/hexo-pangu@0.6.0.patch"
+      "hexo-pangu@0.6.0": "patches/hexo-pangu@0.6.0.patch",
+      "hexo-word-counter@0.2.2": "patches/hexo-word-counter@0.2.2.patch"
     },
     "onlyBuiltDependencies": [
       "core-js",
       "gifsicle",
       "hexo-util",
+      "hexo-word-counter",
       "highlight.js",
       "jpegtran-bin",
       "mozjpeg",

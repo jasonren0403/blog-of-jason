@@ -36,3 +36,18 @@ ReferenceError: window is not defined
 **原因：** `hexo-pangu@0.6.0` 在 Node 侧用 `vm` 加载 `pangu@9` 的浏览器 UMD（`pangu.umd.js`），上下文未注入全局 `window`；`pangu` 内部调用 `window.getComputedStyle` 时崩溃。
 
 **处理：** 通过 pnpm `patchedDependencies` 修补 `hexo-pangu`，在 VM sandbox 中提供 `window` / `globalThis` / `self`；补丁文件为 `patches/hexo-pangu@0.6.0.patch`，安装时自动应用。
+
+### Plugin load failed: hexo-word-counter
+
+```text
+ERROR Plugin load failed: hexo-word-counter
+Error: Cannot find module './index.node'
+```
+
+**原因：**
+1. pnpm v10 默认不跑依赖 postinstall，未把 `hexo-word-counter` 列入 `onlyBuiltDependencies` 时不会下载原生 `index.node`。
+2. 即便允许 postinstall，本机访问 `archive.zsq.im` 时 Node/curl 常 `ECONNRESET`；原脚本失败后回退 `spawnSync('npm', ...)` 在纯 pnpm 环境也会 `ENOENT`。
+
+**处理：**
+1. `pnpm.onlyBuiltDependencies` 包含 `hexo-word-counter`。
+2. 补丁 `patches/hexo-word-counter@0.2.2.patch`：下载依次尝试 https → curl → PowerShell，源码回退兼容 npm/pnpm。
