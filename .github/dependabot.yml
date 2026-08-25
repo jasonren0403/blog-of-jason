@@ -1,7 +1,5 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# pnpm 走 npm ecosystem：Dependabot 会根据 pnpm-lock.yaml / packageManager 更新锁文件
 
 version: 2
 updates:
@@ -11,14 +9,7 @@ updates:
       interval: weekly
     cooldown:
       default-days: 14
-    groups:
-      types:
-        patterns:
-          - "@types/*"
-        update-types:
-          - "minor"
-          - "patch"
-  - package-ecosystem: "github-actions"
+  - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: weekly

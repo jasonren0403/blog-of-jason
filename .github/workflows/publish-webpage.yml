@@ -24,10 +24,13 @@ jobs:
           echo "---"
           date
           echo "---"
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: lts/*
+          cache: pnpm
       - name: Deploy Key Setup 🔑
         env:
           ACTION_DEPLOY_KEY: ${{ secrets.HEXO_DEPLOY_KEY }}
@@ -37,10 +40,8 @@ jobs:
           chmod 700 ~/.ssh
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - name: Install Hexo cli
-        run: |
-          npm install hexo-cli -g
-          npm install
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: Fetch current htmls
         uses: actions/checkout@v7
         with:
@@ -53,6 +54,6 @@ jobs:
           git config --global user.email "40999116+jasonren0403@users.noreply.github.com"
       - name: Build Hexo 🔧
         run: |
-          hexo clean
-          hexo generate -- --prod
-          hexo deploy
+          pnpm exec hexo clean
+          pnpm exec hexo generate -- --prod
+          pnpm exec hexo deploy
