@@ -1,7 +1,7 @@
-diff --git a/node_modules/hexo-pangu/lib/filter.js b/node_modules/hexo-pangu/lib/filter.js
+diff --git a/lib/filter.js b/lib/filter.js
 index 17cb11e..bb6ab7a 100644
---- a/node_modules/hexo-pangu/lib/filter.js
-+++ b/node_modules/hexo-pangu/lib/filter.js
+--- a/lib/filter.js
++++ b/lib/filter.js
 @@ -5,12 +5,17 @@ const { runInNewContext } = require('vm');
  function loadPlugin(file, window) {
    const scriptPath = require.resolve(file);

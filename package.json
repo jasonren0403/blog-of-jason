@@ -2,12 +2,12 @@
   "name": "blog-of-jason",
   "version": "0.2.0",
   "private": true,
+  "packageManager": "pnpm@10.33.4",
   "scripts": {
     "build": "hexo generate",
     "clean": "hexo clean",
     "deploy": "hexo deploy",
-    "serve": "hexo clean && hexo server",
-    "postinstall": "patch-package"
+    "serve": "hexo clean && hexo server"
   },
   "hexo": {
     "version": "8.1.2"
@@ -44,7 +44,22 @@
     "markdown-it-sub": "^2.0.0",
     "markdown-it-sup": "^2.0.0"
   },
-  "devDependencies": {
-    "patch-package": "^8.0.1"
+  "pnpm": {
+    "patchedDependencies": {
+      "hexo-pangu@0.6.0": "patches/hexo-pangu@0.6.0.patch"
+    },
+    "onlyBuiltDependencies": [
+      "core-js",
+      "gifsicle",
+      "hexo-util",
+      "highlight.js",
+      "jpegtran-bin",
+      "mozjpeg",
+      "optipng-bin",
+      "pngquant-bin"
+    ],
+    "overrides": {
+      "bin-wrapper": "npm:bin-wrapper-china"
+    }
   }
 }

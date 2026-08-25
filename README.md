@@ -10,9 +10,21 @@
 	- `hexo new draft <文件名>` 新建草稿
 * `hexo publish [layout] <filename>` 发表草稿
 
+## 包管理
+
+使用 [pnpm](https://pnpm.io/)（`packageManager` 已锁定版本）：
+
+```bash
+pnpm install
+pnpm build
+pnpm serve
+```
+
+Windows 下 imagemin 相关二进制通过 `pnpm.overrides` 使用 `bin-wrapper-china` 下载；`pnpm.onlyBuiltDependencies` 控制允许执行 postinstall 的依赖。
+
 ## Build 失败备忘
 
-`npm run build`（`hexo generate`）曾报：
+`pnpm build`（`hexo generate`）曾报：
 
 ```text
 FATAL Something's wrong...
@@ -23,4 +35,4 @@ ReferenceError: window is not defined
 
 **原因：** `hexo-pangu@0.6.0` 在 Node 侧用 `vm` 加载 `pangu@9` 的浏览器 UMD（`pangu.umd.js`），上下文未注入全局 `window`；`pangu` 内部调用 `window.getComputedStyle` 时崩溃。
 
-**处理：** 用 `patch-package` 修补 `node_modules/hexo-pangu/lib/filter.js`，在 VM sandbox 中提供 `window` / `globalThis` / `self`；补丁文件为 `patches/hexo-pangu+0.6.0.patch`，`postinstall` 会自动应用。
+**处理：** 通过 pnpm `patchedDependencies` 修补 `hexo-pangu`，在 VM sandbox 中提供 `window` / `globalThis` / `self`；补丁文件为 `patches/hexo-pangu@0.6.0.patch`，安装时自动应用。
