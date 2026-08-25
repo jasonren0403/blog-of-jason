@@ -6,7 +6,8 @@
     "build": "hexo generate",
     "clean": "hexo clean",
     "deploy": "hexo deploy",
-    "serve": "hexo clean && hexo server"
+    "serve": "hexo clean && hexo server",
+    "postinstall": "patch-package"
   },
   "hexo": {
     "version": "8.1.2"
@@ -42,5 +43,8 @@
     "markdown-it-ins": "^4.0.0",
     "markdown-it-sub": "^2.0.0",
     "markdown-it-sup": "^2.0.0"
+  },
+  "devDependencies": {
+    "patch-package": "^8.0.1"
   }
 }
