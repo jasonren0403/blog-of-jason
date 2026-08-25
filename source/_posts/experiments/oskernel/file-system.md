@@ -17,7 +17,7 @@ comments: true
 2. 学习较为复杂的Linux系统下的编程
 3. 了解EXT2文件系统的结构
 
-<!--more-->
+<!-- more -->
 
 ## 步骤
 

@@ -272,7 +272,7 @@ follow_me:
 # Dependencies: https://github.com/next-theme/hexo-posts-embedding
 # Or: https://github.com/sergeyzwezdin/hexo-related-posts
 related_posts:
-  enable: true
+  enable: false
   icon: fa fa-signs-post
 
 # Post edit
@@ -315,7 +315,7 @@ text_align:
   mobile: justify
 
 # Reduce padding / margin indents on devices with narrow width.
-mobile_layout_economy: false
+mobile_layout_economy: true
 
 # Browser header panel color.
 theme_color:
@@ -442,7 +442,7 @@ font:
 index_with_subtitle: true
 
 # Automatically add external URL with Base64 encrypt & decrypt.
-exturl: false
+exturl: true
 
 # If true, an icon will be attached to each external URL
 exturl_icon: true

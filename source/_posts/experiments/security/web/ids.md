@@ -12,7 +12,7 @@ categories:
 ## 目的
 
 了解入侵检测的基本原理，尝试在Windows XP下配置Snort IDS并完成基于Snort的攻击检测。尝试利用Snort规则语法自己编写简单的Snort规则。
-<!--more-->
+<!-- more -->
 {% note danger %}
 本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。
 {% endnote %}

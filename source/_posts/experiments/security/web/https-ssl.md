@@ -64,8 +64,9 @@ categories:
 
 ### OpenSSL编程
 1. 源代码 {% gist c6e99430d8f6d7f3ee82b971590ff9c0 sha1.cpp %}
-2. 与标准CRC SHA工具的运算结果比较，完全相同，说明算法正确。 {% tabs opensslcode, 1 %}
+2. 与标准CRC SHA工具的运算结果比较，完全相同，说明算法正确。
 
+    {% tabs opensslcode, 1 %}
 	<!-- tab 代码运行 -->
 	{% asset_img 21.png %}
 	<!-- endtab -->

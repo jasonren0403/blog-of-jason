@@ -13,7 +13,7 @@ categories:
 ## 目标
 
 掌握DoS攻击的基本原理和应用，分析一次工具发出的UDP Flood攻击。尝试使用WindowsXP编程实现SYN Flood攻击。
-<!--more-->
+<!-- more -->
 {% note danger %}
 本篇文章为实验记录，仅供交流学习使用，切勿违法应用，所有文中提到的工具不提供下载。
 {% endnote %}
