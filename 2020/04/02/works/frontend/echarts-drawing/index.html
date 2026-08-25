@@ -47,7 +47,7 @@
 <meta property="og:image" content="https://blog.jason0743.space/2020/04/02/works/frontend/echarts-drawing/9.png">
 <meta property="og:image" content="https://blog.jason0743.space/2020/04/02/works/frontend/echarts-drawing/10.png">
 <meta property="article:published_time" content="2020-04-02T02:38:58.000Z">
-<meta property="article:modified_time" content="2026-08-25T15:31:02.657Z">
+<meta property="article:modified_time" content="2026-08-25T15:46:29.506Z">
 <meta property="article:author" content="Jason Ren">
 <meta property="article:tag" content="echarts">
 <meta property="article:tag" content="frontend">
@@ -430,7 +430,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-08-25 23:31:02" itemprop="dateModified" datetime="2026-08-25T23:31:02+08:00">2026-08-25</time>
+      <time title="修改时间：2026-08-25 23:46:29" itemprop="dateModified" datetime="2026-08-25T23:46:29+08:00">2026-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -472,21 +472,6 @@ mjx-container[display="true"] + br {
   </span>
   
   
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 ≈</span>
-      <span>11 分钟</span>
-    </span>
 </div>
 
         </div>
@@ -598,7 +583,7 @@ mjx-container[display="true"] + br {
 <p>右键或者 F12 打开开发者模式，发现数据来源为这段 JavaScript 代码</p>
 <img src="/2020/04/02/works/frontend/echarts-drawing/8.png" class="" title="页面代码">
 <p>其中正好有我们需要的数据</p>
-<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">	/* .... */</span><br><span class="line">	currentConfirmedCount: 2934, //现存确诊</span><br><span class="line">	confirmedCount: 82691, //累计确诊数</span><br><span class="line">	suspectedCount: 806, //境外输入</span><br><span class="line">	curedCount: 76436, //累计治愈数</span><br><span class="line">	deadCount: 3321, //累计死亡数</span><br><span class="line">	/* .... */</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight json5"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">	<span class="comment">/* .... */</span></span><br><span class="line">	currentConfirmedCount<span class="punctuation">:</span> <span class="number">2934</span><span class="punctuation">,</span> <span class="comment">//现存确诊</span></span><br><span class="line">	confirmedCount<span class="punctuation">:</span> <span class="number">82691</span><span class="punctuation">,</span> <span class="comment">//累计确诊数</span></span><br><span class="line">	suspectedCount<span class="punctuation">:</span> <span class="number">806</span><span class="punctuation">,</span> <span class="comment">//境外输入</span></span><br><span class="line">	curedCount<span class="punctuation">:</span> <span class="number">76436</span><span class="punctuation">,</span> <span class="comment">//累计治愈数</span></span><br><span class="line">	deadCount<span class="punctuation">:</span> <span class="number">3321</span><span class="punctuation">,</span> <span class="comment">//累计死亡数</span></span><br><span class="line">	<span class="comment">/* .... */</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure>
 <p>使用 python requests 库爬下来，扔进 BeautifulSoup 解析一通，然后存到数据库中，其中数据库的结构为</p>
 <figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create table</span> `<span class="number">2020</span>_pneumonia`</span><br><span class="line">(</span><br><span class="line">  last_since datetime <span class="keyword">null</span>, # 上次数据更新时间</span><br><span class="line">  proved <span class="type">int</span> <span class="keyword">null</span>, # 已确诊数</span><br><span class="line">  uncertain <span class="type">int</span> <span class="keyword">null</span>, # 未确诊数</span><br><span class="line">  died <span class="type">int</span> <span class="keyword">null</span>, # 死亡数</span><br><span class="line">  cured <span class="type">int</span> <span class="keyword">null</span> # 治愈数</span><br><span class="line">);</span><br></pre></td></tr></tbody></table></figure>
 <figure class="highlight python"><figcaption><span>crawl.py</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">req = requests.get(url=<span class="string">'https://ncov.dxy.cn/ncovh5/view/pneumonia'</span>, headers=headers, verify=<span class="literal">False</span>)</span><br><span class="line">req.encoding = req.apparent_encoding</span><br><span class="line">soup = BeautifulSoup(req.text, <span class="string">'html.parser'</span>)</span><br><span class="line">final_data = {}</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">  <span class="keyword">import</span> json</span><br><span class="line">  json_text = soup.find(<span class="string">'script'</span>, {<span class="string">'id'</span>: <span class="string">'getStatisticsService'</span>}).get_text().replace(</span><br><span class="line">  <span class="string">'try { window.getStatisticsService = '</span>,</span><br><span class="line">  <span class="string">''</span>).replace(<span class="string">'catch(e){}'</span>, <span class="string">''</span>)</span><br><span class="line">  json_text = json_text[:-<span class="number">1</span>]</span><br><span class="line">  data_dict = json.loads(json_text)</span><br><span class="line">  final_data[<span class="string">'confirmed'</span>] = <span class="built_in">int</span>(data_dict[<span class="string">'confirmedCount'</span>])</span><br><span class="line">  final_data[<span class="string">'suspected'</span>] = <span class="built_in">int</span>(data_dict[<span class="string">'suspectedCount'</span>])</span><br><span class="line">  final_data[<span class="string">'cured'</span>] = <span class="built_in">int</span>(data_dict[<span class="string">'curedCount'</span>])</span><br><span class="line">  final_data[<span class="string">'dead'</span>] = <span class="built_in">int</span>(data_dict[<span class="string">'deadCount'</span>])</span><br><span class="line">  final_data[<span class="string">'last_since'</span>] = data_dict[<span class="string">'modifyTime'</span>]  <span class="comment"># "modifyTime":单位是 ms!</span></span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">  <span class="comment"># json 解析出错，几乎不可能出现（因为这样的话原来以js驱动的网页也显示不出数据了）</span></span><br><span class="line">  quit(-<span class="number">1</span>)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">  <span class="keyword">try</span>:</span><br><span class="line">	<span class="keyword">import</span> datetime,time</span><br><span class="line">	<span class="comment"># 省略连库过程</span></span><br><span class="line">	cur.execute(<span class="string">'select last_since from 2020_pneumonia order by last_since desc'</span>)</span><br><span class="line">	ret = cur.fetchone()</span><br><span class="line">	logger.info(ret)  <span class="comment"># {'last_since': datetime.datetime(2020, 2, 9, 22, 55)}</span></span><br><span class="line">	ret_time = ret.get(<span class="string">'last_since'</span>)</span><br><span class="line">	local_time = datetime.datetime.fromtimestamp(final_data[<span class="string">'last_since'</span>]/<span class="number">1000</span>)</span><br><span class="line">	<span class="keyword">if</span> ret_time == local_time:</span><br><span class="line">	  logger.info(<span class="string">"[*]No need to insert!"</span>)</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">	  date_in = datetime.datetime.fromtimestamp(final_data[<span class="string">'last_since'</span>]/<span class="number">1000</span>).strftime(<span class="string">"%Y-%m-%d %H:%M:%S"</span>)</span><br><span class="line">      proved = final_data[<span class="string">'confirmed'</span>]</span><br><span class="line">	  uncertain = final_data[<span class="string">'suspected'</span>]</span><br><span class="line">      died = final_data[<span class="string">'dead'</span>]</span><br><span class="line">      cured = final_data[<span class="string">'cured'</span>]</span><br><span class="line">      sql = <span class="string">"insert into 2020_pneumonia values('%s',%d,%d,%d,%d);"</span>%(date_in,proved,uncertain,died,cured)</span><br><span class="line">      cur.execute(sql)</span><br><span class="line">      conn.commit()</span><br><span class="line">      logger.info(<span class="string">"[√]Insert success!"</span>)</span><br><span class="line">  <span class="keyword">finally</span>:</span><br><span class="line">    conn.close()</span><br></pre></td></tr></tbody></table></figure>
@@ -808,20 +793,6 @@ mjx-container[display="true"] + br {
     </span>
     <span class="author" itemprop="copyrightHolder">Jason Ren</span>
   </div>
-<div class="wordcount">
-  <span class="post-meta-item">
-    <span class="post-meta-item-icon">
-      <i class="fa fa-chart-line"></i>
-    </span>
-    <span title="站点总字数">103k</span>
-  </span>
-  <span class="post-meta-item">
-    <span class="post-meta-item-icon">
-      <i class="fa fa-coffee"></i>
-    </span>
-    <span title="站点阅读时长">6:15</span>
-  </span>
-</div>
 <div class="busuanzi-count">
     <span class="post-meta-item" id="busuanzi_container_site_uv">
       <span class="post-meta-item-icon">
